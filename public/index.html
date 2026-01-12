@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>FSBC Fortnite Map System</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        :root { 
+            --bg: #0f111a; 
+            --sidebar: #1a1c24; 
+            --accent: #ff4757; 
+            --occupied: #2ecc71; 
+            --discord: #5865F2; 
+        }
+
+        body { 
+            margin: 0; padding: 15px; display: flex; height: 100vh; 
+            background: var(--bg); font-family: 'Segoe UI', sans-serif; 
+            color: white; overflow: hidden; box-sizing: border-box; gap: 15px; 
+        }
+        
+        #sidebar { 
+            width: 300px; background: var(--sidebar); display: flex; 
+            flex-direction: column; padding: 20px; border-radius: 15px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 2000;
+        }
+        
+        #map-container { 
+            flex-grow: 1; position: relative; background: #000; 
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        
+        #map { height: 100%; width: 100%; background-color: #000 !important; }
+
+        .user-card { 
+            display: flex; align-items: center; gap: 10px; 
+            background: rgba(255,255,255,0.05); padding: 12px; 
+            border-radius: 10px; margin-bottom: 10px;
+        }
+
+        .btn-discord { 
+            background: var(--discord); color: white; border: none; 
+            padding: 12px; border-radius: 10px; cursor: pointer; 
+            font-weight: bold; width: 100%; transition: 0.3s;
+            text-align: center; display: block; text-decoration: none;
+        }
+
+        .admin-tools { 
+            margin-top: 20px; padding: 10px; border: 1px solid var(--accent); 
+            border-radius: 10px; background: rgba(255, 71, 87, 0.1); 
+        }
+
+        #drawBtn {
+            margin-top: 10px; width: 100%; padding: 10px; 
+            cursor: pointer; font-weight: bold; border-radius: 8px; border: none;
+            background: #eee; color: black;
+        }
+
+        .leaflet-container { background: #000 !important; }
+    </style>
+</head>
+<body>
+
+<div id="sidebar">
+    <h2 style="margin-top: 0;">FSBC LOBBY</h2>
+    
+    <div id="auth-section">
+        <a href="/auth/discord" class="btn-discord">ZALOGUJ PRZEZ DISCORD</a>
+    </div>
+
+    <div id="profile-section" style="display:none;">
+        <div class="user-card">
+            <img id="user-avatar" src="" style="width:40px; border-radius:50%;">
+            <div>
+                <b id="user-name"></b><br>
+                <small id="user-status" style="color:var(--occupied); font-weight: bold;"></small>
+            </div>
+        </div>
+        
+        <div id="admin-tools" class="admin-tools" style="display:none;">
+            <p style="color:var(--accent); margin:0; font-size:11px; font-weight:bold; text-transform: uppercase;">Panel Administratora</p>
+            <button onclick="toggleDrawMode()" id="drawBtn">Dodaj Strefę</button>
+        </div>
+        <a href="/logout" style="color: #888; font-size: 12px; margin-top: 10px; display: inline-block;">Wyloguj się</a>
+    </div>
+
+    <h3 style="margin-bottom: 10px;">Lista Aktywności</h3>
+    <div id="activity-log" style="overflow-y: auto; flex-grow: 1; font-size: 13px; color: #ccc;">
+        Zaloguj się, aby zarządzać mapą.
+    </div>
+</div>
+
+<div id="map-container">
+    <div id="map"></div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    let currentUser = null;
+    let isDrawMode = false;
+    let firstPoint = null;
+    let savedZones = []; 
+
+    // Konfiguracja Mapy
+    const map = L.map('map', { 
+        crs: L.CRS.Simple, 
+        minZoom: -0.5, maxZoom: 0, zoom: 0,
+        dragging: true, zoomControl: false, attributionControl: false 
+    });
+
+    const bounds = [[0, 0], [590, 670]];
+    L.imageOverlay('https://cdn.discordapp.com/attachments/1444651629633601669/1459626248463450163/image.png?ex=69649f20&is=69634da0&hm=6153884aacf97e021df7fe2bef31051d0f028b5fc61257fa3c2d6400dd1d1b22&', bounds).addTo(map);
+    map.fitBounds(bounds);
+
+    // INICJALIZACJA
+    async function init() {
+        try {
+            const res = await fetch('/api/user');
+            currentUser = await res.json();
+            
+            if (currentUser) {
+                document.getElementById('auth-section').style.display = 'none';
+                document.getElementById('profile-section').style.display = 'block';
+                document.getElementById('user-name').innerText = currentUser.username;
+                document.getElementById('user-avatar').src = `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png`;
+                document.getElementById('user-status').innerText = currentUser.isAdmin ? "Moderator" : "Gracz";
+                
+                if (currentUser.isAdmin) {
+                    document.getElementById('admin-tools').style.display = 'block';
+                }
+            }
+        } catch(e) { console.log("Użytkownik niezalogowany"); }
+
+        loadZones(); // Wczytaj strefy z serwera
+    }
+
+    // WCZYTYWANIE Z SERWERA
+    async function loadZones() {
+        const res = await fetch('/api/zones');
+        savedZones = await res.json();
+        savedZones.forEach(zoneData => {
+            renderZone(zoneData);
+        });
+    }
+
+    // TRYB RYSOWANIA (DLA ADMINA)
+    function toggleDrawMode() {
+        isDrawMode = !isDrawMode;
+        const btn = document.getElementById('drawBtn');
+        btn.innerText = isDrawMode ? 'KLIKNIJ 2 PUNKTY NA MAPIE' : 'Dodaj Strefę';
+        btn.style.background = isDrawMode ? 'var(--accent)' : '#eee';
+        btn.style.color = isDrawMode ? 'white' : 'black';
+    }
+
+    // KLIKNIĘCIE W MAPĘ
+    map.on('click', function(e) {
+        if (currentUser && currentUser.isAdmin && isDrawMode) {
+            if (!firstPoint) {
+                firstPoint = e.latlng;
+            } else {
+                const newZone = {
+                    id: Date.now(),
+                    p1: firstPoint,
+                    p2: e.latlng,
+                    color: '#ff4757',
+                    owner: null
+                };
+                savedZones.push(newZone);
+                renderZone(newZone);
+                saveZonesToServer();
+                
+                firstPoint = null;
+                toggleDrawMode();
+            }
+        }
+    });
+
+    // RYSOWANIE STREFY I OBSŁUGA ZDARZEŃ
+    function renderZone(zoneData) {
+        const zone = L.rectangle([zoneData.p1, zoneData.p2], { 
+            color: zoneData.color, 
+            weight: 2, 
+            fillOpacity: zoneData.owner ? 0.5 : 0.2, 
+            interactive: true 
+        }).addTo(map);
+
+        // Usuwanie (Prawy przycisk - tylko admin)
+        zone.on('contextmenu', (e) => {
+            if (currentUser && currentUser.isAdmin) {
+                if(confirm("Czy chcesz usunąć tę strefę na stałe?")) {
+                    map.removeLayer(zone);
+                    savedZones = savedZones.filter(z => z.id !== zoneData.id);
+                    saveZonesToServer();
+                }
+            }
+        });
+
+        // Zajmowanie strefy (Lewy przycisk)
+        zone.on('click', (e) => {
+            L.DomEvent.stopPropagation(e);
+            if (isDrawMode) return;
+            
+            if (!currentUser) {
+                alert("Musisz się zalogować przez Discord, aby zająć strefę!");
+                return;
+            }
+
+            if (zoneData.owner) {
+                alert(`Ta strefa jest już zajęta przez: ${zoneData.owner}`);
+                return;
+            }
+
+            // Gracz zajmuje strefę
+            zoneData.color = '#2ecc71'; 
+            zoneData.owner = currentUser.username;
+            zone.setStyle({ color: '#2ecc71', fillOpacity: 0.5 });
+            
+            saveZonesToServer();
+            alert(`Zająłeś strefę jako ${currentUser.username}!`);
+        });
+    }
+
+    // ZAPIS DO PLIKU NA SERWERZE
+    async function saveZonesToServer() {
+        await fetch('/api/zones', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(savedZones)
+        });
+    }
+
+    init();
+</script>
+</body>
+</html>
