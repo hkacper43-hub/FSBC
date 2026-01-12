@@ -12,7 +12,7 @@ const app = express();
 // Na hostingu (np. Render) te dane ustawia się w zakładce "Environment Variables"
 const CLIENT_ID = '1459649925485957266';
 const CLIENT_SECRET = '9gDS0_U2WBKQzQQiZkCDdan_q76qSM3K'; // PAMIĘTAJ: Zresetuj go w panelu Discord!
-const CALLBACK_URL = 'http://localhost:3000/auth/discord/callback'; // Zmień na swój adres po publikacji
+const CALLBACK_URL = 'https://fsbc.onrender.com/auth/discord/callback'; // Zmień na swój adres po publikacji
 const MY_GUILD_ID = '1416103818772484271';
 const ADMIN_ROLE_ID = '1416117511237271552';
 
@@ -109,4 +109,5 @@ app.listen(PORT, () => {
     if (PORT === 3000) {
         console.log(`👉 Lokalny adres: http://localhost:3000`);
     }
+
 });
