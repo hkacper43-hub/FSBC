@@ -9,10 +9,9 @@ const fs = require('fs');
 const app = express();
 
 // --- KONFIGURACJA ---
-// Na hostingu (np. Render) te dane ustawia się w zakładce "Environment Variables"
 const CLIENT_ID = '1459649925485957266';
-const CLIENT_SECRET = process.env.CLIENT_SECRET; // Render sam tu wstawi klucz z zakładki Environment
-const CALLBACK_URL = 'https://fsbc.onrender.com/auth/discord/callback'; // Zmień na swój adres po publikacji
+const CLIENT_SECRET = process.env.CLIENT_SECRET; 
+const CALLBACK_URL = 'https://fsbc.onrender.com/auth/discord/callback';
 const MY_GUILD_ID = '1416103818772484271';
 const ADMIN_ROLE_ID = '1416117511237271552';
 
@@ -49,66 +48,38 @@ passport.use(new DiscordStrategy({
     });
 }));
 
-// Middleware
 app.use(express.json());
 app.use(session({ 
-    secret: 'fsbc-secret-key-super-safe', 
-    resave: false, 
-    saveUninitialized: false 
+    secret: 'fsbc-secret-key-123', 
+    resave: true, 
+    saveUninitialized: true,
+    cookie: { secure: false } // Zmień na true, jeśli masz błędy sesji na HTTPS
 }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Serwowanie plików strony
 app.use(express.static(path.join(__dirname, 'public')));
 
-// --- TRASY (ROUTES) ---
-
-// Logowanie
 app.get('/auth/discord', passport.authenticate('discord'));
-
-app.get('/auth/discord/callback', passport.authenticate('discord', { 
-    failureRedirect: '/' 
-}), (req, res) => {
+app.get('/auth/discord/callback', passport.authenticate('discord', { failureRedirect: '/' }), (req, res) => {
     res.redirect('/');
 });
 
-app.get('/api/user', (req, res) => {
-    res.json(req.user || null);
-});
+app.get('/api/user', (req, res) => res.json(req.user || null));
+app.get('/logout', (req, res) => { req.logout(() => res.redirect('/')); });
 
-app.get('/logout', (req, res) => {
-    req.logout(() => res.redirect('/'));
-});
-
-// Zarządzanie strefami
 app.get('/api/zones', (req, res) => {
     if (fs.existsSync(ZONES_FILE)) {
-        const data = fs.readFileSync(ZONES_FILE);
-        res.json(JSON.parse(data));
-    } else {
-        res.json([]);
-    }
+        res.json(JSON.parse(fs.readFileSync(ZONES_FILE)));
+    } else { res.json([]); }
 });
 
 app.post('/api/zones', (req, res) => {
     if (req.user && req.user.isAdmin) {
         fs.writeFileSync(ZONES_FILE, JSON.stringify(req.body, null, 2));
         res.sendStatus(200);
-    } else {
-        res.status(403).send('Brak uprawnień admina');
-    }
+    } else { res.status(403).send('Brak uprawnień'); }
 });
 
-// --- URUCHOMIENIE SERWERA ---
-// process.env.PORT pozwoli serwerowi (np. Render) samemu wybrać port
 const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-    console.log(`✅ Serwer FSBC działa na porcie: ${PORT}`);
-    if (PORT === 3000) {
-        console.log(`👉 Lokalny adres: http://localhost:3000`);
-    }
-
-});
-
+app.listen(PORT, () => console.log(`Serwer na porcie ${PORT}`));
