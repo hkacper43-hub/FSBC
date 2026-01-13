@@ -1,7 +1,7 @@
 {
   "name": "mapy-fsbc",
   "version": "1.0.0",
-  "description": "",
+  "description": "Mapa FSBC z bazą danych MongoDB",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
