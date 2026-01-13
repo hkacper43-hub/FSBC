@@ -2,286 +2,129 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>FSBC Fortnite Map System</title>
+    <title>FSBC Mapa</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        .leaflet-tooltip.zone-label {
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    padding: 0;
-}
-.leaflet-tooltip-pane { z-index: 650; } /* Żeby napisy były nad strefami */
-        :root { 
-            --bg: #0f111a; 
-            --sidebar: #1a1c24; 
-            --accent: #ff4757; 
-            --occupied: #2ecc71; 
-            --discord: #5865F2; 
-        }
-
-        body { 
-            margin: 0; padding: 15px; display: flex; height: 100vh; 
-            background: var(--bg); font-family: 'Segoe UI', sans-serif; 
-            color: white; overflow: hidden; box-sizing: border-box; gap: 15px; 
-        }
+        :root { --bg: #0f111a; --sidebar: #1a1c24; --accent: #ff4757; }
+        body { margin: 0; display: flex; height: 100vh; background: var(--bg); font-family: sans-serif; color: white; gap: 10px; padding: 10px; box-sizing: border-box; }
+        #sidebar { width: 300px; background: var(--sidebar); padding: 20px; border-radius: 15px; z-index: 1000; }
+        #map { flex-grow: 1; border-radius: 15px; background: #000; }
+        .btn-discord { background: #5865F2; color: white; text-decoration: none; padding: 12px; border-radius: 8px; display: block; text-align: center; font-weight: bold; }
+        .user-card { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; }
+        #drawBtn { width: 100%; padding: 10px; margin-top: 10px; cursor: pointer; border: none; border-radius: 5px; font-weight: bold; }
         
-        #sidebar { 
-            width: 300px; background: var(--sidebar); display: flex; 
-            flex-direction: column; padding: 20px; border-radius: 15px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 2000;
-        }
-        
-        #map-container { 
-            flex-grow: 1; position: relative; background: #000; 
-            display: flex; align-items: center; justify-content: center;
-            border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-        
-        #map { height: 100%; width: 100%; background-color: #000 !important; }
-
-        .user-card { 
-            display: flex; align-items: center; gap: 10px; 
-            background: rgba(255,255,255,0.05); padding: 12px; 
-            border-radius: 10px; margin-bottom: 10px;
-        }
-
-        .btn-discord { 
-            background: var(--discord); color: white; border: none; 
-            padding: 12px; border-radius: 10px; cursor: pointer; 
-            font-weight: bold; width: 100%; transition: 0.3s;
-            text-align: center; display: block; text-decoration: none;
-        }
-
-        .admin-tools { 
-            margin-top: 20px; padding: 10px; border: 1px solid var(--accent); 
-            border-radius: 10px; background: rgba(255, 71, 87, 0.1); 
-        }
-
-        #drawBtn {
-            margin-top: 10px; width: 100%; padding: 10px; 
-            cursor: pointer; font-weight: bold; border-radius: 8px; border: none;
-            background: #eee; color: black;
-        }
-
-        .leaflet-container { background: #000 !important; }
+        /* Style dla napisów na strefach */
+        .leaflet-tooltip.zone-label { background: transparent; border: none; box-shadow: none; padding: 0; }
     </style>
 </head>
 <body>
 
 <div id="sidebar">
-    <h2 style="margin-top: 0;">FSBC LOBBY</h2>
-    
+    <h2>FSBC LOBBY</h2>
     <div id="auth-section">
         <a href="/auth/discord" class="btn-discord">ZALOGUJ PRZEZ DISCORD</a>
     </div>
-
     <div id="profile-section" style="display:none;">
         <div class="user-card">
             <img id="user-avatar" src="" style="width:40px; border-radius:50%;">
-            <div>
-                <b id="user-name"></b><br>
-                <small id="user-status" style="color:var(--occupied); font-weight: bold;"></small>
-            </div>
+            <div><b id="user-name"></b><br><small id="user-status"></small></div>
         </div>
-        
-        <div id="admin-tools" class="admin-tools" style="display:none;">
-            <p style="color:var(--accent); margin:0; font-size:11px; font-weight:bold; text-transform: uppercase;">Panel Administratora</p>
-            <button onclick="toggleDrawMode()" id="drawBtn">Dodaj Strefę</button>
+        <div id="admin-tools" style="display:none; margin-top:15px; border-top:1px solid #333; padding-top:15px;">
+            <button id="drawBtn" onclick="toggleDrawMode()">Dodaj Strefę</button>
         </div>
-        <a href="/logout" style="color: #888; font-size: 12px; margin-top: 10px; display: inline-block;">Wyloguj się</a>
-    </div>
-
-    <h3 style="margin-bottom: 10px;">Lista Aktywności</h3>
-    <div id="activity-log" style="overflow-y: auto; flex-grow: 1; font-size: 13px; color: #ccc;">
-        Zaloguj się, aby zarządzać mapą.
+        <a href="/logout" style="color: #666; font-size: 12px; display: block; margin-top: 10px;">Wyloguj</a>
     </div>
 </div>
 
-<div id="map-container">
-    <div id="map"></div>
-</div>
+<div id="map"></div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
     let currentUser = null;
     let isDrawMode = false;
     let firstPoint = null;
-    let savedZones = []; 
+    let savedZones = [];
 
-    // Konfiguracja Mapy
-    const map = L.map('map', { 
-        crs: L.CRS.Simple, 
-        minZoom: -0.5, maxZoom: 0, zoom: 0,
-        dragging: true, zoomControl: false, attributionControl: false 
-    });
-
+    const map = L.map('map', { crs: L.CRS.Simple, minZoom: -0.5, maxZoom: 0, zoom: 0, zoomControl: false, attributionControl: false });
     const bounds = [[0, 0], [590, 670]];
-    L.imageOverlay('https://i.postimg.cc/SQPjn62s/image.png', bounds).addTo(map);
+    L.imageOverlay('https://i.imgur.com/uRj0p6o.png', bounds).addTo(map); // Użyj stabilnego linku Imgur
     map.fitBounds(bounds);
 
-    // INICJALIZACJA
     async function init() {
-        try {
-            const res = await fetch('/api/user');
-            currentUser = await res.json();
-            
-            if (currentUser) {
-                document.getElementById('auth-section').style.display = 'none';
-                document.getElementById('profile-section').style.display = 'block';
-                document.getElementById('user-name').innerText = currentUser.username;
-                document.getElementById('user-avatar').src = `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png`;
-                document.getElementById('user-status').innerText = currentUser.isAdmin ? "Moderator" : "Gracz";
-                
-                if (currentUser.isAdmin) {
-                    document.getElementById('admin-tools').style.display = 'block';
-                }
-            }
-        } catch(e) { console.log("Użytkownik niezalogowany"); }
-
-        loadZones(); // Wczytaj strefy z serwera
+        const res = await fetch('/api/user');
+        currentUser = await res.json();
+        if (currentUser) {
+            document.getElementById('auth-section').style.display = 'none';
+            document.getElementById('profile-section').style.display = 'block';
+            document.getElementById('user-name').innerText = currentUser.username;
+            document.getElementById('user-avatar').src = `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png`;
+            document.getElementById('user-status').innerText = currentUser.isAdmin ? "Moderator" : "Gracz";
+            if (currentUser.isAdmin) document.getElementById('admin-tools').style.display = 'block';
+        }
+        loadZones();
     }
 
-    // WCZYTYWANIE Z SERWERA
     async function loadZones() {
         const res = await fetch('/api/zones');
         savedZones = await res.json();
-        savedZones.forEach(zoneData => {
-            renderZone(zoneData);
-        });
+        savedZones.forEach(z => renderZone(z));
     }
 
-    // TRYB RYSOWANIA (DLA ADMINA)
     function toggleDrawMode() {
         isDrawMode = !isDrawMode;
-        const btn = document.getElementById('drawBtn');
-        btn.innerText = isDrawMode ? 'KLIKNIJ 2 PUNKTY NA MAPIE' : 'Dodaj Strefę';
-        btn.style.background = isDrawMode ? 'var(--accent)' : '#eee';
-        btn.style.color = isDrawMode ? 'white' : 'black';
+        document.getElementById('drawBtn').innerText = isDrawMode ? 'KLIKNIJ 2 PUNKTY' : 'Dodaj Strefę';
     }
 
-    // KLIKNIĘCIE W MAPĘ
-    map.on('click', function(e) {
-        if (currentUser && currentUser.isAdmin && isDrawMode) {
+    map.on('click', (e) => {
+        if (isDrawMode && currentUser?.isAdmin) {
             if (!firstPoint) {
                 firstPoint = e.latlng;
             } else {
-                const newZone = {
-                    id: Date.now(),
-                    p1: firstPoint,
-                    p2: e.latlng,
-                    color: '#ff4757',
-                    owner: null
-                };
+                const newZone = { id: Date.now(), p1: firstPoint, p2: e.latlng, color: '#ff4757', owner: null, ownerAvatar: null };
                 savedZones.push(newZone);
                 renderZone(newZone);
                 saveZonesToServer();
-                
                 firstPoint = null;
                 toggleDrawMode();
             }
         }
     });
 
-   function renderZone(zoneData) {
-    const zone = L.rectangle([zoneData.p1, zoneData.p2], { 
-        color: zoneData.color, 
-        weight: 2, 
-        fillOpacity: zoneData.owner ? 0.4 : 0.2, 
-        interactive: true 
-    }).addTo(map);
+    function renderZone(zoneData) {
+        const zone = L.rectangle([zoneData.p1, zoneData.p2], { color: zoneData.color, fillOpacity: zoneData.owner ? 0.4 : 0.2 }).addTo(map);
 
-    // DODAWANIE PODPISU (NICK + AVATAR)
-    if (zoneData.owner) {
-        // Tworzymy mały HTML dla etykiety
-        const labelContent = `
-            <div style="display: flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.7); padding: 2px 8px; border-radius: 20px; border: 1px solid ${zoneData.color}; color: white; white-space: nowrap;">
-                <img src="${zoneData.ownerAvatar}" style="width: 20px; height: 20px; border-radius: 50%;" onerror="this.style.display='none'">
-                <span style="font-size: 11px; font-weight: bold;">${zoneData.owner}</span>
-            </div>
-        `;
+        if (zoneData.owner) {
+            const label = `<div style="display:flex; align-items:center; gap:5px; background:rgba(0,0,0,0.8); padding:3px 8px; border-radius:15px; color:white; border:1px solid ${zoneData.color};">
+                <img src="${zoneData.ownerAvatar}" style="width:18px; height:18px; border-radius:50%">
+                <span style="font-size:10px">${zoneData.owner}</span>
+            </div>`;
+            zone.bindTooltip(label, { permanent: true, direction: 'center', className: 'zone-label' }).openTooltip();
+        }
 
-        zone.bindTooltip(labelContent, {
-            permanent: true,       // Podpis widocznny cały czas
-            direction: 'center',    // Na środku strefy
-            className: 'zone-label' // Klasa do ewentualnego stylowania CSS
-        }).openTooltip();
-    }
-
-    // Usuwanie (Prawy przycisk - tylko admin)
-    zone.on('contextmenu', (e) => {
-        if (currentUser && currentUser.isAdmin) {
-            if(confirm("Czy chcesz usunąć tę strefę na stałe?")) {
+        zone.on('contextmenu', () => {
+            if (currentUser?.isAdmin && confirm("Usunąć?")) {
                 map.removeLayer(zone);
                 savedZones = savedZones.filter(z => z.id !== zoneData.id);
                 saveZonesToServer();
             }
-        }
-    });
+        });
 
-    // Zajmowanie strefy (Lewy przycisk)
-    zone.on('click', (e) => {
-        L.DomEvent.stopPropagation(e);
-        if (isDrawMode) return;
-        
-        if (!currentUser) {
-            alert("Musisz się zalogować!");
-            return;
-        }
-
-        if (zoneData.owner) {
-            alert(`Zajęte przez: ${zoneData.owner}`);
-            return;
-        }
-
-        // Gracz zajmuje strefę - zapisujemy nick i avatar
-        zoneData.color = '#2ecc71'; 
-        zoneData.owner = currentUser.username;
-        zoneData.ownerAvatar = `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png`;
-        
-        saveZonesToServer();
-        location.reload(); // Odświeżamy, żeby narysować Tooltip od nowa
-    });
-}
-
-        // Zajmowanie strefy (Lewy przycisk)
         zone.on('click', (e) => {
             L.DomEvent.stopPropagation(e);
-            if (isDrawMode) return;
-            
-            if (!currentUser) {
-                alert("Musisz się zalogować przez Discord, aby zająć strefę!");
-                return;
-            }
-
-            if (zoneData.owner) {
-                alert(`Ta strefa jest już zajęta przez: ${zoneData.owner}`);
-                return;
-            }
-
-            // Gracz zajmuje strefę
-            zoneData.color = '#2ecc71'; 
+            if (isDrawMode || zoneData.owner || !currentUser) return;
             zoneData.owner = currentUser.username;
-            zone.setStyle({ color: '#2ecc71', fillOpacity: 0.5 });
-            
+            zoneData.ownerAvatar = `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png`;
+            zoneData.color = '#2ecc71';
             saveZonesToServer();
-            alert(`Zająłeś strefę jako ${currentUser.username}!`);
+            location.reload();
         });
     }
 
-    // ZAPIS DO PLIKU NA SERWERZE
     async function saveZonesToServer() {
-        await fetch('/api/zones', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(savedZones)
-        });
+        await fetch('/api/zones', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(savedZones) });
     }
 
     init();
 </script>
 </body>
-
 </html>
-
-
