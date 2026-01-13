@@ -2,38 +2,39 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>FSBC Mapa</title>
+    <title>FSBC Mapa - System Wieloosobowy</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root { --bg: #0f111a; --sidebar: #1a1c24; --accent: #ff4757; }
-        body { margin: 0; display: flex; height: 100vh; background: var(--bg); font-family: sans-serif; color: white; gap: 10px; padding: 10px; box-sizing: border-box; }
-        #sidebar { width: 300px; background: var(--sidebar); padding: 20px; border-radius: 15px; z-index: 1000; }
-        #map { flex-grow: 1; border-radius: 15px; background: #000; }
+        body { margin: 0; display: flex; height: 100vh; background: var(--bg); font-family: 'Segoe UI', sans-serif; color: white; gap: 10px; padding: 10px; box-sizing: border-box; }
+        #sidebar { width: 320px; background: var(--sidebar); padding: 20px; border-radius: 15px; display: flex; flex-direction: column; }
+        #map { flex-grow: 1; border-radius: 15px; background: #000; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
         .btn-discord { background: #5865F2; color: white; text-decoration: none; padding: 12px; border-radius: 8px; display: block; text-align: center; font-weight: bold; }
         .user-card { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; }
-        #drawBtn { width: 100%; padding: 10px; margin-top: 10px; cursor: pointer; border: none; border-radius: 5px; font-weight: bold; }
-        
-        /* Style dla napisów na strefach */
+        #drawBtn { width: 100%; padding: 12px; margin-top: 10px; cursor: pointer; border: none; border-radius: 8px; font-weight: bold; background: #eee; transition: 0.3s; }
+        #drawBtn.active { background: var(--accent); color: white; }
         .leaflet-tooltip.zone-label { background: transparent; border: none; box-shadow: none; padding: 0; }
     </style>
 </head>
 <body>
 
 <div id="sidebar">
-    <h2>FSBC LOBBY</h2>
+    <h2 style="margin-top:0">FSBC LOBBY</h2>
     <div id="auth-section">
         <a href="/auth/discord" class="btn-discord">ZALOGUJ PRZEZ DISCORD</a>
     </div>
     <div id="profile-section" style="display:none;">
         <div class="user-card">
             <img id="user-avatar" src="" style="width:40px; border-radius:50%;">
-            <div><b id="user-name"></b><br><small id="user-status"></small></div>
+            <div><b id="user-name"></b><br><small id="user-status" style="color:#2ecc71"></small></div>
         </div>
         <div id="admin-tools" style="display:none; margin-top:15px; border-top:1px solid #333; padding-top:15px;">
+            <p style="font-size:11px; color:var(--accent); font-weight:bold; margin-bottom:5px">PANEL ADMINA</p>
             <button id="drawBtn" onclick="toggleDrawMode()">Dodaj Strefę</button>
         </div>
-        <a href="/logout" style="color: #666; font-size: 12px; display: block; margin-top: 10px;">Wyloguj</a>
+        <a href="/logout" style="color: #666; font-size: 12px; display: block; margin-top: 15px;">Wyloguj się</a>
     </div>
+    <div style="margin-top:auto; font-size:11px; color:#555;">FSBC Map System v2.0</div>
 </div>
 
 <div id="map"></div>
@@ -47,20 +48,22 @@
 
     const map = L.map('map', { crs: L.CRS.Simple, minZoom: -0.5, maxZoom: 0, zoom: 0, zoomControl: false, attributionControl: false });
     const bounds = [[0, 0], [590, 670]];
-    L.imageOverlay('https://cdn.discordapp.com/attachments/1444651629633601669/1459626248463450163/image.png?ex=69674220&is=6965f0a0&hm=b0ae409d4a765278ae114ac8b48ba4b03c441303a367628e57b8c4aaff1aa096&', bounds).addTo(map); // Użyj stabilnego linku Imgur
+    L.imageOverlay('https://i.imgur.com/uRj0p6o.png', bounds).addTo(map); 
     map.fitBounds(bounds);
 
     async function init() {
-        const res = await fetch('/api/user');
-        currentUser = await res.json();
-        if (currentUser) {
-            document.getElementById('auth-section').style.display = 'none';
-            document.getElementById('profile-section').style.display = 'block';
-            document.getElementById('user-name').innerText = currentUser.username;
-            document.getElementById('user-avatar').src = `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png`;
-            document.getElementById('user-status').innerText = currentUser.isAdmin ? "Moderator" : "Gracz";
-            if (currentUser.isAdmin) document.getElementById('admin-tools').style.display = 'block';
-        }
+        try {
+            const res = await fetch('/api/user');
+            currentUser = await res.json();
+            if (currentUser) {
+                document.getElementById('auth-section').style.display = 'none';
+                document.getElementById('profile-section').style.display = 'block';
+                document.getElementById('user-name').innerText = currentUser.username;
+                document.getElementById('user-avatar').src = `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png`;
+                document.getElementById('user-status').innerText = currentUser.isAdmin ? "Moderator" : "Gracz";
+                if (currentUser.isAdmin) document.getElementById('admin-tools').style.display = 'block';
+            }
+        } catch(e) {}
         loadZones();
     }
 
@@ -72,7 +75,9 @@
 
     function toggleDrawMode() {
         isDrawMode = !isDrawMode;
-        document.getElementById('drawBtn').innerText = isDrawMode ? 'KLIKNIJ 2 PUNKTY' : 'Dodaj Strefę';
+        const btn = document.getElementById('drawBtn');
+        btn.innerText = isDrawMode ? 'KLIKNIJ 2 PUNKTY NA MAPIE' : 'Dodaj Strefę';
+        btn.className = isDrawMode ? 'active' : '';
     }
 
     map.on('click', (e) => {
@@ -80,7 +85,13 @@
             if (!firstPoint) {
                 firstPoint = e.latlng;
             } else {
-                const newZone = { id: Date.now(), p1: firstPoint, p2: e.latlng, color: '#ff4757', owner: null, ownerAvatar: null };
+                const newZone = { 
+                    id: Date.now(), 
+                    p1: firstPoint, 
+                    p2: e.latlng, 
+                    color: '#ff4757', 
+                    owners: [] 
+                };
                 savedZones.push(newZone);
                 renderZone(newZone);
                 saveZonesToServer();
@@ -91,18 +102,37 @@
     });
 
     function renderZone(zoneData) {
-        const zone = L.rectangle([zoneData.p1, zoneData.p2], { color: zoneData.color, fillOpacity: zoneData.owner ? 0.4 : 0.2 }).addTo(map);
+        // Naprawa starych danych
+        if (!zoneData.owners) zoneData.owners = [];
+        if (zoneData.owner && zoneData.owners.length === 0) {
+            zoneData.owners.push({ name: zoneData.owner, avatar: zoneData.ownerAvatar });
+            delete zoneData.owner;
+        }
 
-        if (zoneData.owner) {
-            const label = `<div style="display:flex; align-items:center; gap:5px; background:rgba(0,0,0,0.8); padding:3px 8px; border-radius:15px; color:white; border:1px solid ${zoneData.color};">
-                <img src="${zoneData.ownerAvatar}" style="width:18px; height:18px; border-radius:50%">
-                <span style="font-size:10px">${zoneData.owner}</span>
-            </div>`;
+        const isOccupied = zoneData.owners.length > 0;
+        const zoneColor = isOccupied ? '#2ecc71' : zoneData.color;
+        
+        const zone = L.rectangle([zoneData.p1, zoneData.p2], { 
+            color: zoneColor, 
+            fillOpacity: isOccupied ? 0.4 : 0.2 
+        }).addTo(map);
+
+        if (isOccupied) {
+            let avatarsHtml = zoneData.owners.map((u, index) => 
+                `<img src="${u.avatar}" title="${u.name}" style="width:22px; height:22px; border-radius:50%; border:2px solid ${zoneColor}; margin-left:${index === 0 ? 0 : -8}px; background:#000;">`
+            ).join('');
+
+            const label = `
+                <div style="display:flex; align-items:center; background:rgba(0,0,0,0.85); padding:4px 10px; border-radius:20px; border:1px solid ${zoneColor};">
+                    <div style="display:flex; margin-right:8px;">${avatarsHtml}</div>
+                    <span style="font-size:11px; font-weight:bold; color:white;">${zoneData.owners.length}</span>
+                </div>`;
+            
             zone.bindTooltip(label, { permanent: true, direction: 'center', className: 'zone-label' }).openTooltip();
         }
 
         zone.on('contextmenu', () => {
-            if (currentUser?.isAdmin && confirm("Usunąć?")) {
+            if (currentUser?.isAdmin && confirm("Usunąć strefę?")) {
                 map.removeLayer(zone);
                 savedZones = savedZones.filter(z => z.id !== zoneData.id);
                 saveZonesToServer();
@@ -111,22 +141,31 @@
 
         zone.on('click', (e) => {
             L.DomEvent.stopPropagation(e);
-            if (isDrawMode || zoneData.owner || !currentUser) return;
-            zoneData.owner = currentUser.username;
-            zoneData.ownerAvatar = `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png`;
-            zoneData.color = '#2ecc71';
-            saveZonesToServer();
-            location.reload();
+            if (isDrawMode || !currentUser) return;
+
+            const exists = zoneData.owners.some(u => u.name === currentUser.username);
+            if (exists) return alert("Już dołączyłeś do tej strefy!");
+
+            if (confirm("Dołączyć do tej strefy?")) {
+                zoneData.owners.push({
+                    name: currentUser.username,
+                    avatar: `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png`
+                });
+                saveZonesToServer();
+                location.reload();
+            }
         });
     }
 
     async function saveZonesToServer() {
-        await fetch('/api/zones', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(savedZones) });
+        await fetch('/api/zones', { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify(savedZones) 
+        });
     }
 
     init();
 </script>
 </body>
 </html>
-
-
