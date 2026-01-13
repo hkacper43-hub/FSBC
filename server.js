@@ -1,4 +1,4 @@
-const express = require('express');const express = require('express');
+const express = require('express');
 const passport = require('passport');
 const DiscordStrategy = require('passport-discord').Strategy;
 const session = require('express-session');
@@ -15,6 +15,11 @@ const MY_GUILD_ID = '1416103818772484271';
 const ADMIN_ROLE_ID = '1416117511237271552';
 
 const ZONES_FILE = path.join(__dirname, 'strefy.json');
+
+// Inicjalizacja pliku jeśli nie istnieje
+if (!fs.existsSync(ZONES_FILE)) {
+    fs.writeFileSync(ZONES_FILE, JSON.stringify([]));
+}
 
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((obj, done) => done(null, obj));
@@ -40,11 +45,11 @@ passport.use(new DiscordStrategy({
             } catch (e) { profile.isAdmin = false; }
             done(null, profile);
         });
-    }).on('error', () => { profile.isAdmin = false; done(null, profile); });
+    }).on('error', () => { done(null, profile); });
 }));
 
 app.use(express.json());
-app.use(session({ secret: 'fsbc-multi-v1', resave: true, saveUninitialized: true }));
+app.use(session({ secret: 'fsbc-safe-key', resave: false, saveUninitialized: false }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -55,22 +60,15 @@ app.get('/api/user', (req, res) => res.json(req.user || null));
 app.get('/logout', (req, res) => { req.logout(() => res.redirect('/')); });
 
 app.get('/api/zones', (req, res) => {
-    if (fs.existsSync(ZONES_FILE)) res.json(JSON.parse(fs.readFileSync(ZONES_FILE)));
-    else res.json([]);
+    const data = fs.readFileSync(ZONES_FILE);
+    res.json(JSON.parse(data));
 });
 
 app.post('/api/zones', (req, res) => {
-    if (!req.user) return res.status(401).send('Zaloguj się!');
-    
-    // Zabezpieczenie: jeśli nie admin, sprawdzamy czy tylko dopisuje się do listy
-    if (!req.user.isAdmin && fs.existsSync(ZONES_FILE)) {
-        const oldZones = JSON.parse(fs.readFileSync(ZONES_FILE));
-        if (oldZones.length !== req.body.length) return res.status(403).send('Tylko admin dodaje strefy!');
-    }
-
+    if (!req.user) return res.status(401).send('Zaloguj się');
     fs.writeFileSync(ZONES_FILE, JSON.stringify(req.body, null, 2));
     res.sendStatus(200);
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Serwer działa na porcie ${PORT}`));
+app.listen(PORT, () => console.log('Server is running'));
