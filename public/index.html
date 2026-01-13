@@ -5,6 +5,13 @@
     <title>FSBC Fortnite Map System</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
+        .leaflet-tooltip.zone-label {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+}
+.leaflet-tooltip-pane { z-index: 650; } /* Żeby napisy były nad strefami */
         :root { 
             --bg: #0f111a; 
             --sidebar: #1a1c24; 
@@ -176,25 +183,66 @@
         }
     });
 
-    // RYSOWANIE STREFY I OBSŁUGA ZDARZEŃ
-    function renderZone(zoneData) {
-        const zone = L.rectangle([zoneData.p1, zoneData.p2], { 
-            color: zoneData.color, 
-            weight: 2, 
-            fillOpacity: zoneData.owner ? 0.5 : 0.2, 
-            interactive: true 
-        }).addTo(map);
+   function renderZone(zoneData) {
+    const zone = L.rectangle([zoneData.p1, zoneData.p2], { 
+        color: zoneData.color, 
+        weight: 2, 
+        fillOpacity: zoneData.owner ? 0.4 : 0.2, 
+        interactive: true 
+    }).addTo(map);
 
-        // Usuwanie (Prawy przycisk - tylko admin)
-        zone.on('contextmenu', (e) => {
-            if (currentUser && currentUser.isAdmin) {
-                if(confirm("Czy chcesz usunąć tę strefę na stałe?")) {
-                    map.removeLayer(zone);
-                    savedZones = savedZones.filter(z => z.id !== zoneData.id);
-                    saveZonesToServer();
-                }
+    // DODAWANIE PODPISU (NICK + AVATAR)
+    if (zoneData.owner) {
+        // Tworzymy mały HTML dla etykiety
+        const labelContent = `
+            <div style="display: flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.7); padding: 2px 8px; border-radius: 20px; border: 1px solid ${zoneData.color}; color: white; white-space: nowrap;">
+                <img src="${zoneData.ownerAvatar}" style="width: 20px; height: 20px; border-radius: 50%;" onerror="this.style.display='none'">
+                <span style="font-size: 11px; font-weight: bold;">${zoneData.owner}</span>
+            </div>
+        `;
+
+        zone.bindTooltip(labelContent, {
+            permanent: true,       // Podpis widocznny cały czas
+            direction: 'center',    // Na środku strefy
+            className: 'zone-label' // Klasa do ewentualnego stylowania CSS
+        }).openTooltip();
+    }
+
+    // Usuwanie (Prawy przycisk - tylko admin)
+    zone.on('contextmenu', (e) => {
+        if (currentUser && currentUser.isAdmin) {
+            if(confirm("Czy chcesz usunąć tę strefę na stałe?")) {
+                map.removeLayer(zone);
+                savedZones = savedZones.filter(z => z.id !== zoneData.id);
+                saveZonesToServer();
             }
-        });
+        }
+    });
+
+    // Zajmowanie strefy (Lewy przycisk)
+    zone.on('click', (e) => {
+        L.DomEvent.stopPropagation(e);
+        if (isDrawMode) return;
+        
+        if (!currentUser) {
+            alert("Musisz się zalogować!");
+            return;
+        }
+
+        if (zoneData.owner) {
+            alert(`Zajęte przez: ${zoneData.owner}`);
+            return;
+        }
+
+        // Gracz zajmuje strefę - zapisujemy nick i avatar
+        zoneData.color = '#2ecc71'; 
+        zoneData.owner = currentUser.username;
+        zoneData.ownerAvatar = `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png`;
+        
+        saveZonesToServer();
+        location.reload(); // Odświeżamy, żeby narysować Tooltip od nowa
+    });
+}
 
         // Zajmowanie strefy (Lewy przycisk)
         zone.on('click', (e) => {
@@ -235,4 +283,5 @@
 </body>
 
 </html>
+
 
