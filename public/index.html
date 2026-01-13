@@ -2,19 +2,18 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>FSBC Mapa - System Wieloosobowy</title>
+    <title>FSBC Mapa - Dynamiczne Kolory</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root { 
             --bg: #0f111a; 
             --sidebar: #1a1c24; 
             --accent: #ff4757; 
-            --occupied: #2ecc71;
         }
 
         body { 
             margin: 0; padding: 10px; display: flex; height: 100vh; 
-            background: var(--bg); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: var(--bg); font-family: 'Segoe UI', sans-serif; 
             color: white; overflow: hidden; box-sizing: border-box; gap: 10px; 
         }
         
@@ -50,7 +49,6 @@
 
         #drawBtn.active { background: var(--accent); color: white; }
 
-        /* Styl etykiet z awatarami na mapie */
         .leaflet-tooltip.zone-label { 
             background: transparent; border: none; 
             box-shadow: none; padding: 0; pointer-events: none;
@@ -71,12 +69,12 @@
             <img id="user-avatar" src="" style="width:40px; border-radius:50%;">
             <div>
                 <b id="user-name"></b><br>
-                <small id="user-status" style="color:var(--occupied); font-weight: bold;"></small>
+                <small id="user-status" style="color:#2ecc71; font-weight: bold;"></small>
             </div>
         </div>
         
         <div id="admin-tools" style="display:none; margin-top: 15px; border-top: 1px solid #333; padding-top: 15px;">
-            <p style="color:var(--accent); margin:0 0 10px 0; font-size:11px; font-weight:bold; text-transform: uppercase;">Moderacja</p>
+            <p style="color:var(--accent); margin:0 0 10px 0; font-size:11px; font-weight:bold;">PANEL MODERATORA</p>
             <button onclick="toggleDrawMode()" id="drawBtn">Dodaj Strefę</button>
         </div>
         <a href="/logout" style="color: #888; font-size: 12px; margin-top: 15px; display: inline-block;">Wyloguj się</a>
@@ -92,7 +90,6 @@
     let firstPoint = null;
     let savedZones = [];
 
-    // Konfiguracja Mapy
     const map = L.map('map', { 
         crs: L.CRS.Simple, 
         minZoom: -0.5, maxZoom: 0.5, zoom: 0,
@@ -100,7 +97,7 @@
     });
 
     const bounds = [[0, 0], [590, 670]];
-    L.imageOverlay('https://cdn.discordapp.com/attachments/1444651629633601669/1459626248463450163/image.png?ex=69674220&is=6965f0a0&hm=b0ae409d4a765278ae114ac8b48ba4b03c441303a367628e57b8c4aaff1aa096&', bounds).addTo(map);
+    L.imageOverlay('https://cdn.discordapp.com/attachments/1444651629633601669/1460615666422780035/image.png?ex=69678fd7&is=69663e57&hm=3fa7645ac2a234f60bed17a59efe403921194448fd9729641f88477307427e15&', bounds).addTo(map);
     map.fitBounds(bounds);
 
     async function init() {
@@ -119,8 +116,7 @@
                     document.getElementById('admin-tools').style.display = 'block';
                 }
             }
-        } catch(e) { console.error("Auth error"); }
-
+        } catch(e) {}
         loadZones();
     }
 
@@ -146,13 +142,11 @@
                     id: Date.now(),
                     p1: firstPoint,
                     p2: e.latlng,
-                    color: '#ff4757',
-                    owners: []
+                    owners: [] // Startuje jako pusta (czarna)
                 };
                 savedZones.push(newZone);
                 renderZone(newZone);
                 saveZonesToServer();
-                
                 firstPoint = null;
                 toggleDrawMode();
             }
@@ -160,33 +154,35 @@
     });
 
     function renderZone(zoneData) {
-        // Konwersja starych danych na nowy system wielu osób
         if (!zoneData.owners) zoneData.owners = [];
-        if (zoneData.owner && zoneData.owners.length === 0) {
-            zoneData.owners.push({ name: zoneData.owner, avatar: zoneData.ownerAvatar });
-            delete zoneData.owner;
+
+        // --- LOGIKA KOLORÓW ---
+        let zoneColor = "#000000"; // Domyślnie czarna (pusta)
+        let count = zoneData.owners.length;
+
+        if (count === 1) {
+            zoneColor = "#2ecc71"; // Zielona (1 osoba)
+        } else if (count >= 2) {
+            zoneColor = "#ff4757"; // Czerwona (2+ osoby)
         }
 
-        const isOccupied = zoneData.owners.length > 0;
-        const currentColor = isOccupied ? '#2ecc71' : zoneData.color;
-
         const zone = L.rectangle([zoneData.p1, zoneData.p2], { 
-            color: currentColor, 
+            color: zoneColor, 
             weight: 2, 
-            fillOpacity: isOccupied ? 0.4 : 0.2, 
+            fillOpacity: count > 0 ? 0.4 : 0.1, 
             interactive: true 
         }).addTo(map);
 
-        // Wyświetlanie etykiety z awatarami
-        if (isOccupied) {
+        // Wyświetlanie awatarów
+        if (count > 0) {
             let avatarsHtml = zoneData.owners.map((u, index) => 
-                `<img src="${u.avatar}" title="${u.name}" style="width:22px; height:22px; border-radius:50%; border:2px solid ${currentColor}; margin-left:${index === 0 ? 0 : -8}px; background:#000;">`
+                `<img src="${u.avatar}" title="${u.name}" style="width:22px; height:22px; border-radius:50%; border:2px solid ${zoneColor}; margin-left:${index === 0 ? 0 : -8}px; background:#000;">`
             ).join('');
 
             const labelContent = `
-                <div style="display: flex; align-items: center; background: rgba(0,0,0,0.85); padding: 4px 10px; border-radius: 20px; border: 1px solid ${currentColor};">
+                <div style="display: flex; align-items: center; background: rgba(0,0,0,0.85); padding: 4px 10px; border-radius: 20px; border: 1px solid ${zoneColor};">
                     <div style="display: flex; margin-right: 8px;">${avatarsHtml}</div>
-                    <span style="font-size: 11px; font-weight: bold; color: white;">${zoneData.owners.length}</span>
+                    <span style="font-size: 11px; font-weight: bold; color: white;">${count}</span>
                 </div>`;
 
             zone.bindTooltip(labelContent, {
@@ -196,7 +192,6 @@
             }).openTooltip();
         }
 
-        // Akcja kliknięcia - Zajmowanie/Dołączanie (Limit 1 strefa na gracza)
         zone.on('click', (e) => {
             L.DomEvent.stopPropagation(e);
             if (isDrawMode || !currentUser) return;
@@ -204,15 +199,13 @@
             const isAlreadyInThisZone = zoneData.owners.some(u => u.name === currentUser.username);
             if (isAlreadyInThisZone) return alert("Już należysz do tej strefy!");
 
-            if (confirm("Czy chcesz dołączyć do tej strefy? (Zostaniesz usunięty z innych stref)")) {
-                // 1. Usuń gracza z każdej innej strefy na mapie
+            if (confirm("Czy chcesz dołączyć do tej strefy? (Opuścisz poprzednią strefę)")) {
+                // Usuwamy z innych stref
                 savedZones.forEach(z => {
-                    if (z.owners) {
-                        z.owners = z.owners.filter(u => u.name !== currentUser.username);
-                    }
+                    if (z.owners) z.owners = z.owners.filter(u => u.name !== currentUser.username);
                 });
 
-                // 2. Dodaj gracza do tej konkretnej strefy
+                // Dodajemy do nowej
                 zoneData.owners.push({
                     name: currentUser.username,
                     avatar: `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png`
@@ -223,10 +216,9 @@
             }
         });
 
-        // Usuwanie strefy (Prawy przycisk - tylko admin)
         zone.on('contextmenu', (e) => {
             if (currentUser && currentUser.isAdmin) {
-                if(confirm("Usunąć strefę całkowicie?")) {
+                if(confirm("Usunąć strefę?")) {
                     map.removeLayer(zone);
                     savedZones = savedZones.filter(z => z.id !== zoneData.id);
                     saveZonesToServer();
