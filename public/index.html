@@ -15,6 +15,8 @@
             --bg-dark: #030712;
             --text-main: #ffffff;
             --text-muted: #94a3b8;
+            --danger: #ff4757;
+            --success: #2ecc71;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -30,7 +32,6 @@
             overflow: hidden;
         }
 
-        /* Tło animowane w stylu Szimiego */
         .bg-effects {
             position: fixed;
             inset: 0;
@@ -47,7 +48,6 @@
             background-size: 50px 50px;
         }
 
-        /* Sidebar - Glassmorphism */
         #sidebar {
             width: 340px;
             background: rgba(3, 7, 18, 0.6);
@@ -72,7 +72,6 @@
             text-align: center;
         }
 
-        /* Mapa */
         #map {
             flex-grow: 1;
             background: #0f172a;
@@ -82,7 +81,6 @@
             overflow: hidden;
         }
 
-        /* Przycisk Discord */
         .btn-discord {
             background: linear-gradient(45deg, #5865F2, var(--primary));
             color: white;
@@ -92,15 +90,12 @@
             font-weight: 600;
             font-size: 13px;
             text-align: center;
+            display: block;
             transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(88, 101, 242, 0.3);
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        .btn-discord:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(88, 101, 242, 0.5); }
-
-        /* Karta użytkownika */
         .user-card {
             display: flex;
             align-items: center;
@@ -113,10 +108,7 @@
         }
 
         .user-card img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--primary); }
-        .user-info b { font-size: 16px; color: #fff; }
-        .user-info small { color: var(--text-muted); display: block; font-size: 11px; text-transform: uppercase; }
 
-        /* Panel Admina */
         #drawBtn {
             width: 100%;
             padding: 14px;
@@ -124,45 +116,26 @@
             border: 1px solid var(--glass-border);
             background: var(--glass-bg);
             color: white;
-            font-family: 'Poppins', sans-serif;
             font-weight: 600;
             cursor: pointer;
             transition: 0.3s;
-            margin-top: 10px;
         }
 
-        #drawBtn.active {
-            background: var(--accent);
-            border-color: var(--accent);
-            box-shadow: 0 0 20px rgba(236, 72, 153, 0.4);
-        }
+        #drawBtn.active { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 20px rgba(236, 72, 153, 0.4); }
 
-        /* Etykiety na mapie */
         .leaflet-tooltip.zone-label { background: transparent; border: none; box-shadow: none; padding: 0; }
         .avatar-container { 
             display: flex; 
             align-items: center; 
-            background: rgba(3, 7, 18, 0.9); 
-            padding: 5px 12px; 
+            background: rgba(0, 0, 0, 0.85); 
+            padding: 4px 10px; 
             border-radius: 30px; 
-            border: 2px solid var(--primary);
-            backdrop-filter: blur(5px);
+            border: 2px solid white;
         }
-        .mini-avatar { width: 28px; height: 28px; border-radius: 50%; border: 2px solid white; margin-right: -10px; transition: 0.3s; }
-        .mini-avatar:hover { margin-right: 5px; transform: scale(1.2); z-index: 100; }
-        .player-count { margin-left: 15px; font-weight: 800; color: white; font-size: 14px; }
+        .mini-avatar { width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; margin-right: -8px; }
+        .player-count { margin-left: 12px; font-weight: 800; color: white; font-size: 14px; }
 
-        .logout-link {
-            margin-top: auto;
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 12px;
-            text-align: center;
-            opacity: 0.6;
-            transition: 0.3s;
-        }
-        .logout-link:hover { color: var(--danger); opacity: 1; }
-
+        .logout-link { margin-top: auto; color: var(--text-muted); text-decoration: none; font-size: 11px; text-align: center; opacity: 0.6; }
     </style>
 </head>
 <body>
@@ -176,22 +149,19 @@
         
         <div id="auth-section">
             <a href="/auth/discord" class="btn-discord">Połącz z Discordem</a>
-            <p style="font-size: 10px; color: var(--text-muted); text-align: center; margin-top: 15px;">Wymagane do zajmowania stref</p>
         </div>
 
         <div id="profile-section" style="display:none;">
             <div class="user-card">
                 <img id="user-avatar" src="">
                 <div class="user-info">
-                    <b id="user-name">Ładowanie...</b>
-                    <small id="user-status"></small>
+                    <b id="user-name"></b><br>
+                    <small id="user-status" style="color: var(--success)"></small>
                 </div>
             </div>
             
             <div id="admin-tools" style="display:none;">
-                <h4 style="font-size: 11px; text-transform: uppercase; color: var(--primary); margin-bottom: 10px;">Panel Dowodzenia</h4>
-                <button onclick="toggleDrawMode()" id="drawBtn">DODAJ NOWĄ STREFĘ</button>
-                <p style="font-size: 10px; color: var(--text-muted); margin-top: 10px; text-align: center;">PPM na strefie, aby ją usunąć</p>
+                <button onclick="toggleDrawMode()" id="drawBtn">DODAJ STREFĘ</button>
             </div>
             
             <a href="/logout" class="logout-link">Wyloguj sesję</a>
@@ -207,16 +177,7 @@
         let firstPoint = null;
         let savedZones = [];
 
-        // Konfiguracja Mapy (używamy Twojego obrazka)
-        const map = L.map('map', { 
-            crs: L.CRS.Simple, 
-            minZoom: -0.5, 
-            maxZoom: 1, 
-            zoom: 0, 
-            zoomControl: false, 
-            attributionControl: false 
-        });
-
+        const map = L.map('map', { crs: L.CRS.Simple, minZoom: -0.5, maxZoom: 1, zoom: 0, zoomControl: false, attributionControl: false });
         const bounds = [[0, 0], [500, 500]];
         L.imageOverlay('https://cdn.discordapp.com/attachments/1444651629633601669/1460615666422780035/image.png?ex=6968e157&is=69678fd7&hm=04c005320bdbf44f2f472af0a569af82294e0e243339d73c24be287faa1b6e42&', bounds).addTo(map);
         map.fitBounds(bounds);
@@ -225,19 +186,15 @@
             try {
                 const res = await fetch('/api/user');
                 currentUser = await res.json();
-                
                 if (currentUser) {
                     document.getElementById('auth-section').style.display = 'none';
                     document.getElementById('profile-section').style.display = 'block';
                     document.getElementById('user-name').innerText = currentUser.username;
                     document.getElementById('user-avatar').src = `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png`;
-                    document.getElementById('user-status').innerText = currentUser.isAdmin ? "OPERATOR (ADMIN)" : "ZALOGOWANY GRACZ";
-                    
-                    if (currentUser.isAdmin) {
-                        document.getElementById('admin-tools').style.display = 'block';
-                    }
+                    document.getElementById('user-status').innerText = currentUser.isAdmin ? "ADMIN" : "GRACZ";
+                    if (currentUser.isAdmin) document.getElementById('admin-tools').style.display = 'block';
                 }
-            } catch(e) { console.log("Brak sesji"); }
+            } catch(e) {}
             loadZones();
         }
 
@@ -246,14 +203,12 @@
                 const res = await fetch('/api/zones');
                 savedZones = await res.json();
                 savedZones.forEach(z => renderZone(z));
-            } catch (err) { console.error(err); }
+            } catch (err) {}
         }
 
         function toggleDrawMode() {
             isDrawMode = !isDrawMode;
-            const btn = document.getElementById('drawBtn');
-            btn.innerText = isDrawMode ? 'USTAW PIERWSZY PUNKT' : 'DODAJ NOWĄ STREFĘ';
-            btn.className = isDrawMode ? 'active' : '';
+            document.getElementById('drawBtn').className = isDrawMode ? 'active' : '';
             firstPoint = null;
         }
 
@@ -261,7 +216,6 @@
             if (currentUser?.isAdmin && isDrawMode) {
                 if (!firstPoint) {
                     firstPoint = e.latlng;
-                    document.getElementById('drawBtn').innerText = 'USTAW DRUGI PUNKT';
                 } else {
                     const newZone = { id: Date.now(), p1: firstPoint, p2: e.latlng, owners: [] };
                     savedZones.push(newZone);
@@ -276,20 +230,20 @@
         function renderZone(zoneData) {
             if (!zoneData.owners) zoneData.owners = [];
             const count = zoneData.owners.length;
-            const color = count === 0 ? "#6366f1" : (count === 1 ? "#2ecc71" : "#ec4899");
+            
+            // STARA LOGIKA KOLORÓW:
+            let color = "#000000"; // Czarny (pusta)
+            if (count === 1) color = "#2ecc71"; // Zielony (1 osoba)
+            if (count > 1) color = "#ff4757";   // Czerwony (więcej osób)
 
             const zone = L.rectangle([zoneData.p1, zoneData.p2], { 
                 color: color, 
-                weight: 2, 
-                fillOpacity: count > 0 ? 0.3 : 0.05,
-                dashArray: count === 0 ? '5, 10' : ''
+                weight: 3, 
+                fillOpacity: count > 0 ? 0.4 : 0.1 
             }).addTo(map);
 
             if (count > 0) {
-                const avatarsHtml = zoneData.owners.map((u, i) => 
-                    `<img src="${u.avatar}" class="mini-avatar" title="${u.name}">`
-                ).join('');
-
+                const avatarsHtml = zoneData.owners.map(u => `<img src="${u.avatar}" class="mini-avatar">`).join('');
                 zone.bindTooltip(
                     `<div class="avatar-container" style="border-color:${color}">
                         ${avatarsHtml}
@@ -302,24 +256,17 @@
             zone.on('click', async (e) => {
                 L.DomEvent.stopPropagation(e);
                 if (isDrawMode || !currentUser) return;
-
                 const isAlreadyHere = zoneData.owners.some(u => u.name === currentUser.username);
-                
                 if (isAlreadyHere) {
-                    if (confirm("Czy chcesz opuścić tę strefę?")) {
+                    if (confirm("Opuścić strefę?")) {
                         zoneData.owners = zoneData.owners.filter(u => u.name !== currentUser.username);
                         await saveZonesToServer();
                         location.reload();
                     }
                 } else {
-                    if (confirm("Czy chcesz zająć tę strefę?")) {
-                        savedZones.forEach(z => {
-                            if (z.owners) z.owners = z.owners.filter(u => u.name !== currentUser.username);
-                        });
-                        zoneData.owners.push({ 
-                            name: currentUser.username, 
-                            avatar: `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png` 
-                        });
+                    if (confirm("Zająć strefę?")) {
+                        savedZones.forEach(z => { if (z.owners) z.owners = z.owners.filter(u => u.name !== currentUser.username); });
+                        zoneData.owners.push({ name: currentUser.username, avatar: `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png` });
                         await saveZonesToServer();
                         location.reload();
                     }
@@ -328,7 +275,7 @@
 
             zone.on('contextmenu', async (e) => {
                 L.DomEvent.stopPropagation(e);
-                if (currentUser?.isAdmin && confirm("TRWAŁE USUNIĘCIE STREFY?")) {
+                if (currentUser?.isAdmin && confirm("Usunąć strefę?")) {
                     savedZones = savedZones.filter(z => z.id !== zoneData.id);
                     await saveZonesToServer();
                     location.reload();
@@ -343,7 +290,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(savedZones)
                 });
-            } catch (err) { alert("Błąd bazy danych!"); }
+            } catch (err) {}
         }
 
         init();
