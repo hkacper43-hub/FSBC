@@ -18,10 +18,32 @@
         #drawBtn { width: 100%; padding: 12px; margin-top: 10px; cursor: pointer; font-weight: bold; border-radius: 8px; border: none; background: #eee; color: black; transition: 0.3s; }
         #drawBtn.active { background: var(--accent); color: white; }
         
-        /* Styl napisów/awatarów na mapie */
+        /* Styl etykiet z awatarami na mapie */
         .leaflet-tooltip.zone-label { background: transparent; border: none; box-shadow: none; padding: 0; pointer-events: none; }
-        .avatar-group { display: flex; align-items: center; background: rgba(0,0,0,0.8); padding: 4px 10px; border-radius: 20px; border: 1px solid white; }
-        .mini-avatar { width: 22px; height: 22px; border-radius: 50%; border: 2px solid white; background: #000; }
+        .avatar-container { 
+            display: flex; 
+            align-items: center; 
+            background: rgba(0,0,0,0.85); 
+            padding: 4px 12px; 
+            border-radius: 25px; 
+            border: 2px solid white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .mini-avatar { 
+            width: 26px; 
+            height: 26px; 
+            border-radius: 50%; 
+            border: 2px solid white; 
+            background: #000; 
+            object-fit: cover;
+        }
+        .player-count {
+            margin-left: 8px;
+            font-weight: 800;
+            font-size: 15px;
+            color: white;
+            text-shadow: 1px 1px 2px black;
+        }
     </style>
 </head>
 <body>
@@ -60,7 +82,6 @@
     let firstPoint = null;
     let savedZones = [];
 
-    // Konfiguracja Mapy
     const map = L.map('map', { 
         crs: L.CRS.Simple, 
         minZoom: -0.5, 
@@ -101,8 +122,6 @@
             const res = await fetch('/api/zones');
             if (!res.ok) throw new Error("Błąd pobierania");
             savedZones = await res.json();
-            
-            // Czyścimy mapę przed ponownym rysowaniem (jeśli trzeba)
             savedZones.forEach(z => renderZone(z));
         } catch (err) {
             console.error("Błąd bazy danych:", err);
@@ -141,31 +160,29 @@
         if (!zoneData.owners) zoneData.owners = [];
         
         let count = zoneData.owners.length;
-        // Kolory: Czarny (pusta), Zielony (1 osoba), Czerwony (więcej)
         let color = count === 0 ? "#000000" : (count === 1 ? "#2ecc71" : "#ff4757");
 
         const zone = L.rectangle([zoneData.p1, zoneData.p2], { 
             color: color, 
-            weight: 2, 
+            weight: 3, 
             fillOpacity: count > 0 ? 0.4 : 0.1 
         }).addTo(map);
 
-        // Dodawanie awatarów na środek strefy
+        // POPRAWKA: Wyświetlanie numeru obok awatara
         if (count > 0) {
             let avatarsHtml = zoneData.owners.map((u, i) => 
-                `<img src="${u.avatar}" class="mini-avatar" style="margin-left:${i === 0 ? 0 : -8}px; border-color:${color};">`
+                `<img src="${u.avatar}" class="mini-avatar" style="margin-left:${i === 0 ? 0 : -10}px; border-color:${color};">`
             ).join('');
 
             zone.bindTooltip(
-                `<div class="avatar-group" style="border-color:${color};">
+                `<div class="avatar-container" style="border-color:${color};">
                     ${avatarsHtml}
-                    <span style="margin-left:5px; font-weight:bold;">${count}</span>
+                    <span class="player-count">${count}</span>
                 </div>`, 
                 { permanent: true, direction: 'center', className: 'zone-label' }
             ).openTooltip();
         }
 
-        // Kliknięcie w strefę (Dołączanie/Opuszczanie)
         zone.on('click', async (e) => {
             L.DomEvent.stopPropagation(e);
             if (isDrawMode || !currentUser) return;
@@ -180,11 +197,9 @@
                 }
             } else {
                 if (confirm("Dołączyć do tej strefy? (Zostaniesz usunięty z innych)")) {
-                    // Usuwamy gracza ze wszystkich innych stref
                     savedZones.forEach(z => {
                         if (z.owners) z.owners = z.owners.filter(u => u.name !== currentUser.username);
                     });
-                    // Dodajemy do nowej
                     zoneData.owners.push({ 
                         name: currentUser.username, 
                         avatar: `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png` 
@@ -195,7 +210,6 @@
             }
         });
 
-        // Usuwanie strefy (Prawy przycisk myszy - tylko dla Admina)
         zone.on('contextmenu', async (e) => {
             L.DomEvent.stopPropagation(e);
             if (currentUser && currentUser.isAdmin && confirm("Usunąć tę strefę na stałe?")) {
@@ -218,10 +232,10 @@
                 const errorMsg = await res.text();
                 throw new Error(errorMsg);
             }
-            console.log("Zapisano pomyślnie w MongoDB Atlas");
+            console.log("Zapisano pomyślnie");
         } catch (err) {
-            console.error("BŁĄD ZAPISU DO BAZY:", err.message);
-            alert("Błąd połączenia z bazą! Sprawdź Network Access w MongoDB. Szczegóły: " + err.message);
+            console.error("BŁĄD ZAPISU:", err.message);
+            alert("Błąd połączenia z bazą! Szczegóły: " + err.message);
         }
     }
 
@@ -229,4 +243,3 @@
 </script>
 </body>
 </html>
-
