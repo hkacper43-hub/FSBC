@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>FSBC - MAPA TAKTYCZNA</title>
+    <title>FSBC - MULTI MAP SYSTEM</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
@@ -11,9 +11,8 @@
             --accent: #ec4899;
             --glass-bg: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.1);
-            --bg-dark: #2b2d31; /* Twój ulubiony kolor tła */
+            --bg-dark: #2b2d31; 
             --text-main: #ffffff;
-            --text-muted: #94a3b8;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -49,9 +48,6 @@
             border-radius: 10px;
             font-size: 13px;
             font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
         /* GŁÓWNY UKŁAD */
@@ -63,7 +59,7 @@
             overflow: hidden;
         }
 
-        /* SIDEBAR Z LISTĄ I SCROLLEM */
+        /* SIDEBAR */
         #sidebar {
             width: 320px;
             background: rgba(3, 7, 18, 0.6);
@@ -72,27 +68,11 @@
             border-radius: 24px;
             display: flex;
             flex-direction: column;
-            flex-shrink: 0;
-        }
-
-        .sidebar-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .search-input {
-            width: 100%;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--glass-border);
-            padding: 10px;
-            border-radius: 12px;
-            color: white;
-            font-size: 13px;
         }
 
         #player-list {
             flex: 1;
-            overflow-y: auto; /* SCROLL WHEEL */
+            overflow-y: auto;
             padding: 15px;
         }
 
@@ -108,13 +88,40 @@
             border-radius: 12px;
             margin-bottom: 5px;
             background: var(--glass-bg);
-            border: 1px solid transparent;
-            transition: 0.2s;
         }
-        .player-row:hover { border-color: var(--primary); background: rgba(99, 102, 241, 0.1); }
         .player-row img { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--primary); }
 
-        /* MAPA */
+        /* KONTENER MAPY I ZAKŁADKI */
+        .map-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .map-tabs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .tab {
+            padding: 10px 25px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 800;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+
+        .tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+        }
+
         #map {
             flex: 1;
             background: var(--bg-dark);
@@ -123,71 +130,102 @@
             overflow: hidden;
         }
 
-        /* ETYKIETY AWATARÓW NA MAPIE */
+        /* AWATARY NA MAPIE */
         .leaflet-tooltip.zone-label { background: transparent; border: none; box-shadow: none; padding: 0; }
-        .map-tag {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-        }
         .map-avatar { 
             width: 34px; height: 34px; border-radius: 50%; 
-            border: 2px solid white; box-shadow: 0 0 15px rgba(0,0,0,0.5);
+            border: 2px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
     </style>
 </head>
 <body>
 
     <div class="top-bar">
-        <div style="font-weight: 800; font-size: 22px; background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">FSBC MAP</div>
+        <div style="font-weight: 800; font-size: 22px; background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">FSBC SYSTEM</div>
         <div class="stats-group">
-            <div class="stat-box" style="border-left: 3px solid #2ecc71;">SESSION OPEN</div>
-            <div class="stat-box" style="border-left: 3px solid var(--primary);">MARKED: <span id="marked-count">0</span> / 50</div>
-            <div class="stat-box" style="background: var(--primary); cursor: pointer;">LEADERBOARD</div>
+            <div class="stat-box" style="border-left: 3px solid #2ecc71;">MAPA: <span id="active-map-name">GŁÓWNA</span></div>
+            <div class="stat-box" style="border-left: 3px solid var(--primary);">GRACZE: <span id="marked-count">0</span></div>
         </div>
     </div>
 
     <div class="main-container">
         <div id="sidebar">
-            <div class="sidebar-header">
-                <input type="text" class="search-input" placeholder="Szukaj gracza...">
-            </div>
-            <div style="padding: 10px 20px; font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase;">Gracze na mapie</div>
+            <div style="padding: 20px; font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase; border-bottom: 1px solid var(--glass-border);">Lista Graczy (Scroll)</div>
             <div id="player-list">
                 </div>
         </div>
 
-        <div id="map"></div>
+        <div class="map-section">
+            <div class="map-tabs">
+                <div class="tab active" onclick="switchMap('main')">Mapa Główna</div>
+                <div class="tab" onclick="switchMap('reload')">Mapa Reload</div>
+            </div>
+            <div id="map"></div>
+        </div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
+        let currentMapType = 'main';
         let savedZones = [];
+        let imageLayer = null;
+
+        // Konfiguracja map
+        const mapConfigs = {
+            'main': {
+                name: 'GŁÓWNA',
+                url: 'https://cdn.discordapp.com/attachments/1444651629633601669/1460615666422780035/image.png?ex=6968e157&is=69678fd7&hm=04c005320bdbf44f2f472af0a569af82294e0e243339d73c24be287faa1b6e42&',
+                apiUrl: '/api/zones' // Twoje główne API
+            },
+            'reload': {
+                name: 'RELOAD',
+                url: 'https://cdn.discordapp.com/attachments/1444651629633601669/1459626248463450163/image.png?ex=69693c60&is=6967eae0&hm=25f929256478898e6f1f4a756186099cc5f4845cf4583870f7963f18944c135c&',
+                apiUrl: '/api/zones_reload' // Sugerowane drugie API
+            }
+        };
+
         const map = L.map('map', { crs: L.CRS.Simple, minZoom: -0.5, maxZoom: 1, zoom: 0, zoomControl: false, attributionControl: false });
         const bounds = [[0, 0], [500, 500]];
-        L.imageOverlay('https://cdn.discordapp.com/attachments/1444651629633601669/1460615666422780035/image.png?ex=6968e157&is=69678fd7&hm=04c005320bdbf44f2f472af0a569af82294e0e243339d73c24be287faa1b6e42&', bounds).addTo(map);
-        map.fitBounds(bounds);
+
+        function switchMap(type) {
+            currentMapType = type;
+            
+            // Zakładki UI
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('active-map-name').innerText = mapConfigs[type].name;
+
+            // Zmiana tła mapy
+            if (imageLayer) map.removeLayer(imageLayer);
+            imageLayer = L.imageOverlay(mapConfigs[type].url, bounds).addTo(map);
+            map.fitBounds(bounds);
+
+            // Przeładowanie danych z odpowiedniego API
+            loadZones();
+        }
 
         async function loadZones() {
-            const res = await fetch('/api/zones');
-            savedZones = await res.json();
-            renderAll();
+            try {
+                const res = await fetch(mapConfigs[currentMapType].apiUrl);
+                savedZones = await res.json();
+                renderAll();
+            } catch(e) { 
+                console.error("Błąd ładowania stref");
+                savedZones = []; 
+                renderAll(); 
+            }
         }
 
         function renderAll() {
-            // Czyścimy mapę i listę
             map.eachLayer(l => { if(l instanceof L.Rectangle || l instanceof L.Marker) map.removeLayer(l); });
             const list = document.getElementById('player-list');
             list.innerHTML = '';
-            
             let total = 0;
 
             savedZones.forEach(zoneData => {
                 const owners = zoneData.owners || [];
                 total += owners.length;
 
-                // Logika kolorów: Czarny -> Zielony -> Czerwony
                 let color = "#000000";
                 if(owners.length === 1) color = "#2ecc71";
                 if(owners.length > 1) color = "#ff4757";
@@ -197,27 +235,25 @@
                 }).addTo(map);
 
                 owners.forEach(u => {
-                    // Dodaj do listy bocznej
                     const row = document.createElement('div');
                     row.className = 'player-row';
                     row.innerHTML = `<img src="${u.avatar}"> <span>${u.name}</span>`;
                     list.appendChild(row);
 
-                    // Dodaj awatar na mapę
                     L.marker(rect.getBounds().getCenter(), {
                         icon: L.divIcon({
                             className: 'zone-label',
-                            html: `<div class="map-tag"><img src="${u.avatar}" class="map-avatar"></div>`,
+                            html: `<img src="${u.avatar}" class="map-avatar">`,
                             iconSize: [34, 34]
                         })
                     }).addTo(map);
                 });
             });
-
             document.getElementById('marked-count').innerText = total;
         }
 
-        loadZones();
+        // Start
+        switchMap('main');
     </script>
 </body>
 </html>
