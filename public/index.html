@@ -21,42 +21,59 @@
             font-family: 'Poppins', sans-serif;
             background: var(--bg-dark);
             color: var(--text-main);
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow-y: auto; /* Włączenie scrollowania strony */
         }
 
         /* GÓRNY PASEK STATYSTYK */
         .top-bar {
-            height: 70px;
-            background: rgba(3, 7, 18, 0.4);
+            height: 80px;
+            background: rgba(15, 23, 42, 0.8);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--glass-border);
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 25px;
-            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
-        .stats-group { display: flex; gap: 15px; }
+        .stats-group { display: flex; gap: 15px; align-items: center; }
+        
         .stat-box {
-            background: var(--glass-bg);
+            background: rgba(0,0,0,0.3);
             border: 1px solid var(--glass-border);
-            padding: 5px 15px;
-            border-radius: 10px;
+            padding: 8px 18px;
+            border-radius: 8px;
             font-size: 13px;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
+
+        .btn-leaderboard {
+            background: #7c3aed;
+            color: white;
+            padding: 8px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .btn-leaderboard:hover { opacity: 0.8; }
 
         /* GŁÓWNY UKŁAD */
         .main-container {
             display: flex;
             flex: 1;
-            padding: 15px;
-            gap: 15px;
-            overflow: hidden;
+            padding: 20px;
+            gap: 20px;
         }
 
         /* SIDEBAR */
@@ -68,6 +85,10 @@
             border-radius: 24px;
             display: flex;
             flex-direction: column;
+            height: fit-content;
+            max-height: 85vh;
+            position: sticky;
+            top: 100px;
         }
 
         #player-list {
@@ -76,7 +97,6 @@
             padding: 15px;
         }
 
-        /* Styl scrollbara */
         #player-list::-webkit-scrollbar { width: 4px; }
         #player-list::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
 
@@ -91,24 +111,29 @@
         }
         .player-row img { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--primary); }
 
-        /* KONTENER MAPY I ZAKŁADKI */
+        /* KONTENER MAPY */
         .map-section {
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 15px;
         }
 
         .map-tabs {
             display: flex;
             gap: 10px;
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 15px;
+            width: fit-content;
         }
 
         .tab {
-            padding: 10px 25px;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
+            padding: 8px 20px;
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            border-radius: 10px;
             cursor: pointer;
             font-size: 12px;
             font-weight: 800;
@@ -118,12 +143,12 @@
 
         .tab.active {
             background: var(--primary);
-            border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+            color: white;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
         }
 
         #map {
-            flex: 1;
+            height: 800px; /* Stała wysokość mapy dla scrolla strony */
             background: var(--bg-dark);
             border-radius: 24px;
             border: 1px solid var(--glass-border);
@@ -142,23 +167,28 @@
 
     <div class="top-bar">
         <div style="font-weight: 800; font-size: 22px; background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">FSBC SYSTEM</div>
+        
         <div class="stats-group">
-            <div class="stat-box" style="border-left: 3px solid #2ecc71;">MAPA: <span id="active-map-name">GŁÓWNA</span></div>
-            <div class="stat-box" style="border-left: 3px solid var(--primary);">GRACZE: <span id="marked-count">0</span></div>
+            <div class="stat-box" style="border-left: 3px solid #2ecc71;">
+                <span style="color: #2ecc71">●</span> OPEN
+            </div>
+            <div class="stat-box">
+                GRACZE: <span id="marked-count">0</span> / 16
+            </div>
+            <a href="#" class="btn-leaderboard">LEADERBOARD</a>
         </div>
     </div>
 
     <div class="main-container">
         <div id="sidebar">
-            <div style="padding: 20px; font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase; border-bottom: 1px solid var(--glass-border);">Lista Graczy (Scroll)</div>
-            <div id="player-list">
-                </div>
+            <div style="padding: 20px; font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase; border-bottom: 1px solid var(--glass-border);">Zaznaczeni Gracze</div>
+            <div id="player-list"></div>
         </div>
 
         <div class="map-section">
             <div class="map-tabs">
-                <div class="tab active" onclick="switchMap('main')">Mapa Główna</div>
-                <div class="tab" onclick="switchMap('reload')">Mapa Reload</div>
+                <button class="tab active" id="btn-main" onclick="switchMap('main')">Mapa Główna</button>
+                <button class="tab" id="btn-reload" onclick="switchMap('reload')">Mapa Reload</button>
             </div>
             <div id="map"></div>
         </div>
@@ -170,37 +200,42 @@
         let savedZones = [];
         let imageLayer = null;
 
-        // Konfiguracja map
         const mapConfigs = {
             'main': {
                 name: 'Starfall',
                 url: 'https://cdn.discordapp.com/attachments/1444651629633601669/1460615666422780035/image.png?ex=6968e157&is=69678fd7&hm=04c005320bdbf44f2f472af0a569af82294e0e243339d73c24be287faa1b6e42&',
-                apiUrl: '/api/zones' // Twoje główne API
+                apiUrl: '/api/zones'
             },
             'reload': {
                 name: 'Venture',
                 url: 'https://cdn.discordapp.com/attachments/1444651629633601669/1461103324903375021/image.png?ex=69695602&is=69680482&hm=331fcbe257312cd805870c534199fb81ac0e2e4a6f270a8a4fbe5dcbb3b51d14&',
-                apiUrl: '/api/zones_reload' // Sugerowane drugie API
+                apiUrl: '/api/zones_reload'
             }
         };
 
-        const map = L.map('map', { crs: L.CRS.Simple, minZoom: -0.5, maxZoom: 1, zoom: 0, zoomControl: false, attributionControl: false });
+        const map = L.map('map', { 
+            crs: L.CRS.Simple, 
+            minZoom: -0.5, 
+            maxZoom: 1, 
+            zoom: 0, 
+            zoomControl: true, 
+            attributionControl: false 
+        });
         const bounds = [[0, 0], [500, 500]];
 
         function switchMap(type) {
             currentMapType = type;
             
-            // Zakładki UI
+            // UI Update
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            event.target.classList.add('active');
-            document.getElementById('active-map-name').innerText = mapConfigs[type].name;
+            if(type === 'main') document.getElementById('btn-main').classList.add('active');
+            else document.getElementById('btn-reload').classList.add('active');
 
-            // Zmiana tła mapy
+            // Map Update
             if (imageLayer) map.removeLayer(imageLayer);
             imageLayer = L.imageOverlay(mapConfigs[type].url, bounds).addTo(map);
             map.fitBounds(bounds);
 
-            // Przeładowanie danych z odpowiedniego API
             loadZones();
         }
 
@@ -210,7 +245,6 @@
                 savedZones = await res.json();
                 renderAll();
             } catch(e) { 
-                console.error("Błąd ładowania stref");
                 savedZones = []; 
                 renderAll(); 
             }
@@ -226,9 +260,7 @@
                 const owners = zoneData.owners || [];
                 total += owners.length;
 
-                let color = "#000000";
-                if(owners.length === 1) color = "#2ecc71";
-                if(owners.length > 1) color = "#ff4757";
+                let color = (owners.length === 1) ? "#2ecc71" : (owners.length > 1 ? "#ff4757" : "#000000");
 
                 const rect = L.rectangle([zoneData.p1, zoneData.p2], { 
                     color: color, weight: 3, fillOpacity: owners.length > 0 ? 0.3 : 0.05 
@@ -252,9 +284,10 @@
             document.getElementById('marked-count').innerText = total;
         }
 
-        // Start
-        switchMap('main');
+        // Naprawa startu - odpala mapę po załadowaniu okna
+        window.onload = () => {
+            switchMap('main');
+        };
     </script>
 </body>
 </html>
-
