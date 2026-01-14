@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>FSBC Mapa</title>
-    <link rel="icon" type="image/png" href="https://i.imgur.com/uRj0p6o.png">
+    <link rel="icon" type="image/png" href="https://cdn.discordapp.com/attachments/1444651629633601669/1461012857310154793/grok_image_2bs0gf.png?ex=696901c1&is=6967b041&hm=0d9a59a9386759d6bfcf28a62ce7932d8f86baeb388e88ee9477e65f6c2d4687&">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root { --bg: #303136; --sidebar: #1a1c24; --accent: #ff4757; }
@@ -70,8 +70,8 @@
         attributionControl: false 
     });
 
-    const bounds = [[0, 0], [590, 670]];
-    L.imageOverlay('https://i.imgur.com/uRj0p6o.png', bounds).addTo(map);
+    const bounds = [[0, 0], [500, 500]];
+    L.imageOverlay('https://cdn.discordapp.com/attachments/1444651629633601669/1460615666422780035/image.png?ex=6968e157&is=69678fd7&hm=04c005320bdbf44f2f472af0a569af82294e0e243339d73c24be287faa1b6e42&', bounds).addTo(map);
     map.fitBounds(bounds);
 
     async function init() {
@@ -229,3 +229,4 @@
 </script>
 </body>
 </html>
+
