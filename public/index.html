@@ -8,15 +8,12 @@
     <style>
         :root {
             --primary: #6366f1;
-            --secondary: #a855f7;
             --accent: #ec4899;
             --glass-bg: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.1);
-            --bg-dark: #030712;
+            --bg-dark: #2b2d31; /* Twój ulubiony kolor tła */
             --text-main: #ffffff;
             --text-muted: #94a3b8;
-            --danger: #ff4757;
-            --success: #2ecc71;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -27,275 +24,200 @@
             color: var(--text-main);
             height: 100vh;
             display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* GÓRNY PASEK STATYSTYK */
+        .top-bar {
+            height: 70px;
+            background: rgba(3, 7, 18, 0.4);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+            flex-shrink: 0;
+        }
+
+        .stats-group { display: flex; gap: 15px; }
+        .stat-box {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 5px 15px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* GŁÓWNY UKŁAD */
+        .main-container {
+            display: flex;
+            flex: 1;
             padding: 15px;
             gap: 15px;
             overflow: hidden;
         }
 
-        .bg-effects {
-            position: fixed;
-            inset: 0;
-            z-index: -1;
-            background: radial-gradient(circle at 0% 0%, #1e1b4b 0%, #030712 50%);
-        }
-
-        .grid-overlay {
-            position: fixed;
-            inset: 0;
-            background-image: 
-                linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-        }
-
+        /* SIDEBAR Z LISTĄ I SCROLLEM */
         #sidebar {
-            width: 340px;
+            width: 320px;
             background: rgba(3, 7, 18, 0.6);
             backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             border-radius: 24px;
             display: flex;
             flex-direction: column;
-            padding: 25px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            z-index: 10;
+            flex-shrink: 0;
         }
 
-        .logo {
-            font-size: 28px;
-            font-weight: 800;
-            letter-spacing: -1px;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 30px;
-            text-align: center;
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--glass-border);
         }
 
-       #map {
-    flex-grow: 1;
-    background: #2b2d31; 
-    border-radius: 24px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-    overflow: hidden;
-        }
-
-        .btn-discord {
-            background: linear-gradient(45deg, #5865F2, var(--primary));
-            color: white;
-            text-decoration: none;
-            padding: 14px;
+        .search-input {
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            padding: 10px;
             border-radius: 12px;
-            font-weight: 600;
+            color: white;
             font-size: 13px;
-            text-align: center;
-            display: block;
-            transition: 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
         }
 
-        .user-card {
+        #player-list {
+            flex: 1;
+            overflow-y: auto; /* SCROLL WHEEL */
+            padding: 15px;
+        }
+
+        /* Styl scrollbara */
+        #player-list::-webkit-scrollbar { width: 4px; }
+        #player-list::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+        .player-row {
             display: flex;
             align-items: center;
-            gap: 15px;
-            background: var(--glass-bg);
-            padding: 15px;
-            border-radius: 16px;
-            border: 1px solid var(--glass-border);
-            margin-bottom: 20px;
-        }
-
-        .user-card img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--primary); }
-
-        #drawBtn {
-            width: 100%;
-            padding: 14px;
+            gap: 12px;
+            padding: 10px;
             border-radius: 12px;
-            border: 1px solid var(--glass-border);
+            margin-bottom: 5px;
             background: var(--glass-bg);
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
+            border: 1px solid transparent;
+            transition: 0.2s;
+        }
+        .player-row:hover { border-color: var(--primary); background: rgba(99, 102, 241, 0.1); }
+        .player-row img { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--primary); }
+
+        /* MAPA */
+        #map {
+            flex: 1;
+            background: var(--bg-dark);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
         }
 
-        #drawBtn.active { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 20px rgba(236, 72, 153, 0.4); }
-
+        /* ETYKIETY AWATARÓW NA MAPIE */
         .leaflet-tooltip.zone-label { background: transparent; border: none; box-shadow: none; padding: 0; }
-        .avatar-container { 
-            display: flex; 
-            align-items: center; 
-            background: rgba(0, 0, 0, 0.85); 
-            padding: 4px 10px; 
-            border-radius: 30px; 
-            border: 2px solid white;
+        .map-tag {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
         }
-        .mini-avatar { width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; margin-right: -8px; }
-        .player-count { margin-left: 12px; font-weight: 800; color: white; font-size: 14px; }
-
-        .logout-link { margin-top: auto; color: var(--text-muted); text-decoration: none; font-size: 11px; text-align: center; opacity: 0.6; }
+        .map-avatar { 
+            width: 34px; height: 34px; border-radius: 50%; 
+            border: 2px solid white; box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
     </style>
 </head>
 <body>
 
-    <div class="bg-effects">
-        <div class="grid-overlay"></div>
+    <div class="top-bar">
+        <div style="font-weight: 800; font-size: 22px; background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">FSBC MAP</div>
+        <div class="stats-group">
+            <div class="stat-box" style="border-left: 3px solid #2ecc71;">SESSION OPEN</div>
+            <div class="stat-box" style="border-left: 3px solid var(--primary);">MARKED: <span id="marked-count">0</span> / 50</div>
+            <div class="stat-box" style="background: var(--primary); cursor: pointer;">LEADERBOARD</div>
+        </div>
     </div>
 
-    <div id="sidebar">
-        <div class="logo">FSBC MAP</div>
-        
-        <div id="auth-section">
-            <a href="/auth/discord" class="btn-discord">Połącz z Discordem</a>
-        </div>
-
-        <div id="profile-section" style="display:none;">
-            <div class="user-card">
-                <img id="user-avatar" src="">
-                <div class="user-info">
-                    <b id="user-name"></b><br>
-                    <small id="user-status" style="color: var(--success)"></small>
+    <div class="main-container">
+        <div id="sidebar">
+            <div class="sidebar-header">
+                <input type="text" class="search-input" placeholder="Szukaj gracza...">
+            </div>
+            <div style="padding: 10px 20px; font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase;">Gracze na mapie</div>
+            <div id="player-list">
                 </div>
-            </div>
-            
-            <div id="admin-tools" style="display:none;">
-                <button onclick="toggleDrawMode()" id="drawBtn">DODAJ STREFĘ</button>
-            </div>
-            
-            <a href="/logout" class="logout-link">Wyloguj sesję</a>
         </div>
-    </div>
 
-    <div id="map"></div>
+        <div id="map"></div>
+    </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        let currentUser = null;
-        let isDrawMode = false;
-        let firstPoint = null;
         let savedZones = [];
-
         const map = L.map('map', { crs: L.CRS.Simple, minZoom: -0.5, maxZoom: 1, zoom: 0, zoomControl: false, attributionControl: false });
         const bounds = [[0, 0], [500, 500]];
         L.imageOverlay('https://cdn.discordapp.com/attachments/1444651629633601669/1460615666422780035/image.png?ex=6968e157&is=69678fd7&hm=04c005320bdbf44f2f472af0a569af82294e0e243339d73c24be287faa1b6e42&', bounds).addTo(map);
         map.fitBounds(bounds);
 
-        async function init() {
-            try {
-                const res = await fetch('/api/user');
-                currentUser = await res.json();
-                if (currentUser) {
-                    document.getElementById('auth-section').style.display = 'none';
-                    document.getElementById('profile-section').style.display = 'block';
-                    document.getElementById('user-name').innerText = currentUser.username;
-                    document.getElementById('user-avatar').src = `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png`;
-                    document.getElementById('user-status').innerText = currentUser.isAdmin ? "ADMIN" : "GRACZ";
-                    if (currentUser.isAdmin) document.getElementById('admin-tools').style.display = 'block';
-                }
-            } catch(e) {}
-            loadZones();
-        }
-
         async function loadZones() {
-            try {
-                const res = await fetch('/api/zones');
-                savedZones = await res.json();
-                savedZones.forEach(z => renderZone(z));
-            } catch (err) {}
+            const res = await fetch('/api/zones');
+            savedZones = await res.json();
+            renderAll();
         }
 
-        function toggleDrawMode() {
-            isDrawMode = !isDrawMode;
-            document.getElementById('drawBtn').className = isDrawMode ? 'active' : '';
-            firstPoint = null;
-        }
-
-        map.on('click', async (e) => {
-            if (currentUser?.isAdmin && isDrawMode) {
-                if (!firstPoint) {
-                    firstPoint = e.latlng;
-                } else {
-                    const newZone = { id: Date.now(), p1: firstPoint, p2: e.latlng, owners: [] };
-                    savedZones.push(newZone);
-                    renderZone(newZone);
-                    await saveZonesToServer();
-                    firstPoint = null;
-                    toggleDrawMode();
-                }
-            }
-        });
-
-        function renderZone(zoneData) {
-            if (!zoneData.owners) zoneData.owners = [];
-            const count = zoneData.owners.length;
+        function renderAll() {
+            // Czyścimy mapę i listę
+            map.eachLayer(l => { if(l instanceof L.Rectangle || l instanceof L.Marker) map.removeLayer(l); });
+            const list = document.getElementById('player-list');
+            list.innerHTML = '';
             
-            // STARA LOGIKA KOLORÓW:
-            let color = "#000000"; // Czarny (pusta)
-            if (count === 1) color = "#2ecc71"; // Zielony (1 osoba)
-            if (count > 1) color = "#ff4757";   // Czerwony (więcej osób)
+            let total = 0;
 
-            const zone = L.rectangle([zoneData.p1, zoneData.p2], { 
-                color: color, 
-                weight: 3, 
-                fillOpacity: count > 0 ? 0.4 : 0.1 
-            }).addTo(map);
+            savedZones.forEach(zoneData => {
+                const owners = zoneData.owners || [];
+                total += owners.length;
 
-            if (count > 0) {
-                const avatarsHtml = zoneData.owners.map(u => `<img src="${u.avatar}" class="mini-avatar">`).join('');
-                zone.bindTooltip(
-                    `<div class="avatar-container" style="border-color:${color}">
-                        ${avatarsHtml}
-                        <span class="player-count">${count}</span>
-                    </div>`, 
-                    { permanent: true, direction: 'center', className: 'zone-label' }
-                ).openTooltip();
-            }
+                // Logika kolorów: Czarny -> Zielony -> Czerwony
+                let color = "#000000";
+                if(owners.length === 1) color = "#2ecc71";
+                if(owners.length > 1) color = "#ff4757";
 
-            zone.on('click', async (e) => {
-                L.DomEvent.stopPropagation(e);
-                if (isDrawMode || !currentUser) return;
-                const isAlreadyHere = zoneData.owners.some(u => u.name === currentUser.username);
-                if (isAlreadyHere) {
-                    if (confirm("Opuścić strefę?")) {
-                        zoneData.owners = zoneData.owners.filter(u => u.name !== currentUser.username);
-                        await saveZonesToServer();
-                        location.reload();
-                    }
-                } else {
-                    if (confirm("Zająć strefę?")) {
-                        savedZones.forEach(z => { if (z.owners) z.owners = z.owners.filter(u => u.name !== currentUser.username); });
-                        zoneData.owners.push({ name: currentUser.username, avatar: `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png` });
-                        await saveZonesToServer();
-                        location.reload();
-                    }
-                }
-            });
+                const rect = L.rectangle([zoneData.p1, zoneData.p2], { 
+                    color: color, weight: 3, fillOpacity: owners.length > 0 ? 0.3 : 0.05 
+                }).addTo(map);
 
-            zone.on('contextmenu', async (e) => {
-                L.DomEvent.stopPropagation(e);
-                if (currentUser?.isAdmin && confirm("Usunąć strefę?")) {
-                    savedZones = savedZones.filter(z => z.id !== zoneData.id);
-                    await saveZonesToServer();
-                    location.reload();
-                }
-            });
-        }
+                owners.forEach(u => {
+                    // Dodaj do listy bocznej
+                    const row = document.createElement('div');
+                    row.className = 'player-row';
+                    row.innerHTML = `<img src="${u.avatar}"> <span>${u.name}</span>`;
+                    list.appendChild(row);
 
-        async function saveZonesToServer() {
-            try {
-                await fetch('/api/zones', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(savedZones)
+                    // Dodaj awatar na mapę
+                    L.marker(rect.getBounds().getCenter(), {
+                        icon: L.divIcon({
+                            className: 'zone-label',
+                            html: `<div class="map-tag"><img src="${u.avatar}" class="map-avatar"></div>`,
+                            iconSize: [34, 34]
+                        })
+                    }).addTo(map);
                 });
-            } catch (err) {}
+            });
+
+            document.getElementById('marked-count').innerText = total;
         }
 
-        init();
+        loadZones();
     </script>
 </body>
 </html>
-
-
