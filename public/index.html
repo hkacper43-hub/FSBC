@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>FSBC - MULTI MAP SYSTEM</title>
+    <title>FSBC SYSTEM</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
@@ -21,15 +21,15 @@
             font-family: 'Poppins', sans-serif;
             background: var(--bg-dark);
             color: var(--text-main);
-            min-height: 100vh;
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow-y: auto; /* Włączenie scrollowania strony */
+            overflow: hidden;
         }
 
-        /* GÓRNY PASEK STATYSTYK */
+        /* GÓRNY PASEK Z PRZEŁĄCZANIEM MAP */
         .top-bar {
-            height: 80px;
+            height: 70px;
             background: rgba(15, 23, 42, 0.8);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--glass-border);
@@ -37,125 +37,107 @@
             align-items: center;
             justify-content: space-between;
             padding: 0 25px;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            flex-shrink: 0;
         }
 
-        .stats-group { display: flex; gap: 15px; align-items: center; }
-        
-        .stat-box {
-            background: rgba(0,0,0,0.3);
-            border: 1px solid var(--glass-border);
-            padding: 8px 18px;
+        .nav-section { display: flex; gap: 15px; align-items: center; }
+
+        /* ZAKŁADKI W PASKU GÓRNYM */
+        .map-tabs {
+            display: flex;
+            background: rgba(0,0,0,0.2);
+            padding: 5px;
+            border-radius: 12px;
+            margin-right: 20px;
+        }
+        .tab {
+            padding: 8px 15px;
+            background: transparent;
+            border: none;
+            color: #94a3b8;
             border-radius: 8px;
-            font-size: 13px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 800;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .stat-box {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            padding: 6px 15px;
+            border-radius: 8px;
+            font-size: 12px;
             font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .btn-leaderboard {
             background: #7c3aed;
             color: white;
-            padding: 8px 18px;
+            padding: 7px 15px;
             border-radius: 8px;
             text-decoration: none;
-            font-size: 13px;
-            font-weight: 600;
-            transition: 0.3s;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
         }
-        .btn-leaderboard:hover { opacity: 0.8; }
 
         /* GŁÓWNY UKŁAD */
         .main-container {
             display: flex;
             flex: 1;
-            padding: 20px;
-            gap: 20px;
+            padding: 15px;
+            gap: 15px;
+            overflow: hidden;
         }
 
-        /* SIDEBAR */
+        /* SIDEBAR NA CAŁĄ WYSOKOŚĆ */
         #sidebar {
-            width: 320px;
-            background: rgba(3, 7, 18, 0.6);
-            backdrop-filter: blur(20px);
+            width: 300px;
+            background: rgba(3, 7, 18, 0.4);
             border: 1px solid var(--glass-border);
-            border-radius: 24px;
+            border-radius: 20px;
             display: flex;
             flex-direction: column;
-            height: fit-content;
-            max-height: 85vh;
-            position: sticky;
-            top: 100px;
+            height: 100%; /* Rozwinięcie do dołu */
         }
 
         #player-list {
             flex: 1;
             overflow-y: auto;
-            padding: 15px;
+            padding: 10px;
         }
-
-        #player-list::-webkit-scrollbar { width: 4px; }
-        #player-list::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
 
         .player-row {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 10px;
-            border-radius: 12px;
-            margin-bottom: 5px;
-            background: var(--glass-bg);
-        }
-        .player-row img { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--primary); }
-
-        /* KONTENER MAPY */
-        .map-section {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .map-tabs {
-            display: flex;
             gap: 10px;
-            background: rgba(0,0,0,0.2);
-            padding: 10px;
-            border-radius: 15px;
-            width: fit-content;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--glass-border);
         }
+        .player-row img { width: 32px; height: 32px; border-radius: 50%; }
 
-        .tab {
-            padding: 8px 20px;
-            background: transparent;
-            border: none;
-            color: #94a3b8;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 800;
-            transition: 0.3s;
-            text-transform: uppercase;
-        }
-
-        .tab.active {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
-        }
-
-        #map {
-            height: 800px; /* Stała wysokość mapy dla scrolla strony */
-            background: var(--bg-dark);
-            border-radius: 24px;
+        /* MAPA BEZ PRZYCISKÓW ZOOM */
+        #map-container {
+            flex: 1;
+            border-radius: 20px;
             border: 1px solid var(--glass-border);
             overflow: hidden;
+            background: #1e1f22;
         }
+        #map { height: 100%; width: 100%; }
 
-        /* AWATARY NA MAPIE */
         .leaflet-tooltip.zone-label { background: transparent; border: none; box-shadow: none; padding: 0; }
         .map-avatar { 
             width: 34px; height: 34px; border-radius: 50%; 
@@ -166,30 +148,31 @@
 <body>
 
     <div class="top-bar">
-        <div style="font-weight: 800; font-size: 22px; background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">FSBC SYSTEM</div>
+        <div style="font-weight: 800; font-size: 20px; color: var(--accent);">FSBC SYSTEM</div>
         
-        <div class="stats-group">
-            <div class="stat-box" style="border-left: 3px solid #2ecc71;">
+        <div class="nav-section">
+            <div class="map-tabs">
+                <button class="tab active" id="btn-main" onclick="switchMap('main')">Mapa Główna</button>
+                <button class="tab" id="btn-reload" onclick="switchMap('reload')">Mapa Reload</button>
+            </div>
+
+            <div class="stat-box">
                 <span style="color: #2ecc71">●</span> OPEN
             </div>
             <div class="stat-box">
                 GRACZE: <span id="marked-count">0</span> / 16
             </div>
-            <a href="#" class="btn-leaderboard">LEADERBOARD</a>
+            <a href="#" class="btn-leaderboard">Leaderboard</a>
         </div>
     </div>
 
     <div class="main-container">
         <div id="sidebar">
-            <div style="padding: 20px; font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase; border-bottom: 1px solid var(--glass-border);">Zaznaczeni Gracze</div>
+            <div style="padding: 15px; font-size: 10px; font-weight: 800; color: #6366f1; text-transform: uppercase; border-bottom: 1px solid var(--glass-border);">Zaznaczeni Gracze</div>
             <div id="player-list"></div>
         </div>
 
-        <div class="map-section">
-            <div class="map-tabs">
-                <button class="tab active" id="btn-main" onclick="switchMap('main')">Mapa Główna</button>
-                <button class="tab" id="btn-reload" onclick="switchMap('reload')">Mapa Reload</button>
-            </div>
+        <div id="map-container">
             <div id="map"></div>
         </div>
     </div>
@@ -202,40 +185,35 @@
 
         const mapConfigs = {
             'main': {
-                name: 'Starfall',
                 url: 'https://cdn.discordapp.com/attachments/1444651629633601669/1460615666422780035/image.png?ex=6968e157&is=69678fd7&hm=04c005320bdbf44f2f472af0a569af82294e0e243339d73c24be287faa1b6e42&',
                 apiUrl: '/api/zones'
             },
             'reload': {
-                name: 'Venture',
                 url: 'https://cdn.discordapp.com/attachments/1444651629633601669/1461103324903375021/image.png?ex=69695602&is=69680482&hm=331fcbe257312cd805870c534199fb81ac0e2e4a6f270a8a4fbe5dcbb3b51d14&',
                 apiUrl: '/api/zones_reload'
             }
         };
 
+        // ZOOMCONTROL: FALSE - USUWA PRZYCISKI +/-
         const map = L.map('map', { 
             crs: L.CRS.Simple, 
             minZoom: -0.5, 
             maxZoom: 1, 
             zoom: 0, 
-            zoomControl: true, 
+            zoomControl: false, 
             attributionControl: false 
         });
         const bounds = [[0, 0], [500, 500]];
 
         function switchMap(type) {
             currentMapType = type;
-            
-            // UI Update
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             if(type === 'main') document.getElementById('btn-main').classList.add('active');
             else document.getElementById('btn-reload').classList.add('active');
 
-            // Map Update
             if (imageLayer) map.removeLayer(imageLayer);
             imageLayer = L.imageOverlay(mapConfigs[type].url, bounds).addTo(map);
             map.fitBounds(bounds);
-
             loadZones();
         }
 
@@ -244,10 +222,7 @@
                 const res = await fetch(mapConfigs[currentMapType].apiUrl);
                 savedZones = await res.json();
                 renderAll();
-            } catch(e) { 
-                savedZones = []; 
-                renderAll(); 
-            }
+            } catch(e) { renderAll(); }
         }
 
         function renderAll() {
@@ -259,7 +234,6 @@
             savedZones.forEach(zoneData => {
                 const owners = zoneData.owners || [];
                 total += owners.length;
-
                 let color = (owners.length === 1) ? "#2ecc71" : (owners.length > 1 ? "#ff4757" : "#000000");
 
                 const rect = L.rectangle([zoneData.p1, zoneData.p2], { 
@@ -284,10 +258,7 @@
             document.getElementById('marked-count').innerText = total;
         }
 
-        // Naprawa startu - odpala mapę po załadowaniu okna
-        window.onload = () => {
-            switchMap('main');
-        };
+        window.onload = () => switchMap('main');
     </script>
 </body>
 </html>
