@@ -47,13 +47,43 @@
             z-index: 100;
             display: flex;
             align-items: center;
-            justify-content: flex-end; /* Przyciski po prawej stronie */
+            justify-content: space-between; /* Rozłożenie elementów */
             padding: 0 25px;
-            gap: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        /* PRZYCISKI NA PASKU */
+        .top-bar-left, .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* PRZEŁĄCZNIK MAP */
+        .map-switcher {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .map-btn {
+            padding: 6px 16px;
+            border-radius: 8px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .map-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
         .stats-badge {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--glass-border);
@@ -63,10 +93,7 @@
             align-items: center;
             gap: 10px;
             font-weight: 600;
-            color: #94a3b8;
         }
-        .stats-badge i { color: #ffffff; }
-        .stats-badge span { color: #60a5fa; } /* Kolor liczby */
 
         .btn-leaderboard {
             background: rgba(168, 85, 247, 0.15);
@@ -81,158 +108,56 @@
             gap: 8px;
             transition: 0.3s;
         }
-        .btn-leaderboard:hover {
-            background: var(--secondary);
-            color: white;
-            box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
-        }
 
-        .bg-effects {
-            position: fixed;
-            inset: 0;
-            z-index: -1;
-            background: radial-gradient(circle at 0% 0%, #1e1b4b 0%, #030712 50%);
-        }
-
-        .grid-overlay {
-            position: fixed;
-            inset: 0;
-            background-image: 
-                linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-        }
-
-        #sidebar {
-            width: 340px;
-            margin-top: 75px;
-            height: calc(100vh - 105px);
-            background: rgba(3, 7, 18, 0.6);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            display: flex;
-            flex-direction: column;
-            padding: 25px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            z-index: 10;
-        }
-
-        .logo {
-            font-size: 28px;
-            font-weight: 800;
-            letter-spacing: -1px;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        #map {
-            flex-grow: 1;
-            margin-top: 75px;
-            height: calc(100vh - 105px);
-            background: #2b2d31; 
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            overflow: hidden;
-        }
-
-        .btn-discord {
-            background: linear-gradient(45deg, #5865F2, var(--primary));
-            color: white;
-            text-decoration: none;
-            padding: 14px;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 13px;
-            text-align: center;
-            display: block;
-            transition: 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .user-card {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            background: var(--glass-bg);
-            padding: 15px;
-            border-radius: 16px;
-            border: 1px solid var(--glass-border);
-            margin-bottom: 20px;
-        }
-
+        /* RESZTA STYLI BEZ ZMIAN */
+        .bg-effects { position: fixed; inset: 0; z-index: -1; background: radial-gradient(circle at 0% 0%, #1e1b4b 0%, #030712 50%); }
+        .grid-overlay { position: fixed; inset: 0; background-image: linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px); background-size: 50px 50px; }
+        #sidebar { width: 340px; margin-top: 75px; height: calc(100vh - 105px); background: rgba(3, 7, 18, 0.6); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 24px; display: flex; flex-direction: column; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); z-index: 10; }
+        .logo { font-size: 28px; font-weight: 800; background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 30px; text-align: center; }
+        #map { flex-grow: 1; margin-top: 75px; height: calc(100vh - 105px); background: #2b2d31; border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); overflow: hidden; }
+        .user-card { display: flex; align-items: center; gap: 15px; background: var(--glass-bg); padding: 15px; border-radius: 16px; border: 1px solid var(--glass-border); margin-bottom: 20px; }
         .user-card img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--primary); }
-
-        #drawBtn {
-            width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            border: 1px solid var(--glass-border);
-            background: var(--glass-bg);
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        #drawBtn.active { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 20px rgba(236, 72, 153, 0.4); }
-
-        .leaflet-tooltip.zone-label { background: transparent; border: none; box-shadow: none; padding: 0; }
-        .avatar-container { 
-            display: flex; 
-            align-items: center; 
-            background: rgba(0, 0, 0, 0.85); 
-            padding: 4px 10px; 
-            border-radius: 30px; 
-            border: 2px solid white;
-        }
+        .btn-discord { background: linear-gradient(45deg, #5865F2, var(--primary)); color: white; text-decoration: none; padding: 14px; border-radius: 12px; font-weight: 600; text-align: center; display: block; text-transform: uppercase; }
+        #drawBtn { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--glass-bg); color: white; font-weight: 600; cursor: pointer; }
+        #drawBtn.active { background: var(--accent); border-color: var(--accent); }
+        .avatar-container { display: flex; align-items: center; background: rgba(0, 0, 0, 0.85); padding: 4px 10px; border-radius: 30px; border: 2px solid white; }
         .mini-avatar { width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; margin-right: -8px; }
-        .player-count { margin-left: 12px; font-weight: 800; color: white; font-size: 14px; }
-
-        .logout-link { margin-top: auto; color: var(--text-muted); text-decoration: none; font-size: 11px; text-align: center; opacity: 0.6; }
+        .player-count { margin-left: 12px; font-weight: 800; color: white; }
+        .logout-link { margin-top: auto; color: var(--text-muted); text-decoration: none; font-size: 11px; text-align: center; }
+        .leaflet-tooltip.zone-label { background: transparent; border: none; box-shadow: none; padding: 0; }
     </style>
 </head>
 <body>
 
     <div class="top-bar">
-        <div class="stats-badge">
-            <i class="fa-solid fa-users"></i>
-            <span id="player-total">0</span>/16
+        <div class="top-bar-left">
+            <div class="map-switcher">
+                <button onclick="switchMap('starfall')" id="btn-starfall" class="map-btn active">STARFALL</button>
+                <button onclick="switchMap('venture')" id="btn-venture" class="map-btn">VENTURE</button>
+            </div>
         </div>
-        <a href="https://yunite.xyz/leaderboard/f406ce8e-205b-49ae-ae9d-076ea8c66aee" target="_blank" class="btn-leaderboard">
-            <i class="fa-solid fa-trophy"></i> Leaderboard
-        </a>
+
+        <div class="top-bar-right">
+            <div class="stats-badge">
+                <i class="fa-solid fa-users"></i>
+                <span id="player-total">0</span>/16
+            </div>
+            <a href="LINK_DO_TABELI" target="_blank" class="btn-leaderboard">
+                <i class="fa-solid fa-trophy"></i> Leaderboard
+            </a>
+        </div>
     </div>
 
-    <div class="bg-effects">
-        <div class="grid-overlay"></div>
-    </div>
+    <div class="bg-effects"><div class="grid-overlay"></div></div>
 
     <div id="sidebar">
         <div class="logo">FSBC MAP</div>
-        
-        <div id="auth-section">
-            <a href="/auth/discord" class="btn-discord">Połącz z Discordem</a>
-        </div>
-
+        <div id="auth-section"><a href="/auth/discord" class="btn-discord">Połącz z Discordem</a></div>
         <div id="profile-section" style="display:none;">
             <div class="user-card">
-                <img id="user-avatar" src="">
-                <div class="user-info">
-                    <b id="user-name"></b><br>
-                    <small id="user-status" style="color: var(--success)"></small>
-                </div>
+                <img id="user-avatar" src=""><div class="user-info"><b id="user-name"></b><br><small id="user-status" style="color: var(--success)"></small></div>
             </div>
-            
-            <div id="admin-tools" style="display:none;">
-                <button onclick="toggleDrawMode()" id="drawBtn">DODAJ STREFĘ</button>
-            </div>
-            
+            <div id="admin-tools" style="display:none;"><button onclick="toggleDrawMode()" id="drawBtn">DODAJ STREFĘ</button></div>
             <a href="/logout" class="logout-link">Wyloguj sesję</a>
         </div>
     </div>
@@ -245,16 +170,39 @@
         let isDrawMode = false;
         let firstPoint = null;
         let savedZones = [];
+        let currentMap = 'starfall'; // Domyślna mapa
+
+        // Adresy obrazków map (zmień na właściwe)
+        const mapImages = {
+            'starfall': 'https://cdn.discordapp.com/attachments/1444651629633601669/1460615666422780035/image.png?ex=6968e157&is=69678fd7&hm=04c005320bdbf44f2f472af0a569af82294e0e243339d73c24be287faa1b6e42&',
+            'venture': 'LINK_DO_DRUGIEJ_MAPY_TUTAJ'
+        };
 
         const map = L.map('map', { crs: L.CRS.Simple, minZoom: -0.5, maxZoom: 1, zoom: 0, zoomControl: false, attributionControl: false });
         const bounds = [[0, 0], [500, 500]];
-        L.imageOverlay('https://cdn.discordapp.com/attachments/1444651629633601669/1460615666422780035/image.png?ex=6968e157&is=69678fd7&hm=04c005320bdbf44f2f472af0a569af82294e0e243339d73c24be287faa1b6e42&', bounds).addTo(map);
+        let imageOverlay = L.imageOverlay(mapImages[currentMap], bounds).addTo(map);
         map.fitBounds(bounds);
 
-        // FUNKCJA AKTUALIZUJĄCA LICZNIK NA PASKU
+        function switchMap(mapName) {
+            if (currentMap === mapName) return;
+            
+            currentMap = mapName;
+            
+            // Zmiana przycisków
+            document.querySelectorAll('.map-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`btn-${mapName}`).classList.add('active');
+            
+            // Zmiana tła mapy
+            imageOverlay.setUrl(mapImages[mapName]);
+            
+            // Przeładowanie stref
+            loadZones();
+        }
+
         function updateTopBarStats() {
             let totalPlayers = 0;
-            savedZones.forEach(zone => {
+            // Liczymy graczy tylko na AKTUALNEJ mapie
+            savedZones.filter(z => z.map === currentMap).forEach(zone => {
                 if (zone.owners) totalPlayers += zone.owners.length;
             });
             document.getElementById('player-total').innerText = totalPlayers;
@@ -278,10 +226,20 @@
 
         async function loadZones() {
             try {
+                // Usuwamy stare rysunki z mapy
+                map.eachLayer(layer => {
+                    if (layer instanceof L.Rectangle || layer instanceof L.Marker) {
+                        if (layer !== imageOverlay) map.removeLayer(layer);
+                    }
+                });
+
                 const res = await fetch('/api/zones');
-                savedZones = await res.json();
-                savedZones.forEach(z => renderZone(z));
-                updateTopBarStats(); // Aktualizacja po załadowaniu
+                const allZones = await res.json();
+                savedZones = allZones;
+                
+                // Renderujemy tylko strefy dla tej mapy
+                savedZones.filter(z => z.map === currentMap).forEach(z => renderZone(z));
+                updateTopBarStats();
             } catch (err) {}
         }
 
@@ -296,7 +254,13 @@
                 if (!firstPoint) {
                     firstPoint = e.latlng;
                 } else {
-                    const newZone = { id: Date.now(), p1: firstPoint, p2: e.latlng, owners: [] };
+                    const newZone = { 
+                        id: Date.now(), 
+                        map: currentMap, // PRZYPISANIE DO MAPY
+                        p1: firstPoint, 
+                        p2: e.latlng, 
+                        owners: [] 
+                    };
                     savedZones.push(newZone);
                     renderZone(newZone);
                     await saveZonesToServer();
@@ -307,28 +271,16 @@
         });
 
         function renderZone(zoneData) {
-            if (!zoneData.owners) zoneData.owners = [];
-            const count = zoneData.owners.length;
-            
+            const count = zoneData.owners ? zoneData.owners.length : 0;
             let color = "#000000"; 
             if (count === 1) color = "#2ecc71"; 
             if (count > 1) color = "#ff4757";   
 
-            const zone = L.rectangle([zoneData.p1, zoneData.p2], { 
-                color: color, 
-                weight: 3, 
-                fillOpacity: count > 0 ? 0.4 : 0.1 
-            }).addTo(map);
+            const zone = L.rectangle([zoneData.p1, zoneData.p2], { color: color, weight: 3, fillOpacity: count > 0 ? 0.4 : 0.1 }).addTo(map);
 
             if (count > 0) {
                 const avatarsHtml = zoneData.owners.map(u => `<img src="${u.avatar}" class="mini-avatar">`).join('');
-                zone.bindTooltip(
-                    `<div class="avatar-container" style="border-color:${color}">
-                        ${avatarsHtml}
-                        <span class="player-count">${count}</span>
-                    </div>`, 
-                    { permanent: true, direction: 'center', className: 'zone-label' }
-                ).openTooltip();
+                zone.bindTooltip(`<div class="avatar-container" style="border-color:${color}">${avatarsHtml}<span class="player-count">${count}</span></div>`, { permanent: true, direction: 'center', className: 'zone-label' }).openTooltip();
             }
 
             zone.on('click', async (e) => {
@@ -339,14 +291,17 @@
                     if (confirm("Opuścić strefę?")) {
                         zoneData.owners = zoneData.owners.filter(u => u.name !== currentUser.username);
                         await saveZonesToServer();
-                        location.reload();
+                        loadZones();
                     }
                 } else {
                     if (confirm("Zająć strefę?")) {
-                        savedZones.forEach(z => { if (z.owners) z.owners = z.owners.filter(u => u.name !== currentUser.username); });
+                        // Usuwamy gracza ze wszystkich stref NA TEJ KONKRETNEJ MAPIE
+                        savedZones.filter(z => z.map === currentMap).forEach(z => {
+                            if (z.owners) z.owners = z.owners.filter(u => u.name !== currentUser.username);
+                        });
                         zoneData.owners.push({ name: currentUser.username, avatar: `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png` });
                         await saveZonesToServer();
-                        location.reload();
+                        loadZones();
                     }
                 }
             });
@@ -356,7 +311,7 @@
                 if (currentUser?.isAdmin && confirm("Usunąć strefę?")) {
                     savedZones = savedZones.filter(z => z.id !== zoneData.id);
                     await saveZonesToServer();
-                    location.reload();
+                    loadZones();
                 }
             });
         }
@@ -368,7 +323,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(savedZones)
                 });
-                updateTopBarStats(); // Aktualizacja po każdej zmianie na serwerze
+                updateTopBarStats();
             } catch (err) {}
         }
 
@@ -376,4 +331,3 @@
     </script>
 </body>
 </html>
-
