@@ -7,11 +7,10 @@ const path = require('path');
 
 const app = express();
 
-// ZMIENNE - POBIERANE Z RENDER (ZAKŁADKA ENVIRONMENT)
 const MONGO_URI = process.env.MONGO_URI;
-const CLIENT_ID = '1459649925485957266'; // ID musi być w cudzysłowie
-const CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET;
-const CALLBACK_URL = 'https://fsbc.onrender.com/auth/discord/callback'; // URL musi być w cudzysłowie
+const CLIENT_ID = '1459649925485957266';
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const CALLBACK_URL = 'https://fsbc.onrender.com/auth/discord/callback';
 
 app.use(express.json());
 app.use(express.static(__dirname));
@@ -22,7 +21,6 @@ app.use(passport.session());
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((obj, done) => done(null, obj));
 
-// Konfiguracja Discorda - zadziała tylko jeśli podasz SECRET na Renderze
 if (CLIENT_ID && CLIENT_SECRET) {
     passport.use(new DiscordStrategy({
         clientID: CLIENT_ID,
@@ -30,15 +28,14 @@ if (CLIENT_ID && CLIENT_SECRET) {
         callbackURL: CALLBACK_URL,
         scope: ['identify']
     }, (accessToken, refreshToken, profile, done) => {
-        // TUTAJ WPISZ SWOJE PRAWIDŁOWE ID DISCORD ZAMIAST "TWOJE_ID"
+        // Zmień poniższe ID na swoje prawdziwe ID z Discorda, aby mieć Admina
         profile.isAdmin = (profile.id === "1444637422385365195"); 
         return done(null, profile);
     }));
 }
 
-// BAZA DANYCH
 if (MONGO_URI) {
-    mongoose.connect(MONGO_URI).then(() => console.log("✅ Baza działa")).catch(err => console.log("❌ Błąd bazy:", err));
+    mongoose.connect(MONGO_URI).then(() => console.log("✅ Połączono z bazą")).catch(err => console.log("❌ Błąd bazy:", err));
 }
 
 const Zone = mongoose.model('Zone', new mongoose.Schema({
@@ -63,5 +60,4 @@ app.post('/api/zones', async (req, res) => {
 
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Serwer ruszył na porcie ${PORT}`));
+app.listen(process.env.PORT || 3000, () => console.log("🚀 Serwer działa"));
