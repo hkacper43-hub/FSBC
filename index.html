@@ -18,7 +18,7 @@
             --bg-starfall: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #030712 100%);
             --bg-venture: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000000 100%);
             
-            /* Kolor tła pod samą mapą - USTAWIONY NA BŁĘKIT DLA OBU */
+            /* Kolor tła pod samą mapą - Błękit oceaniczny dla obu */
             --void-starfall: #0a192f;
             --void-venture: #0a192f; 
 
@@ -60,6 +60,7 @@
             opacity: 0.15;
         }
 
+        /* GÓRNY PASEK */
         .top-navbar {
             position: fixed;
             top: 20px; left: 380px; right: 20px;
@@ -123,6 +124,7 @@
 
         .stat-item i { color: var(--primary); }
 
+        /* PRZYCISK LINKU DO TABELI */
         .leaderboard-link {
             background: linear-gradient(45deg, var(--secondary), var(--accent));
             color: white;
@@ -132,8 +134,17 @@
             font-weight: 700;
             font-size: 13px;
             transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
+        .leaderboard-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(236, 72, 153, 0.4);
+        }
+
+        /* SIDEBAR */
         #sidebar {
             width: 340px;
             height: calc(100vh - 40px);
@@ -197,12 +208,6 @@
             transition: 0.3s;
         }
 
-        .admin-panel {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid var(--glass-border);
-        }
-
         #drawBtn {
             width: 100%;
             padding: 15px;
@@ -221,6 +226,7 @@
             box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
         }
 
+        /* MAPA KONTENER */
         #map-container {
             flex-grow: 1;
             margin: 20px 20px 20px 0;
@@ -283,7 +289,7 @@
                     </div>
                 </div>
 
-                <div id="admin-controls" class="admin-panel" style="display: none;">
+                <div id="admin-controls" class="admin-panel" style="display: none; border-top: 1px solid var(--glass-border); padding-top: 20px;">
                     <button id="drawBtn" onclick="toggleDrawMode()"><i class="fa-solid fa-plus-circle"></i> DODAJ NOWĄ STREFĘ</button>
                 </div>
             </div>
@@ -298,7 +304,10 @@
         </div>
         <div class="server-stats">
             <div class="stat-item"><i class="fa-solid fa-users"></i> AKTYWNI: <span id="count-total">0</span> / 16</div>
-            <a href="#" class="leaderboard-link"><i class="fa-solid fa-trophy"></i> TABELA</a>
+            
+            <a href="https://yunite.xyz/leaderboard/f406ce8e-205b-49ae-ae9d-076ea8c66aee" target="_blank" class="leaderboard-link">
+                <i class="fa-solid fa-trophy"></i> TABELA
+            </a>
         </div>
     </nav>
 
@@ -369,23 +378,15 @@
             allZones.filter(z => z.map === currentActiveMap).forEach(zoneData => {
                 const count = zoneData.owners.length;
                 
-                // NOWA LOGIKA KOLORÓW
-                let col = "#000000"; // Domyślnie CZARNY dla pustych
+                // LOGIKA KOLORÓW: Czarny puste, Zielony 1, Czerwony 2+
+                let col = "#000000"; 
                 let opacity = 0.4;
 
-                if (count === 1) {
-                    col = "#2ecc71"; // ZIELONY dla 1 gracza
-                    opacity = 0.5;
-                } else if (count > 1) {
-                    col = "#ef4444"; // CZERWONY dla 2+ graczy
-                    opacity = 0.6;
-                }
+                if (count === 1) { col = "#2ecc71"; opacity = 0.5; }
+                else if (count > 1) { col = "#ef4444"; opacity = 0.6; }
 
                 const rect = L.rectangle([zoneData.p1, zoneData.p2], { 
-                    color: col, 
-                    weight: 2, 
-                    fillColor: col,
-                    fillOpacity: opacity 
+                    color: col, weight: 2, fillColor: col, fillOpacity: opacity 
                 }).addTo(map);
 
                 if (count > 0) {
