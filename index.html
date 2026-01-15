@@ -14,7 +14,8 @@
             --primary: #6366f1;
             --secondary: #a855f7;
             --accent: #ec4899;
-            --bg-dark: #030712;
+            --bg-starfall: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #030712 100%);
+            --bg-venture: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000000 100%);
             --sidebar-bg: rgba(3, 7, 18, 0.8);
             --glass: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.1);
@@ -28,19 +29,21 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-dark);
+            background-color: #030712;
             color: var(--text-main);
             height: 100vh;
             display: flex;
             overflow: hidden;
+            transition: background 0.5s ease;
         }
 
         /* TŁO ANIMOWANE */
-        .bg-glow {
+        #dynamic-bg {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #030712 100%);
+            background: var(--bg-starfall);
             z-index: -2;
+            transition: background 0.8s ease;
         }
 
         .grid-pattern {
@@ -67,16 +70,9 @@
             justify-content: space-between;
             padding: 0 30px;
             z-index: 1000;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        .map-selector {
-            display: flex;
-            background: rgba(0,0,0,0.3);
-            padding: 5px;
-            border-radius: 15px;
-            gap: 5px;
-        }
+        .map-selector { display: flex; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 15px; gap: 5px; }
 
         .nav-btn {
             padding: 10px 25px;
@@ -84,48 +80,15 @@
             background: transparent;
             color: var(--text-muted);
             font-weight: 600;
-            font-size: 13px;
             cursor: pointer;
             border-radius: 12px;
             transition: 0.3s all;
-            letter-spacing: 1px;
-            text-transform: uppercase;
         }
 
         .nav-btn.active {
             background: var(--primary);
             color: white;
             box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
-        }
-
-        .server-stats {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .stat-item {
-            background: var(--glass);
-            padding: 8px 15px;
-            border-radius: 12px;
-            border: 1px solid var(--glass-border);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-        }
-
-        .stat-item i { color: var(--primary); }
-
-        .leaderboard-link {
-            background: linear-gradient(45deg, var(--secondary), var(--accent));
-            color: white;
-            text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 13px;
-            transition: 0.3s;
         }
 
         /* SIDEBAR */
@@ -141,26 +104,15 @@
             flex-direction: column;
             padding: 35px;
             z-index: 100;
-            box-shadow: 10px 0 50px rgba(0,0,0,0.5);
         }
 
-        .logo-area {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
+        .logo-area { text-align: center; margin-bottom: 40px; }
         .logo-area h1 {
             font-size: 30px;
-            font-weight: 800;
             background: linear-gradient(to right, var(--primary), var(--accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            letter-spacing: -1px;
-        }
-
-        /* PROFIL UŻYTKOWNIKA */
-        .user-section {
-            flex-grow: 1;
+            font-weight: 800;
         }
 
         .profile-card {
@@ -179,32 +131,6 @@
             height: 55px;
             border-radius: 50%;
             border: 2px solid var(--primary);
-            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
-        }
-
-        .user-meta b { font-size: 17px; display: block; color: white; }
-        .user-meta span { font-size: 11px; color: var(--success); font-weight: 700; text-transform: uppercase; }
-
-        .btn-discord-login {
-            width: 100%;
-            background: #5865F2;
-            color: white;
-            text-decoration: none;
-            padding: 16px;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            font-weight: 700;
-            transition: 0.3s;
-        }
-
-        /* NARZĘDZIA ADMINA */
-        .admin-panel {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid var(--glass-border);
         }
 
         #drawBtn {
@@ -219,11 +145,7 @@
             transition: 0.3s;
         }
 
-        #drawBtn.active {
-            background: var(--danger);
-            border-color: var(--danger);
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
-        }
+        #drawBtn.active { background: var(--danger); }
 
         /* MAPA KONTENER */
         #map-container {
@@ -233,12 +155,9 @@
             border-radius: 25px;
             overflow: hidden;
             border: 1px solid var(--glass-border);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
 
         #map { width: 100%; height: 100%; background: #000; }
-
-        .zone-tooltip { background: transparent !important; border: none !important; box-shadow: none !important; }
 
         .avatar-badge-stack {
             display: flex;
@@ -249,47 +168,28 @@
             border: 2px solid white;
         }
 
-        .badge-img {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            border: 1.5px solid white;
-            margin-right: -10px;
-        }
-
-        .badge-count { margin-left: 18px; font-weight: 800; font-size: 14px; color: white; }
-
-        .logout-link { margin-top: auto; text-align: center; font-size: 12px; color: var(--text-muted); text-decoration: none; }
+        .badge-img { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid white; margin-right: -10px; }
+        .badge-count { margin-left: 18px; font-weight: 800; color: white; }
     </style>
 </head>
 <body>
 
-    <div class="bg-glow"></div>
+    <div id="dynamic-bg"></div>
     <div class="grid-pattern"></div>
 
     <aside id="sidebar">
         <div class="logo-area"><h1>FSBC SYSTEM</h1></div>
-
-        <div class="user-section">
-            <div id="auth-box">
-                <a href="/auth/discord" class="btn-discord-login"><i class="fa-brands fa-discord"></i> LOGIN DISCORD</a>
-            </div>
-
-            <div id="profile-box" style="display: none;">
-                <div class="profile-card">
-                    <img id="u-avatar" src="" alt="Avatar">
-                    <div class="user-meta">
-                        <b id="u-name">Użytkownik</b>
-                        <span id="u-role">Gracz</span>
-                    </div>
-                </div>
-
-                <div id="admin-controls" class="admin-panel" style="display: none;">
-                    <button id="drawBtn" onclick="toggleDrawMode()"><i class="fa-solid fa-plus-circle"></i> DODAJ NOWĄ STREFĘ</button>
+        <div id="profile-box">
+            <div class="profile-card">
+                <img id="u-avatar" src="https://via.placeholder.com/55" alt="Avatar">
+                <div class="user-meta">
+                    <b id="u-name">Ładowanie...</b>
+                    <span id="u-role" style="display:block; font-size:11px; color:var(--success)">Gracz</span>
                 </div>
             </div>
+            <button id="drawBtn" onclick="toggleDrawMode()"><i class="fa-solid fa-plus-circle"></i> DODAJ NOWĄ STREFĘ</button>
         </div>
-        <a href="/logout" class="logout-link">Wyloguj sesję</a>
+        <a href="/logout" style="margin-top:auto; text-align:center; color:var(--text-muted); text-decoration:none; font-size:12px;">Wyloguj sesję</a>
     </aside>
 
     <nav class="top-navbar">
@@ -297,9 +197,9 @@
             <button class="nav-btn active" id="btn-starfall" onclick="changeMap('starfall')">Starfall</button>
             <button class="nav-btn" id="btn-venture" onclick="changeMap('venture')">Venture</button>
         </div>
-        <div class="server-stats">
-            <div class="stat-item"><i class="fa-solid fa-users"></i> AKTYWNI: <span id="count-total">0</span> / 16</div>
-            <a href="#" class="leaderboard-link"><i class="fa-solid fa-trophy"></i> TABELA</a>
+        <div style="display:flex; gap:20px; align-items:center;">
+            <span><i class="fa-solid fa-users"></i> AKTYWNI: <span id="count-total">0</span>/16</span>
+            <button class="nav-btn" style="background:var(--accent); color:white;">TABELA</button>
         </div>
     </nav>
 
@@ -310,8 +210,16 @@
         let currentUser = null, isDrawMode = false, firstPoint = null, allZones = [], currentActiveMap = 'starfall';
 
         const mapConfigs = {
-            'starfall': { url: 'https://cdn.discordapp.com/attachments/1444651629633601669/1460615666422780035/image.png?ex=6968e157&is=69678fd7&hm=04c005320bdbf44f2f472af0a569af82294e0e243339d73c24be287faa1b6e42&', bounds: [[0, 0], [500, 500]] },
-            'venture': { url: 'https://cdn.discordapp.com/attachments/1444651629633601669/1461368359835799623/image.png?ex=696a4cd7&is=6968fb57&hm=2189699ad6534e675e1efdeccf200eaa414485fe773d68c6fa2fc39994dac61c&', bounds: [[0, 0], [500, 500]] }
+            'starfall': { 
+                url: 'https://cdn.discordapp.com/attachments/1444651629633601669/1460615666422780035/image.png?ex=6968e157&is=69678fd7&hm=04c005320bdbf44f2f472af0a569af82294e0e243339d73c24be287faa1b6e42&', 
+                bounds: [[0, 0], [500, 500]],
+                bgColor: 'var(--bg-starfall)'
+            },
+            'venture': { 
+                url: 'LINK_DO_TWOJEJ_MAPY_VENTURE', 
+                bounds: [[0, 0], [500, 500]],
+                bgColor: 'var(--bg-venture)'
+            }
         };
 
         const map = L.map('map', { crs: L.CRS.Simple, minZoom: -1, maxZoom: 2, zoomControl: false, attributionControl: false });
@@ -319,89 +227,67 @@
         map.fitBounds(mapConfigs.starfall.bounds);
 
         async function bootstrap() {
-            try {
-                const userRes = await fetch('/api/user');
-                const userData = await userRes.json();
-                if (userData && userData.id) {
-                    currentUser = userData;
-                    document.getElementById('auth-box').style.display = 'none';
-                    document.getElementById('profile-box').style.display = 'block';
-                    document.getElementById('u-name').innerText = userData.username;
-                    document.getElementById('u-avatar').src = userData.avatar ? `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png` : 'https://via.placeholder.com/55';
-                    if (userData.isAdmin) {
-                        document.getElementById('admin-controls').style.display = 'block';
-                        document.getElementById('u-role').innerText = "Administrator";
-                    }
-                }
-            } catch (e) { console.log("Niezalogowany"); }
+            const res = await fetch('/api/user');
+            currentUser = await res.json();
+            if(currentUser) {
+                document.getElementById('u-name').innerText = currentUser.username;
+                if(currentUser.avatar) document.getElementById('u-avatar').src = `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png`;
+                document.getElementById('u-role').innerText = currentUser.isAdmin ? "ADMINISTRATOR" : "GRACZ";
+            }
             fetchZones();
-        }
-
-        async function fetchZones() {
-            try {
-                const res = await fetch('/api/zones');
-                allZones = await res.json();
-                renderAllZones();
-            } catch (e) { console.error("Błąd bazy"); }
         }
 
         function changeMap(mapId) {
             currentActiveMap = mapId;
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.id === `btn-${mapId}`));
+            // Zmiana przycisków
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`btn-${mapId}`).classList.add('active');
+            
+            // Zmiana tła strony
+            document.getElementById('dynamic-bg').style.background = mapConfigs[mapId].bgColor;
+            
+            // Zmiana obrazu mapy
             mapOverlay.setUrl(mapConfigs[mapId].url);
+            renderAllZones();
+        }
+
+        async function fetchZones() {
+            const res = await fetch('/api/zones');
+            allZones = await res.json();
             renderAllZones();
         }
 
         function renderAllZones() {
             map.eachLayer(l => { if (l instanceof L.Rectangle || l instanceof L.Tooltip) map.removeLayer(l); });
-            
-            allZones.filter(z => z.map === currentActiveMap).forEach(zoneData => {
-                const count = zoneData.owners.length;
-                let col = count === 0 ? "#ffffff" : (count === 1 ? "#2ecc71" : "#ef4444");
-
-                const rect = L.rectangle([zoneData.p1, zoneData.p2], { color: col, weight: 2, fillOpacity: count > 0 ? 0.3 : 0.05 }).addTo(map);
-
+            allZones.filter(z => z.map === currentActiveMap).forEach(zone => {
+                const count = zone.owners.length;
+                let color = count === 0 ? "#ffffff" : (count === 1 ? "#2ecc71" : "#ef4444");
+                const rect = L.rectangle([zone.p1, zone.p2], { color: color, weight: 2, fillOpacity: count > 0 ? 0.3 : 0.05 }).addTo(map);
+                
                 if (count > 0) {
-                    const html = `<div class="avatar-badge-stack" style="border-color:${col}">${zoneData.owners.map(o => `<img src="${o.avatar}" class="badge-img">`).join('')}<span class="badge-count">${count}</span></div>`;
+                    const html = `<div class="avatar-badge-stack">${zone.owners.map(o => `<img src="${o.avatar}" class="badge-img">`).join('')}<span class="badge-count">${count}</span></div>`;
                     rect.bindTooltip(html, { permanent: true, direction: 'center', className: 'zone-tooltip' }).openTooltip();
                 }
 
-                rect.on('click', (e) => {
-                    L.DomEvent.stopPropagation(e);
-                    if (isDrawMode || !currentUser) return;
-                    handleZoneClick(zoneData);
-                });
-
-                rect.on('contextmenu', (e) => {
-                    L.DomEvent.stopPropagation(e);
-                    if (currentUser?.isAdmin && confirm("Usunąć?")) {
-                        allZones = allZones.filter(z => z.id !== zoneData.id);
-                        saveAndSync();
-                    }
-                });
+                rect.on('click', () => handleZoneClick(zone));
             });
-            updateTotalCount();
+            updateTotal();
         }
 
-        function handleZoneClick(zone) {
-            const isInside = zone.owners.some(o => o.name === currentUser.username);
-            if (isInside) {
-                zone.owners = zone.owners.filter(o => o.name !== currentUser.username);
-            } else {
-                allZones.forEach(z => { if (z.map === currentActiveMap) z.owners = z.owners.filter(o => o.name !== currentUser.username); });
+        async function handleZoneClick(zone) {
+            if(!currentUser || isDrawMode) return;
+            const exists = zone.owners.find(o => o.name === currentUser.username);
+            if(exists) zone.owners = zone.owners.filter(o => o.name !== currentUser.username);
+            else {
+                allZones.forEach(z => { if(z.map === currentActiveMap) z.owners = z.owners.filter(o => o.name !== currentUser.username); });
                 zone.owners.push({ name: currentUser.username, avatar: document.getElementById('u-avatar').src });
             }
-            saveAndSync();
+            saveZones();
         }
 
-        async function saveAndSync() {
+        async function saveZones() {
             renderAllZones();
-            await fetch('/api/zones', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(allZones) });
-        }
-
-        function updateTotalCount() {
-            const count = allZones.filter(z => z.map === currentActiveMap).reduce((acc, z) => acc + z.owners.length, 0);
-            document.getElementById('count-total').innerText = count;
+            await fetch('/api/zones', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(allZones) });
         }
 
         function toggleDrawMode() {
@@ -411,13 +297,18 @@
         }
 
         map.on('click', (e) => {
-            if (!isDrawMode) return;
-            if (!firstPoint) firstPoint = e.latlng;
+            if(!isDrawMode) return;
+            if(!firstPoint) firstPoint = e.latlng;
             else {
                 allZones.push({ id: Date.now(), map: currentActiveMap, p1: [firstPoint.lat, firstPoint.lng], p2: [e.latlng.lat, e.latlng.lng], owners: [] });
-                firstPoint = null; toggleDrawMode(); saveAndSync();
+                firstPoint = null; toggleDrawMode(); saveZones();
             }
         });
+
+        function updateTotal() {
+            const total = allZones.filter(z => z.map === currentActiveMap).reduce((acc, z) => acc + z.owners.length, 0);
+            document.getElementById('count-total').innerText = total;
+        }
 
         bootstrap();
     </script>
