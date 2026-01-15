@@ -5,6 +5,7 @@
     <title>FSBC - MAPA TAKTYCZNA</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --primary: #6366f1;
@@ -32,7 +33,7 @@
             overflow: hidden;
         }
 
-        /* NOWY GÓRNY PASEK */
+        /* GÓRNY PASEK */
         .top-bar {
             position: fixed;
             top: 15px;
@@ -46,8 +47,44 @@
             z-index: 100;
             display: flex;
             align-items: center;
+            justify-content: flex-end; /* Przyciski po prawej stronie */
             padding: 0 25px;
+            gap: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        /* PRZYCISKI NA PASKU */
+        .stats-badge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            padding: 8px 16px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            color: #94a3b8;
+        }
+        .stats-badge i { color: #ffffff; }
+        .stats-badge span { color: #60a5fa; } /* Kolor liczby */
+
+        .btn-leaderboard {
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid var(--secondary);
+            color: var(--secondary);
+            padding: 8px 16px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+        .btn-leaderboard:hover {
+            background: var(--secondary);
+            color: white;
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
         }
 
         .bg-effects {
@@ -68,8 +105,8 @@
 
         #sidebar {
             width: 340px;
-            margin-top: 75px; /* Odstęp od paska górnego */
-            height: calc(100vh - 105px); /* Dopasowanie wysokości */
+            margin-top: 75px;
+            height: calc(100vh - 105px);
             background: rgba(3, 7, 18, 0.6);
             backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
@@ -94,8 +131,8 @@
 
         #map {
             flex-grow: 1;
-            margin-top: 75px; /* Odstęp od paska górnego */
-            height: calc(100vh - 105px); /* Dopasowanie wysokości */
+            margin-top: 75px;
+            height: calc(100vh - 105px);
             background: #2b2d31; 
             border-radius: 24px;
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -162,7 +199,15 @@
 </head>
 <body>
 
-    <div class="top-bar"></div>
+    <div class="top-bar">
+        <div class="stats-badge">
+            <i class="fa-solid fa-users"></i>
+            <span id="player-total">0</span>/16
+        </div>
+        <a href="TU_WKLEJ_SWOJ_LINK_DO_TABELI" target="_blank" class="btn-leaderboard">
+            <i class="fa-solid fa-trophy"></i> Leaderboard
+        </a>
+    </div>
 
     <div class="bg-effects">
         <div class="grid-overlay"></div>
@@ -206,6 +251,15 @@
         L.imageOverlay('https://cdn.discordapp.com/attachments/1444651629633601669/1460615666422780035/image.png?ex=6968e157&is=69678fd7&hm=04c005320bdbf44f2f472af0a569af82294e0e243339d73c24be287faa1b6e42&', bounds).addTo(map);
         map.fitBounds(bounds);
 
+        // FUNKCJA AKTUALIZUJĄCA LICZNIK NA PASKU
+        function updateTopBarStats() {
+            let totalPlayers = 0;
+            savedZones.forEach(zone => {
+                if (zone.owners) totalPlayers += zone.owners.length;
+            });
+            document.getElementById('player-total').innerText = totalPlayers;
+        }
+
         async function init() {
             try {
                 const res = await fetch('/api/user');
@@ -227,6 +281,7 @@
                 const res = await fetch('/api/zones');
                 savedZones = await res.json();
                 savedZones.forEach(z => renderZone(z));
+                updateTopBarStats(); // Aktualizacja po załadowaniu
             } catch (err) {}
         }
 
@@ -313,6 +368,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(savedZones)
                 });
+                updateTopBarStats(); // Aktualizacja po każdej zmianie na serwerze
             } catch (err) {}
         }
 
