@@ -16,12 +16,12 @@ const CALLBACK_URL = 'https://fsbc.onrender.com/auth/discord/callback';
 app.use(express.json());
 app.use(express.static(__dirname));
 
-// Poprawiona konfiguracja sesji - eliminuje Warning i błędy logowania
+// Konfiguracja sesji
 app.use(session({
     secret: 'fsbc_system_ultra_secret_777',
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false } // Ustaw na true tylko jeśli masz HTTPS (Render ma)
+    cookie: { secure: process.env.NODE_ENV === 'production' } 
 }));
 
 app.use(passport.initialize());
@@ -30,7 +30,7 @@ app.use(passport.session());
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((obj, done) => done(null, obj));
 
-// Strategia Discorda z poprawionym CALLBACK
+// Strategia Discorda
 if (CLIENT_ID && CLIENT_SECRET) {
     passport.use(new DiscordStrategy({
         clientID: CLIENT_ID,
@@ -38,13 +38,13 @@ if (CLIENT_ID && CLIENT_SECRET) {
         callbackURL: CALLBACK_URL,
         scope: ['identify']
     }, (accessToken, refreshToken, profile, done) => {
-        // Podmień na swoje ID (kliknij PPM na siebie na Discordzie -> Kopiuj ID)
+        // ID Twojego konta (Admina)
         profile.isAdmin = (profile.id === '1444637422385365195'); 
         return done(null, profile);
     }));
 }
 
-// Bezpieczne połączenie z bazą
+// Połączenie z bazą
 if (MONGO_URI) {
     mongoose.connect(MONGO_URI)
         .then(() => console.log('✅ MongoDB Połączone'))
@@ -64,6 +64,7 @@ app.get('/auth/discord/callback', passport.authenticate('discord', {
 
 app.get('/api/user', (req, res) => res.json(req.user || null));
 
+// POBIERANIE STREF
 app.get('/api/zones', async (req, res) => {
     try {
         const zones = await Zone.find({});
@@ -71,11 +72,37 @@ app.get('/api/zones', async (req, res) => {
     } catch (e) { res.status(500).json([]); }
 });
 
+// ZAPISYWANIE STREF - POPRAWIONE
 app.post('/api/zones', async (req, res) => {
-    if (!req.user || !req.user.isAdmin) return res.sendStatus(403);
-    await Zone.deleteMany({});
-    await Zone.insertMany(req.body);
-    res.sendStatus(200);
+    // 1. Sprawdzamy czy użytkownik jest zalogowany
+    if (!req.user) return res.sendStatus(401);
+
+    try {
+        const zonesFromClient = req.body;
+
+        if (req.user.isAdmin) {
+            // ADMIN: Może zmieniać wszystko (dodawać/usuwać strefy)
+            await Zone.deleteMany({});
+            if (zonesFromClient.length > 0) {
+                await Zone.insertMany(zonesFromClient);
+            }
+        } else {
+            // GRACZ: Może TYLKO aktualizować listę osób (owners) w istniejących strefach
+            // Pętla przechodzi przez każdą strefę wysłaną z mapy i aktualizuje owners w bazie
+            const updatePromises = zonesFromClient.map(zone => {
+                return Zone.updateOne(
+                    { id: zone.id },
+                    { $set: { owners: zone.owners } }
+                );
+            });
+            await Promise.all(updatePromises);
+        }
+        
+        res.sendStatus(200);
+    } catch (e) {
+        console.error("Błąd podczas zapisu stref:", e);
+        res.status(500).send("Błąd zapisu");
+    }
 });
 
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
