@@ -11,7 +11,7 @@ const app = express();
 // ZMIENNE ŚRODOWISKOWE - Ustaw je w panelu Render!
 const MONGO_URI = process.env.MONGO_URI;
 const CLIENT_ID = 1459649925485957266;
-const CLIENT_SECRET = zLaA-oLA14JwlpbcEujVR0gAOl0DcDRu;
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const CALLBACK_URL = https://fsbc.onrender.com/auth/discord/callback; // np. https://twoja-strona.onrender.com/auth/discord/callback
 
 app.use(express.json());
@@ -69,3 +69,4 @@ app.get('*', (req, res) => {
 });
 
 app.listen(process.env.PORT || 3000);
+
