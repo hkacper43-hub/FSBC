@@ -47,7 +47,7 @@
             z-index: 100;
             display: flex;
             align-items: center;
-            justify-content: space-between; /* Rozłożenie elementów */
+            justify-content: space-between;
             padding: 0 25px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
@@ -109,17 +109,44 @@
             transition: 0.3s;
         }
 
-        /* RESZTA STYLI BEZ ZMIAN */
         .bg-effects { position: fixed; inset: 0; z-index: -1; background: radial-gradient(circle at 0% 0%, #1e1b4b 0%, #030712 50%); }
         .grid-overlay { position: fixed; inset: 0; background-image: linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px); background-size: 50px 50px; }
-        #sidebar { width: 340px; margin-top: 75px; height: calc(100vh - 105px); background: rgba(3, 7, 18, 0.6); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 24px; display: flex; flex-direction: column; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); z-index: 10; }
+        
+        #sidebar { 
+            width: 340px; 
+            margin-top: 75px; 
+            height: calc(100vh - 105px); 
+            background: rgba(3, 7, 18, 0.6); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid var(--glass-border); 
+            border-radius: 24px; 
+            display: flex; 
+            flex-direction: column; 
+            padding: 25px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+            z-index: 10; 
+        }
+
         .logo { font-size: 28px; font-weight: 800; background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 30px; text-align: center; }
-        #map { flex-grow: 1; margin-top: 75px; height: calc(100vh - 105px); background: #2b2d31; border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); overflow: hidden; }
+        
+        #map { 
+            flex-grow: 1; 
+            margin-top: 75px; 
+            height: calc(100vh - 105px); 
+            background: #2b2d31; 
+            border-radius: 24px; 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+            overflow: hidden; 
+        }
+
         .user-card { display: flex; align-items: center; gap: 15px; background: var(--glass-bg); padding: 15px; border-radius: 16px; border: 1px solid var(--glass-border); margin-bottom: 20px; }
         .user-card img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--primary); }
         .btn-discord { background: linear-gradient(45deg, #5865F2, var(--primary)); color: white; text-decoration: none; padding: 14px; border-radius: 12px; font-weight: 600; text-align: center; display: block; text-transform: uppercase; }
+        
         #drawBtn { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--glass-bg); color: white; font-weight: 600; cursor: pointer; }
         #drawBtn.active { background: var(--accent); border-color: var(--accent); }
+        
         .avatar-container { display: flex; align-items: center; background: rgba(0, 0, 0, 0.85); padding: 4px 10px; border-radius: 30px; border: 2px solid white; }
         .mini-avatar { width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; margin-right: -8px; }
         .player-count { margin-left: 12px; font-weight: 800; color: white; }
@@ -142,7 +169,7 @@
                 <i class="fa-solid fa-users"></i>
                 <span id="player-total">0</span>/16
             </div>
-            <a href="LINK_DO_TABELI" target="_blank" class="btn-leaderboard">
+            <a href="TU_WKLEJ_SWOJ_LINK" target="_blank" class="btn-leaderboard">
                 <i class="fa-solid fa-trophy"></i> Leaderboard
             </a>
         </div>
@@ -170,12 +197,11 @@
         let isDrawMode = false;
         let firstPoint = null;
         let savedZones = [];
-        let currentMap = 'starfall'; // Domyślna mapa
+        let currentMap = 'starfall';
 
-        // Adresy obrazków map (zmień na właściwe)
         const mapImages = {
             'starfall': 'https://cdn.discordapp.com/attachments/1444651629633601669/1460615666422780035/image.png?ex=6968e157&is=69678fd7&hm=04c005320bdbf44f2f472af0a569af82294e0e243339d73c24be287faa1b6e42&',
-            'venture': 'LINK_DO_DRUGIEJ_MAPY_TUTAJ'
+            'venture': 'TU_WKLEJ_LINK_DO_MAPY_VENTURE'
         };
 
         const map = L.map('map', { crs: L.CRS.Simple, minZoom: -0.5, maxZoom: 1, zoom: 0, zoomControl: false, attributionControl: false });
@@ -185,23 +211,17 @@
 
         function switchMap(mapName) {
             if (currentMap === mapName) return;
-            
             currentMap = mapName;
             
-            // Zmiana przycisków
             document.querySelectorAll('.map-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(`btn-${mapName}`).classList.add('active');
             
-            // Zmiana tła mapy
             imageOverlay.setUrl(mapImages[mapName]);
-            
-            // Przeładowanie stref
-            loadZones();
+            loadZones(); // Przeładowuje strefy dla nowej mapy
         }
 
         function updateTopBarStats() {
             let totalPlayers = 0;
-            // Liczymy graczy tylko na AKTUALNEJ mapie
             savedZones.filter(z => z.map === currentMap).forEach(zone => {
                 if (zone.owners) totalPlayers += zone.owners.length;
             });
@@ -226,18 +246,17 @@
 
         async function loadZones() {
             try {
-                // Usuwamy stare rysunki z mapy
+                const res = await fetch('/api/zones');
+                savedZones = await res.json();
+
+                // CZYŚCIMY TYLKO STREFY I TOOLTIPY
                 map.eachLayer(layer => {
-                    if (layer instanceof L.Rectangle || layer instanceof L.Marker) {
-                        if (layer !== imageOverlay) map.removeLayer(layer);
+                    if (layer instanceof L.Rectangle || layer instanceof L.Tooltip) {
+                        map.removeLayer(layer);
                     }
                 });
 
-                const res = await fetch('/api/zones');
-                const allZones = await res.json();
-                savedZones = allZones;
-                
-                // Renderujemy tylko strefy dla tej mapy
+                // Rysujemy strefy przypisane do aktualnej mapy
                 savedZones.filter(z => z.map === currentMap).forEach(z => renderZone(z));
                 updateTopBarStats();
             } catch (err) {}
@@ -256,7 +275,7 @@
                 } else {
                     const newZone = { 
                         id: Date.now(), 
-                        map: currentMap, // PRZYPISANIE DO MAPY
+                        map: currentMap, 
                         p1: firstPoint, 
                         p2: e.latlng, 
                         owners: [] 
@@ -276,32 +295,49 @@
             if (count === 1) color = "#2ecc71"; 
             if (count > 1) color = "#ff4757";   
 
-            const zone = L.rectangle([zoneData.p1, zoneData.p2], { color: color, weight: 3, fillOpacity: count > 0 ? 0.4 : 0.1 }).addTo(map);
+            const zone = L.rectangle([zoneData.p1, zoneData.p2], { 
+                color: color, 
+                weight: 3, 
+                fillOpacity: count > 0 ? 0.4 : 0.1 
+            }).addTo(map);
 
             if (count > 0) {
                 const avatarsHtml = zoneData.owners.map(u => `<img src="${u.avatar}" class="mini-avatar">`).join('');
-                zone.bindTooltip(`<div class="avatar-container" style="border-color:${color}">${avatarsHtml}<span class="player-count">${count}</span></div>`, { permanent: true, direction: 'center', className: 'zone-label' }).openTooltip();
+                zone.bindTooltip(
+                    `<div class="avatar-container" style="border-color:${color}">
+                        ${avatarsHtml}
+                        <span class="player-count">${count}</span>
+                    </div>`, 
+                    { permanent: true, direction: 'center', className: 'zone-label' }
+                ).openTooltip();
             }
 
             zone.on('click', async (e) => {
                 L.DomEvent.stopPropagation(e);
                 if (isDrawMode || !currentUser) return;
+                
                 const isAlreadyHere = zoneData.owners.some(u => u.name === currentUser.username);
+                
                 if (isAlreadyHere) {
                     if (confirm("Opuścić strefę?")) {
                         zoneData.owners = zoneData.owners.filter(u => u.name !== currentUser.username);
                         await saveZonesToServer();
-                        loadZones();
+                        loadZones(); // Odśwież widok bez przeładowania strony
                     }
                 } else {
                     if (confirm("Zająć strefę?")) {
-                        // Usuwamy gracza ze wszystkich stref NA TEJ KONKRETNEJ MAPIE
+                        // Usuwamy gracza z innych stref tylko na TEJ mapie
                         savedZones.filter(z => z.map === currentMap).forEach(z => {
                             if (z.owners) z.owners = z.owners.filter(u => u.name !== currentUser.username);
                         });
-                        zoneData.owners.push({ name: currentUser.username, avatar: `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png` });
+                        
+                        zoneData.owners.push({ 
+                            name: currentUser.username, 
+                            avatar: `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png` 
+                        });
+                        
                         await saveZonesToServer();
-                        loadZones();
+                        loadZones(); // Odśwież widok bez przeładowania strony
                     }
                 }
             });
