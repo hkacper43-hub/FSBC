@@ -352,15 +352,28 @@
                     }
                 }
             } catch (e) {}
-            fetchZones();
+            
+            // Pierwsze pobranie danych
+            await fetchZones();
+            
+            // DODANE: Uruchomienie automatycznego odświeżania co 5 sekund
+            setInterval(fetchZones, 5000);
         }
 
         async function fetchZones() {
             try {
                 const res = await fetch('/api/zones');
-                allZones = await res.json();
-                renderAllZones();
-            } catch (e) {}
+                const data = await res.json();
+                
+                // Aktualizujemy dane tylko jeśli administrator nie jest w trybie rysowania
+                // (żeby mu nie zniknął punkt, który właśnie zaznaczył)
+                if (!isDrawMode) {
+                    allZones = data;
+                    renderAllZones();
+                }
+            } catch (e) {
+                console.error("Błąd synchronizacji danych.");
+            }
         }
 
         function changeMap(mapId) {
@@ -424,7 +437,15 @@
 
         async function saveAndSync() {
             renderAllZones();
-            await fetch('/api/zones', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(allZones) });
+            try {
+                await fetch('/api/zones', { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify(allZones) 
+                });
+            } catch (e) {
+                console.error("Błąd zapisu danych na serwerze.");
+            }
         }
 
         function updateTotalCount() {
