@@ -4,17 +4,21 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const app = express();
 
-// --- KONFIGURACJA (ZMIEŃ TO!) ---
-const MONGO_URI = 'mongodb+srv://hkacper43_db_user:Bimatech1907@cluster0.nsfmsqp.mongodb.net/?retryWrites=true&w=majority'; 
+// --- KONFIGURACJA ŚCIEŻEK I BAZY ---
+const PORT = process.env.PORT || 3000;
+// Jeśli nie masz zmiennej w Render, wklej link bezpośrednio w miejsce process.env.MONGO_URI
+const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://TWOJA_LINKA_Z_ATLAS'; 
 
 app.use(bodyParser.json());
+// Serwowanie plików statycznych z głównego folderu
+app.use(express.static(path.resolve(__dirname)));
 
-// Łączenie z MongoDB
+// --- POŁĄCZENIE Z MONGODB ---
 mongoose.connect(MONGO_URI)
     .then(() => console.log('✅ Połączono z MongoDB'))
-    .catch(err => console.error('❌ BŁĄD MONGODB:', err));
+    .catch(err => console.error('❌ BŁĄD MONGODB (Sprawdź link!):', err));
 
-// Schemat bazy danych
+// --- MODEL STREFY ---
 const zoneSchema = new mongoose.Schema({
     id: Number,
     map: String,
@@ -24,40 +28,40 @@ const zoneSchema = new mongoose.Schema({
 });
 const Zone = mongoose.model('Zone', zoneSchema);
 
-// SERWOWANIE STRONY
+// --- TRASY (ROUTES) ---
+
+// Główna strona - NAPRAWA BŁĘDU ENOENT
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.resolve(__dirname, 'index.html'));
 });
 
-// API: POBIERANIE
+// API: Pobieranie stref
 app.get('/api/zones', async (req, res) => {
     try {
         const zones = await Zone.find({});
-        console.log(`📡 Wysłano ${zones.length} stref do przeglądarki.`);
         res.json(zones);
     } catch (err) {
-        res.status(500).json([]);
+        res.status(500).json({ error: "Błąd bazy" });
     }
 });
 
-// API: ZAPISYWANIE
+// API: Zapisywanie stref
 app.post('/api/zones', async (req, res) => {
     try {
-        console.log("📥 Otrzymano dane do zapisu...");
-        await Zone.deleteMany({}); // Czyścimy bazę
-        await Zone.insertMany(req.body); // Wstawiamy nowe
-        console.log("💾 Zapisano pomyślnie w MongoDB!");
-        res.sendStatus(200);
+        await Zone.deleteMany({});
+        if (req.body && Array.isArray(req.body)) {
+            await Zone.insertMany(req.body);
+            res.status(200).send("Zapisano");
+        }
     } catch (err) {
-        console.error("❌ BŁĄD ZAPISU:", err);
-        res.status(500).send(err);
+        console.error("Błąd zapisu:", err);
+        res.status(500).send("Błąd serwera");
     }
 });
 
-// API: USER (Dla testów zawsze admin)
+// Mockup użytkownika (Admin dla testów)
 app.get('/api/user', (req, res) => {
-    res.json({ id: "123", username: "Admin", avatar: "", isAdmin: true });
+    res.json({ id: "123", username: "Administrator", avatar: "", isAdmin: true });
 });
 
-app.listen(3000, () => console.log('🚀 Serwer: http://localhost:3000'));
-
+app.listen(PORT, () => console.log(`🚀 Serwer śmiga na porcie ${PORT}`));
