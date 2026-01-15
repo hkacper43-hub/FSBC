@@ -4,21 +4,17 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const app = express();
 
-// --- KONFIGURACJA ---
-const PORT = 3000;
-const MONGO_URI = 'TWOJA_LINKA_Z_MONGODB_ATLAS'; // Wklej tutaj swój link!
+// --- KONFIGURACJA (ZMIEŃ TO!) ---
+const MONGO_URI = 'TWOJA_LINKA_Z_MONGODB_ATLAS'; 
 
-// Middlewares
 app.use(bodyParser.json());
-// Serwowanie plików statycznych (jeśli masz CSS/JS w osobnych plikach)
-app.use(express.static(path.join(__dirname, 'public')));
 
-// --- POŁĄCZENIE Z BAZĄ ---
+// Łączenie z MongoDB
 mongoose.connect(MONGO_URI)
     .then(() => console.log('✅ Połączono z MongoDB'))
-    .catch(err => console.error('❌ Błąd połączenia z MongoDB:', err));
+    .catch(err => console.error('❌ BŁĄD MONGODB:', err));
 
-// --- MODEL DANYCH ---
+// Schemat bazy danych
 const zoneSchema = new mongoose.Schema({
     id: Number,
     map: String,
@@ -28,52 +24,39 @@ const zoneSchema = new mongoose.Schema({
 });
 const Zone = mongoose.model('Zone', zoneSchema);
 
-// --- TRASY (ROUTES) ---
-
-// 1. NAPRAWA "CANNOT GET /" - Wyświetla Twój plik HTML
+// SERWOWANIE STRONY
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// 2. API: Pobieranie wszystkich stref
+// API: POBIERANIE
 app.get('/api/zones', async (req, res) => {
     try {
         const zones = await Zone.find({});
+        console.log(`📡 Wysłano ${zones.length} stref do przeglądarki.`);
         res.json(zones);
     } catch (err) {
-        res.status(500).json({ error: "Błąd pobierania" });
+        res.status(500).json([]);
     }
 });
 
-// 3. API: Zapisywanie wszystkich stref (Nadpisywanie bazy)
+// API: ZAPISYWANIE
 app.post('/api/zones', async (req, res) => {
     try {
-        // Czyścimy starą kolekcję i wstawiamy nową tablicę z frontendu
-        await Zone.deleteMany({});
-        if (req.body && Array.isArray(req.body)) {
-            await Zone.insertMany(req.body);
-            res.status(200).send("Zapisano pomyślnie");
-        } else {
-            res.status(400).send("Błędny format danych");
-        }
+        console.log("📥 Otrzymano dane do zapisu...");
+        await Zone.deleteMany({}); // Czyścimy bazę
+        await Zone.insertMany(req.body); // Wstawiamy nowe
+        console.log("💾 Zapisano pomyślnie w MongoDB!");
+        res.sendStatus(200);
     } catch (err) {
-        console.error("Błąd zapisu:", err);
+        console.error("❌ BŁĄD ZAPISU:", err);
         res.status(500).send(err);
     }
 });
 
-// 4. API: Dane użytkownika (Mockup dla testów - zastąp swoim systemem Discord)
+// API: USER (Dla testów zawsze admin)
 app.get('/api/user', (req, res) => {
-    // Tutaj normalnie byłaby logika passport.js / Discord
-    // Na potrzeby testu zwracamy admina:
-    res.json({
-        id: "123456789",
-        username: "Tester",
-        avatar: "link_do_avatara",
-        isAdmin: true
-    });
+    res.json({ id: "123", username: "Admin", avatar: "", isAdmin: true });
 });
 
-app.listen(PORT, () => {
-    console.log(`🚀 Serwer śmiga na http://localhost:${PORT}`);
-});
+app.listen(3000, () => console.log('🚀 Serwer: http://localhost:3000'));
