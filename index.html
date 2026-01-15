@@ -14,7 +14,13 @@
             --primary: #6366f1;
             --secondary: #a855f7;
             --accent: #ec4899;
-            --bg-dark: #030712;
+            /* Definicje tła dla strony */
+            --bg-starfall: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #030712 100%);
+            --bg-venture: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000000 100%);
+            /* Kolor tła pod samą mapą (zamiast czarnego) */
+            --void-starfall: #0a192f;
+            --void-venture: #080808;
+
             --sidebar-bg: rgba(3, 7, 18, 0.8);
             --glass: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.1);
@@ -28,19 +34,20 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-dark);
+            background-color: #030712;
             color: var(--text-main);
             height: 100vh;
             display: flex;
             overflow: hidden;
         }
 
-        /* TŁO ANIMOWANE */
-        .bg-glow {
+        /* DYNAMICZNE TŁO STRONY */
+        #dynamic-bg {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #030712 100%);
+            background: var(--bg-starfall);
             z-index: -2;
+            transition: background 0.8s ease;
         }
 
         .grid-pattern {
@@ -50,7 +57,7 @@
                               linear-gradient(90deg, var(--glass-border) 1px, transparent 1px);
             background-size: 40px 40px;
             z-index: -1;
-            opacity: 0.2;
+            opacity: 0.15;
         }
 
         /* GÓRNY PASEK */
@@ -144,11 +151,7 @@
             box-shadow: 10px 0 50px rgba(0,0,0,0.5);
         }
 
-        .logo-area {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
+        .logo-area { text-align: center; margin-bottom: 40px; }
         .logo-area h1 {
             font-size: 30px;
             font-weight: 800;
@@ -158,10 +161,7 @@
             letter-spacing: -1px;
         }
 
-        /* PROFIL UŻYTKOWNIKA */
-        .user-section {
-            flex-grow: 1;
-        }
+        .user-section { flex-grow: 1; }
 
         .profile-card {
             background: var(--glass);
@@ -175,8 +175,7 @@
         }
 
         .profile-card img {
-            width: 55px;
-            height: 55px;
+            width: 55px; height: 55px;
             border-radius: 50%;
             border: 2px solid var(--primary);
             box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
@@ -200,7 +199,6 @@
             transition: 0.3s;
         }
 
-        /* NARZĘDZIA ADMINA */
         .admin-panel {
             margin-top: 20px;
             padding-top: 20px;
@@ -236,22 +234,28 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
 
-        #map { width: 100%; height: 100%; background: #000; }
+        /* Tło bezpośrednio za mapą */
+        #map { 
+            width: 100%; 
+            height: 100%; 
+            background-color: var(--void-starfall); 
+            transition: background-color 0.8s ease;
+        }
 
         .zone-tooltip { background: transparent !important; border: none !important; box-shadow: none !important; }
 
         .avatar-badge-stack {
             display: flex;
             align-items: center;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.85);
             padding: 5px 12px;
             border-radius: 25px;
             border: 2px solid white;
+            backdrop-filter: blur(5px);
         }
 
         .badge-img {
-            width: 28px;
-            height: 28px;
+            width: 28px; height: 28px;
             border-radius: 50%;
             border: 1.5px solid white;
             margin-right: -10px;
@@ -259,12 +263,12 @@
 
         .badge-count { margin-left: 18px; font-weight: 800; font-size: 14px; color: white; }
 
-        .logout-link { margin-top: auto; text-align: center; font-size: 12px; color: var(--text-muted); text-decoration: none; }
+        .logout-link { margin-top: auto; text-align: center; font-size: 12px; color: var(--text-muted); text-decoration: none; opacity: 0.6; }
     </style>
 </head>
 <body>
 
-    <div class="bg-glow"></div>
+    <div id="dynamic-bg"></div>
     <div class="grid-pattern"></div>
 
     <aside id="sidebar">
@@ -310,8 +314,18 @@
         let currentUser = null, isDrawMode = false, firstPoint = null, allZones = [], currentActiveMap = 'starfall';
 
         const mapConfigs = {
-            'starfall': { url: 'https://cdn.discordapp.com/attachments/1444651629633601669/1460615666422780035/image.png?ex=6968e157&is=69678fd7&hm=04c005320bdbf44f2f472af0a569af82294e0e243339d73c24be287faa1b6e42&', bounds: [[0, 0], [500, 500]] },
-            'venture': { url: 'https://cdn.discordapp.com/attachments/1444651629633601669/1461368359835799623/image.png?ex=696a4cd7&is=6968fb57&hm=2189699ad6534e675e1efdeccf200eaa414485fe773d68c6fa2fc39994dac61c&', bounds: [[0, 0], [500, 500]] }
+            'starfall': { 
+                url: 'https://cdn.discordapp.com/attachments/1444651629633601669/1460615666422780035/image.png?ex=6968e157&is=69678fd7&hm=04c005320bdbf44f2f472af0a569af82294e0e243339d73c24be287faa1b6e42&', 
+                bounds: [[0, 0], [500, 500]],
+                pageBg: 'var(--bg-starfall)',
+                mapVoid: 'var(--void-starfall)'
+            },
+            'venture': { 
+                url: 'https://cdn.discordapp.com/attachments/1444651629633601669/1461368359835799623/image.png?ex=696a4cd7&is=6968fb57&hm=2189699ad6534e675e1efdeccf200eaa414485fe773d68c6fa2fc39994dac61c&', 
+                bounds: [[0, 0], [500, 500]],
+                pageBg: 'var(--bg-venture)',
+                mapVoid: 'var(--void-venture)'
+            }
         };
 
         const map = L.map('map', { crs: L.CRS.Simple, minZoom: -1, maxZoom: 2, zoomControl: false, attributionControl: false });
@@ -348,6 +362,12 @@
         function changeMap(mapId) {
             currentActiveMap = mapId;
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.id === `btn-${mapId}`));
+            
+            // Zmiana tła strony
+            document.getElementById('dynamic-bg').style.background = mapConfigs[mapId].pageBg;
+            // Zmiana tła pod mapą
+            document.getElementById('map').style.backgroundColor = mapConfigs[mapId].mapVoid;
+
             mapOverlay.setUrl(mapConfigs[mapId].url);
             renderAllZones();
         }
@@ -359,10 +379,10 @@
                 const count = zoneData.owners.length;
                 let col = count === 0 ? "#ffffff" : (count === 1 ? "#2ecc71" : "#ef4444");
 
-                const rect = L.rectangle([zoneData.p1, zoneData.p2], { color: col, weight: 2, fillOpacity: count > 0 ? 0.3 : 0.05 }).addTo(map);
+                const rect = L.rectangle([zoneData.p1, zoneData.p2], { color: col, weight: 2, fillOpacity: count > 0 ? 0.35 : 0.05 }).addTo(map);
 
                 if (count > 0) {
-                    const html = `<div class="avatar-badge-stack" style="border-color:${col}">${zoneData.owners.map(o => `<img src="${o.avatar}" class="badge-img">`).join('')}<span class="badge-count">${count}</span></div>`;
+                    const html = `<div class="avatar-badge-stack" style="border-color:${col}">${zoneData.owners.map(o => `<img src="${o.avatar}" class="badge-img" title="${o.name}">`).join('')}<span class="badge-count">${count}</span></div>`;
                     rect.bindTooltip(html, { permanent: true, direction: 'center', className: 'zone-tooltip' }).openTooltip();
                 }
 
@@ -374,7 +394,7 @@
 
                 rect.on('contextmenu', (e) => {
                     L.DomEvent.stopPropagation(e);
-                    if (currentUser?.isAdmin && confirm("Usunąć?")) {
+                    if (currentUser?.isAdmin && confirm("Usunąć strefę permanentnie?")) {
                         allZones = allZones.filter(z => z.id !== zoneData.id);
                         saveAndSync();
                     }
@@ -407,6 +427,7 @@
         function toggleDrawMode() {
             isDrawMode = !isDrawMode;
             document.getElementById('drawBtn').classList.toggle('active');
+            document.getElementById('drawBtn').innerHTML = isDrawMode ? '<i class="fa-solid fa-xmark"></i> ANULUJ RYSOWANIE' : '<i class="fa-solid fa-plus-circle"></i> DODAJ NOWĄ STREFĘ';
             firstPoint = null;
         }
 
