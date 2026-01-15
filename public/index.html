@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>FSBC - MAPA TAKTYCZNA</title>
+    <title>FSBC - SYSTEM TAKTYCZNY</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
@@ -11,7 +11,7 @@
             --accent: #ec4899;
             --glass-bg: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.1);
-            --bg-dark: #2b2d31; /* Twój ulubiony kolor tła */
+            --bg-dark: #2b2d31; 
             --text-main: #ffffff;
             --text-muted: #94a3b8;
         }
@@ -28,7 +28,7 @@
             overflow: hidden;
         }
 
-        /* GÓRNY PASEK STATYSTYK */
+        /* GÓRNY PASEK */
         .top-bar {
             height: 70px;
             background: rgba(3, 7, 18, 0.4);
@@ -63,7 +63,7 @@
             overflow: hidden;
         }
 
-        /* SIDEBAR Z LISTĄ I SCROLLEM */
+        /* SIDEBAR */
         #sidebar {
             width: 320px;
             background: rgba(3, 7, 18, 0.6);
@@ -75,28 +75,46 @@
             flex-shrink: 0;
         }
 
-        .sidebar-header {
+        /* PANEL ADMINA W SIDEBARZE */
+        .admin-panel {
             padding: 20px;
             border-bottom: 1px solid var(--glass-border);
+            display: none; /* Pokazywane tylko po zalogowaniu */
         }
-
-        .search-input {
-            width: 100%;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--glass-border);
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
             padding: 10px;
-            border-radius: 12px;
-            color: white;
-            font-size: 13px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
         }
+        .user-info img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--primary); }
+        .user-info h4 { font-size: 14px; }
+
+        .btn-action {
+            width: 100%;
+            padding: 10px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 11px;
+            transition: 0.3s;
+        }
+        .btn-action:hover { opacity: 0.8; transform: translateY(-2px); }
 
         #player-list {
             flex: 1;
-            overflow-y: auto; /* SCROLL WHEEL */
+            overflow-y: auto;
             padding: 15px;
         }
 
-        /* Styl scrollbara */
         #player-list::-webkit-scrollbar { width: 4px; }
         #player-list::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
 
@@ -108,10 +126,7 @@
             border-radius: 12px;
             margin-bottom: 5px;
             background: var(--glass-bg);
-            border: 1px solid transparent;
-            transition: 0.2s;
         }
-        .player-row:hover { border-color: var(--primary); background: rgba(99, 102, 241, 0.1); }
         .player-row img { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--primary); }
 
         /* MAPA */
@@ -123,14 +138,7 @@
             overflow: hidden;
         }
 
-        /* ETYKIETY AWATARÓW NA MAPIE */
         .leaflet-tooltip.zone-label { background: transparent; border: none; box-shadow: none; padding: 0; }
-        .map-tag {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-        }
         .map-avatar { 
             width: 34px; height: 34px; border-radius: 50%; 
             border: 2px solid white; box-shadow: 0 0 15px rgba(0,0,0,0.5);
@@ -140,22 +148,30 @@
 <body>
 
     <div class="top-bar">
-        <div style="font-weight: 800; font-size: 22px; background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">FSBC MAP</div>
+        <div style="font-weight: 800; font-size: 22px; background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">FSBC SYSTEM</div>
         <div class="stats-group">
             <div class="stat-box" style="border-left: 3px solid #2ecc71;">SESSION OPEN</div>
             <div class="stat-box" style="border-left: 3px solid var(--primary);">MARKED: <span id="marked-count">0</span> / 50</div>
-            <div class="stat-box" style="background: var(--primary); cursor: pointer;">LEADERBOARD</div>
+            <a href="/auth/discord" id="login-btn" class="stat-box" style="background: var(--primary); text-decoration: none; color: white;">ZALOGUJ DISCORD</a>
         </div>
     </div>
 
     <div class="main-container">
         <div id="sidebar">
-            <div class="sidebar-header">
-                <input type="text" class="search-input" placeholder="Szukaj gracza...">
-            </div>
-            <div style="padding: 10px 20px; font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase;">Gracze na mapie</div>
-            <div id="player-list">
+            <div class="admin-panel" id="admin-panel">
+                <div class="user-info">
+                    <img id="u-avatar" src="">
+                    <div>
+                        <h4 id="u-name">Admin</h4>
+                        <p style="font-size: 9px; color: var(--text-muted);">UPRAWNIENIA OPERATORA</p>
+                    </div>
                 </div>
+                <button class="btn-action" onclick="startAddingZone()">+ Dodaj nową strefę</button>
+                <a href="/logout" style="display: block; text-align: center; color: #ff4757; font-size: 10px; margin-top: 10px; text-decoration: none;">Wyloguj się</a>
+            </div>
+
+            <div style="padding: 15px 20px 5px; font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase;">Lista Graczy</div>
+            <div id="player-list"></div>
         </div>
 
         <div id="map"></div>
@@ -164,10 +180,29 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         let savedZones = [];
+        let isAddingZone = false;
+        let p1 = null;
+        let user = null;
+
         const map = L.map('map', { crs: L.CRS.Simple, minZoom: -0.5, maxZoom: 1, zoom: 0, zoomControl: false, attributionControl: false });
         const bounds = [[0, 0], [500, 500]];
         L.imageOverlay('https://cdn.discordapp.com/attachments/1444651629633601669/1460615666422780035/image.png?ex=6968e157&is=69678fd7&hm=04c005320bdbf44f2f472af0a569af82294e0e243339d73c24be287faa1b6e42&', bounds).addTo(map);
         map.fitBounds(bounds);
+
+        // --- FUNKCJE SYSTEMOWE ---
+
+        async function checkAuth() {
+            try {
+                const res = await fetch('/api/user');
+                if (res.ok) {
+                    user = await res.json();
+                    document.getElementById('login-btn').style.display = 'none';
+                    document.getElementById('admin-panel').style.display = 'block';
+                    document.getElementById('u-name').innerText = user.name;
+                    document.getElementById('u-avatar').src = user.avatar;
+                }
+            } catch (e) { console.log("Użytkownik niezalogowany"); }
+        }
 
         async function loadZones() {
             const res = await fetch('/api/zones');
@@ -175,48 +210,79 @@
             renderAll();
         }
 
+        function startAddingZone() {
+            isAddingZone = true;
+            p1 = null;
+            alert("TRYB EDYCJI: Kliknij pierwszy punkt na mapie.");
+        }
+
+        map.on('click', async (e) => {
+            if (!isAddingZone) return;
+
+            if (!p1) {
+                p1 = [e.latlng.lat, e.latlng.lng];
+                L.circleMarker(p1, { color: 'red' }).addTo(map);
+            } else {
+                const p2 = [e.latlng.lat, e.latlng.lng];
+                await fetch('/api/zones', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ p1, p2, owners: [] })
+                });
+                isAddingZone = false;
+                loadZones();
+            }
+        });
+
+        async function removeZone(id) {
+            if (confirm("Czy na pewno chcesz usunąć tę strefę?")) {
+                await fetch(`/api/zones/${id}`, { method: 'DELETE' });
+                loadZones();
+            }
+        }
+
         function renderAll() {
-            // Czyścimy mapę i listę
-            map.eachLayer(l => { if(l instanceof L.Rectangle || l instanceof L.Marker) map.removeLayer(l); });
+            map.eachLayer(l => { if(l instanceof L.Rectangle || l instanceof L.Marker || l instanceof L.CircleMarker) map.removeLayer(l); });
             const list = document.getElementById('player-list');
             list.innerHTML = '';
-            
             let total = 0;
 
             savedZones.forEach(zoneData => {
                 const owners = zoneData.owners || [];
                 total += owners.length;
 
-                // Logika kolorów: Czarny -> Zielony -> Czerwony
-                let color = "#000000";
-                if(owners.length === 1) color = "#2ecc71";
-                if(owners.length > 1) color = "#ff4757";
+                let color = (owners.length === 1) ? "#2ecc71" : (owners.length > 1 ? "#ff4757" : "#000000");
 
                 const rect = L.rectangle([zoneData.p1, zoneData.p2], { 
                     color: color, weight: 3, fillOpacity: owners.length > 0 ? 0.3 : 0.05 
                 }).addTo(map);
 
+                // Usuwanie PPM dla admina
+                rect.on('contextmenu', (e) => {
+                    L.DomEvent.stopPropagation(e);
+                    if (user) removeZone(zoneData.id);
+                });
+
                 owners.forEach(u => {
-                    // Dodaj do listy bocznej
                     const row = document.createElement('div');
                     row.className = 'player-row';
                     row.innerHTML = `<img src="${u.avatar}"> <span>${u.name}</span>`;
                     list.appendChild(row);
 
-                    // Dodaj awatar na mapę
                     L.marker(rect.getBounds().getCenter(), {
                         icon: L.divIcon({
                             className: 'zone-label',
-                            html: `<div class="map-tag"><img src="${u.avatar}" class="map-avatar"></div>`,
+                            html: `<img src="${u.avatar}" class="map-avatar">`,
                             iconSize: [34, 34]
                         })
                     }).addTo(map);
                 });
             });
-
             document.getElementById('marked-count').innerText = total;
         }
 
+        // START
+        checkAuth();
         loadZones();
     </script>
 </body>
