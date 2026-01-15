@@ -5,7 +5,7 @@ const path = require('path');
 const app = express();
 
 // --- KONFIGURACJA (ZMIEŃ TO!) ---
-const MONGO_URI = 'TWOJA_LINKA_Z_MONGODB_ATLAS'; 
+const MONGO_URI = 'mongodb+srv://hkacper43_db_user:Bimatech1907@cluster0.nsfmsqp.mongodb.net/?retryWrites=true&w=majority'; 
 
 app.use(bodyParser.json());
 
@@ -60,3 +60,4 @@ app.get('/api/user', (req, res) => {
 });
 
 app.listen(3000, () => console.log('🚀 Serwer: http://localhost:3000'));
+
