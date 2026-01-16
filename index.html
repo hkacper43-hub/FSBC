@@ -3,29 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FSBC | Competitive Esports Hub</title>
+    <title>FSBC LEAGUE 2026 | Official Hub</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
             --primary: #6366f1;
-            --primary-glow: rgba(99, 102, 241, 0.5);
-            --secondary: #a855f7;
+            --primary-glow: rgba(99, 102, 241, 0.4);
             --accent: #ec4899;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --glass-bg: rgba(255, 255, 255, 0.03);
+            --gold: #fbbf24;
+            --bg-dark: #030712;
+            --glass: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.08);
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --gold: #fbbf24;
-            --bg-dark: #030712;
-            --card-gradient: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%);
         }
 
-        /* RESET & BASE */
+        /* RESET & SCROLLBAR */
         * { box-sizing: border-box; margin: 0; padding: 0; scroll-behavior: smooth; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
         body {
             font-family: 'Poppins', sans-serif;
             background: var(--bg-dark);
@@ -34,41 +35,28 @@
             line-height: 1.6;
         }
 
-        /* --- TŁO I CZĄSTECZKI --- */
-        .bg-wrapper {
+        /* BACKGROUND ELEMENTS */
+        .bg-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            background: radial-gradient(circle at 50% -20%, #1e1b4b 0%, #030712 80%);
+        }
+
+        #particles {
             position: fixed;
             inset: 0;
             z-index: -1;
-            background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #030712 70%);
-            overflow: hidden;
+            pointer-events: none;
         }
 
-        .particles {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-        }
-
-        .particle {
-            position: absolute;
-            background: #fff;
-            border-radius: 50%;
-            opacity: 0.3;
-            animation: float-particle linear infinite;
-        }
-
-        @keyframes float-particle {
-            from { transform: translateY(0); }
-            to { transform: translateY(-100vh); }
-        }
-
-        /* --- POWIADOMIENIA --- */
-        .notification-bar {
-            background: linear-gradient(90deg, #1e1b4b, #ef4444, #1e1b4b);
+        /* NOTIFICATION BAR */
+        .announcement {
+            background: linear-gradient(90deg, #1e1b4b, var(--danger, #ef4444), #1e1b4b);
             background-size: 200% auto;
-            animation: gradient-flow 5s linear infinite;
-            color: #fff;
-            padding: 8px 20px;
+            animation: flow 5s linear infinite;
+            color: white;
+            padding: 10px;
             text-align: center;
             font-size: 11px;
             font-weight: 800;
@@ -76,23 +64,20 @@
             text-transform: uppercase;
             position: sticky;
             top: 0;
-            z-index: 1002;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            z-index: 2000;
         }
 
-        @keyframes gradient-flow {
-            to { background-position: 200% center; }
-        }
+        @keyframes flow { to { background-position: 200% center; } }
 
-        /* --- HEADER & NAV --- */
+        /* HEADER */
         header {
-            position: sticky;
-            top: 35px; /* Tuż pod notyfikacją */
-            z-index: 1000;
-            background: rgba(3, 7, 18, 0.7);
+            background: rgba(3, 7, 18, 0.8);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--glass-border);
-            padding: 15px 0;
+            padding: 20px 0;
+            position: sticky;
+            top: 37px;
+            z-index: 1000;
         }
 
         nav {
@@ -104,368 +89,261 @@
             padding: 0 40px;
         }
 
-        .nav-left { display: flex; align-items: center; gap: 40px; }
-        .logo { font-size: 30px; font-weight: 900; background: linear-gradient(90deg, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .logo { font-size: 32px; font-weight: 900; background: linear-gradient(to right, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        nav ul { display: flex; list-style: none; gap: 30px; }
+        nav ul a { text-decoration: none; color: var(--text-muted); font-size: 12px; font-weight: 700; text-transform: uppercase; transition: 0.3s; }
+        nav ul a:hover { color: white; text-shadow: 0 0 10px var(--primary); }
 
-        nav ul { list-style: none; display: flex; gap: 25px; }
-        nav ul li a { text-decoration: none; color: var(--text-muted); font-weight: 600; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; transition: 0.3s; }
-        nav ul li a:hover { color: #fff; text-shadow: 0 0 8px var(--primary); }
+        /* HERO SECTION */
+        .hero { text-align: center; padding: 140px 20px 100px; }
+        .hero h1 { font-size: clamp(60px, 15vw, 150px); font-weight: 900; line-height: 0.8; letter-spacing: -6px; margin-bottom: 30px; }
+        .hero p { max-width: 600px; margin: 0 auto 40px; color: var(--text-muted); font-size: 18px; }
 
-        .nav-right { display: flex; gap: 10px; }
-        .badge { padding: 6px 14px; border-radius: 8px; font-size: 10px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
-        .badge-open { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid #10b981; }
-        .badge-count { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--glass-border); }
-
-        /* --- HERO SECTION --- */
-        .hero { text-align: center; padding: 150px 20px 100px; position: relative; }
-        .hero h1 { font-size: clamp(60px, 18vw, 160px); font-weight: 900; line-height: 0.8; margin-bottom: 20px; letter-spacing: -8px; background: linear-gradient(to bottom, #fff, #475569); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .hero p { font-size: 18px; color: var(--text-muted); max-width: 700px; margin: 0 auto 50px; }
-
-        .countdown-box {
+        .timer-box {
             display: inline-flex;
             gap: 20px;
-            padding: 30px 60px;
-            background: var(--card-gradient);
-            border: 1px solid var(--glass-border);
+            background: var(--glass);
+            padding: 35px 50px;
             border-radius: 40px;
-            backdrop-filter: blur(15px);
-            box-shadow: 0 30px 60px -12px rgba(0,0,0,0.5);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
         }
-        .time-unit { display: flex; flex-direction: column; }
-        .time-val { font-size: 42px; font-weight: 900; color: var(--primary); }
-        .time-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
+        .t-unit { display: flex; flex-direction: column; min-width: 70px; }
+        .t-val { font-size: 40px; font-weight: 900; color: var(--primary); }
+        .t-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); }
 
-        /* --- SEKCJE --- */
-        section { max-width: 1400px; margin: 0 auto; padding: 100px 40px; opacity: 0; transform: translateY(50px); transition: 1.2s cubic-bezier(0.22, 1, 0.36, 1); }
-        section.visible { opacity: 1; transform: translateY(0); }
-        h2 { font-size: 56px; font-weight: 900; margin-bottom: 60px; letter-spacing: -3px; }
-        .highlight { color: var(--primary); }
+        /* SECTIONS */
+        section { max-width: 1400px; margin: 0 auto; padding: 80px 40px; }
+        .section-title { font-size: 48px; font-weight: 900; margin-bottom: 50px; letter-spacing: -2px; }
+        .section-title span { color: var(--primary); }
 
-        /* --- DROP MAPS --- */
-        .map-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
-        .main-map { position: relative; border-radius: 30px; overflow: hidden; border: 1px solid var(--glass-border); aspect-ratio: 16/9; background: #000; }
-        .main-map img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; transition: 0.5s; }
-        .main-map:hover img { opacity: 1; transform: scale(1.02); }
-        
-        .map-point {
+        /* DROP MAP SYSTEM */
+        .map-container {
+            position: relative;
+            border-radius: 40px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            background: #000;
+            aspect-ratio: 16/9;
+        }
+        .map-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; transition: 0.5s; }
+        .map-container:hover .map-img { opacity: 0.9; transform: scale(1.01); }
+
+        .pin {
             position: absolute;
-            width: 40px; height: 40px;
+            width: 20px; height: 20px;
             background: var(--primary);
-            border: 3px solid #fff;
+            border: 4px solid #fff;
             border-radius: 50%;
             transform: translate(-50%, -50%);
             cursor: pointer;
             box-shadow: 0 0 20px var(--primary);
-            animation: pulse-marker 2s infinite;
+            animation: pulse-pin 2s infinite;
         }
+        @keyframes pulse-pin { 0% { box-shadow: 0 0 0 0 rgba(99,102,241,0.7); } 70% { box-shadow: 0 0 0 15px rgba(99,102,241,0); } 100% { box-shadow: 0 0 0 0 rgba(99,102,241,0); } }
 
-        @keyframes pulse-marker {
-            0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(99, 102, 241, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
-        }
-
-        /* --- CARDS & GRIDS --- */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
-        .card {
-            background: var(--glass-bg);
+        /* PLAYER CARDS */
+        .player-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        .p-card {
+            background: var(--glass);
             border: 1px solid var(--glass-border);
             border-radius: 35px;
-            padding: 40px;
-            position: relative;
-            overflow: hidden;
-            transition: 0.4s;
+            padding: 35px;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .card:hover { transform: translateY(-10px); background: rgba(255,255,255,0.06); border-color: var(--primary); }
-        .card i { font-size: 40px; margin-bottom: 25px; color: var(--primary); }
+        .p-card:hover { transform: translateY(-12px); border-color: var(--primary); background: rgba(255,255,255,0.05); }
 
-        /* --- LEADERBOARD --- */
-        .table-container { background: var(--glass-bg); border-radius: 40px; padding: 20px; border: 1px solid var(--glass-border); overflow: hidden; }
-        table { width: 100%; border-collapse: collapse; }
-        th { padding: 25px; text-align: left; color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid var(--glass-border); }
-        td { padding: 25px; border-bottom: 1px solid rgba(255,255,255,0.02); font-weight: 600; }
+        .p-rank { font-size: 12px; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 10px; }
+        .p-name { font-size: 26px; font-weight: 800; margin-bottom: 20px; }
         
-        .rank-circle { width: 40px; height: 40px; background: rgba(255,255,255,0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; border: 1px solid var(--glass-border); }
-        tr:nth-child(1) .rank-circle { background: var(--gold); color: #000; box-shadow: 0 0 20px rgba(251, 191, 36, 0.3); }
+        .p-stats { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; }
+        .p-bar-bg { height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; margin-bottom: 15px; }
+        .p-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); }
 
-        /* --- FOOTER --- */
-        footer { padding: 120px 40px; text-align: center; border-top: 1px solid var(--glass-border); margin-top: 100px; }
-        .social-links { display: flex; justify-content: center; gap: 30px; margin-bottom: 40px; }
-        .social-links a { color: var(--text-muted); font-size: 24px; transition: 0.3s; }
-        .social-links a:hover { color: #fff; transform: scale(1.2); }
+        /* RANKING TABLE */
+        .table-wrapper { background: var(--glass); border-radius: 35px; border: 1px solid var(--glass-border); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        th { padding: 25px; text-align: left; font-size: 11px; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid var(--glass-border); }
+        td { padding: 25px; border-bottom: 1px solid rgba(255,255,255,0.02); font-weight: 600; }
+        tr:hover { background: rgba(255,255,255,0.01); }
+        .gold-txt { color: var(--gold); }
+
+        /* FOOTER */
+        footer { padding: 100px 40px; text-align: center; border-top: 1px solid var(--glass-border); margin-top: 100px; }
+        .socials { display: flex; justify-content: center; gap: 25px; margin-bottom: 30px; }
+        .socials a { color: var(--text-muted); font-size: 24px; transition: 0.3s; }
+        .socials a:hover { color: #fff; transform: translateY(-5px); }
 
     </style>
 </head>
 <body>
 
-<div class="notification-bar">
-    <i class="fas fa-bullhorn"></i> &nbsp; WAŻNE: POGOŃ MA 0 TITULI &nbsp; | &nbsp; ZAPISY NA SEZON #2 OTWARTE
-</div>
+    <div class="announcement">
+        <i class="fas fa-crown"></i> &nbsp; WAŻNE: POGOŃ MA 0 TITULI &nbsp; | &nbsp; SEZON #2 NADCHODZI
+    </div>
 
-<div class="bg-wrapper">
-    <div id="particle-container" class="particles"></div>
-</div>
+    <div class="bg-overlay"></div>
+    <canvas id="particles"></canvas>
 
-<header>
-    <nav>
-        <div class="nav-left">
-            <div class="logo">FSBC<span style="color:var(--accent)">.</span></div>
+    <header>
+        <nav>
+            <div class="logo">FSBC</div>
             <ul>
-                <li><a href="#hero">Start</a></li>
-                <li><a href="#dropmaps">Dropmaps</a></li>
-                <li><a href="#ranking">Ranking</a></li>
-                <li><a href="#rules">Zasady</a></li>
-                <li><a href="#resources">Zasoby</a></li>
+                <li><a href="#hero">Główna</a></li>
+                <li><a href="#map">Drop Map</a></li>
+                <li><a href="#players">Gracze</a></li>
+                <li><a href="#ranking">Tabela</a></li>
             </ul>
-        </div>
-        <div class="nav-right">
-            <div class="badge badge-open"><i class="fas fa-door-open"></i> Duo Session Open</div>
-            <div class="badge badge-count"><i class="fas fa-users"></i> 20/20</div>
-        </div>
-    </nav>
-</header>
+        </nav>
+    </header>
 
-<section id="hero" class="hero">
-    <p style="text-transform: uppercase; letter-spacing: 6px; font-weight: 800; color: var(--primary); margin-bottom: 20px;">The Next Generation of Competitive</p>
-    <h1>FSBC<br>LEAGUE</h1>
-    <p>Oficjalna platforma rozgrywek FSBC. Walcz o punkty, dominuj na mapie i zapisz się w Hall of Fame roku 2026.</p>
-    
-    <div class="countdown-box">
-        <div class="time-unit">
-            <span id="days" class="time-val">00</span>
-            <span class="time-label">Dni</span>
-        </div>
-        <div class="time-unit">
-            <span id="hours" class="time-val">00</span>
-            <span class="time-label">Godz</span>
-        </div>
-        <div class="time-unit">
-            <span id="minutes" class="time-val">00</span>
-            <span class="time-label">Min</span>
-        </div>
-        <div class="time-unit">
-            <span id="seconds" class="time-val">00</span>
-            <span class="time-label">Sek</span>
-        </div>
-    </div>
-</section>
-
-<section id="hof">
-    <div class="card" style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, transparent 100%); border-color: rgba(251,191,36,0.3);">
-        <div style="display: flex; align-items: center; gap: 40px;">
-            <div style="font-size: 80px;">👑</div>
-            <div>
-                <span style="color: var(--gold); font-weight: 800; letter-spacing: 3px; text-transform: uppercase; font-size: 12px;">Aktualny Mistrz</span>
-                <h2 style="font-size: 48px; margin: 5px 0 15px 0;">szimicarson6</h2>
-                <p style="color: var(--text-muted);">Zdominował turniej FSBC Solo #1 zdobywając rekordowe 194 PKT.</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section id="dropmaps">
-    <h2>Drop <span class="highlight">Maps</span></h2>
-    <div class="map-grid">
-        <div class="main-map">
-            <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Map Preview">
-            <div class="map-point" style="top: 30%; left: 45%;" title="Starfall"></div>
-            <div class="map-point" style="top: 60%; left: 20%;" title="Venture"></div>
-            <div class="map-point" style="top: 75%; left: 70%;" title="Outpost"></div>
-        </div>
-        <div class="grid" style="grid-template-columns: 1fr; gap: 15px;">
-            <div class="card" style="padding: 25px;">
-                <h4 style="color: var(--primary);">Ostatnie lądowanie</h4>
-                <p style="font-size: 13px; color: var(--text-muted); margin-top: 5px;">Mrc3l44: Lądowanie w sektorze C4 (Starfall).</p>
-            </div>
-            <div class="card" style="padding: 25px;">
-                <h4 style="color: var(--accent);">Zajęte strefy</h4>
-                <p style="font-size: 13px; color: var(--text-muted); margin-top: 5px;">4/10 sektorów kluczowych jest obecnie pod kontestem.</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section id="players">
-    <h2>Top <span class="highlight">Zawodnicy</span></h2>
-    <div class="grid" id="playerGrid"></div>
-</section>
-
-<section id="ranking">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px;">
-        <h2>Klasyfikacja <span class="highlight">Ogólna</span></h2>
-        <a href="#" class="badge badge-count" style="text-decoration:none; padding:12px 25px;">Pobierz pełne statystyki .CSV</a>
-    </div>
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Gracz</th>
-                    <th>Gry</th>
-                    <th>Wins</th>
-                    <th>Eliminacje</th>
-                    <th style="text-align:right">Punkty</th>
-                </tr>
-            </thead>
-            <tbody id="tb"></tbody>
-        </table>
-    </div>
-</section>
-
-<section id="rules">
-    <h2>Zasady <span class="highlight">Gry</span></h2>
-    <div class="grid">
-        <div class="card">
-            <i class="fas fa-shield-alt"></i>
-            <h3>No Early Looting</h3>
-            <p style="color: var(--text-muted); margin-top: 15px;">Nie można lootować enemy spota do <strong>3 zone</strong>. Kara: -20 PKT.</p>
-        </div>
-        <div class="card">
-            <i class="fas fa-crosshairs"></i>
-            <h3>Contest Zones</h3>
-            <p style="color: var(--text-muted); margin-top: 15px;">W 1 zone mogą się fightować tylko osoby, które mają <strong>potwierdzony contest</strong>.</p>
-        </div>
-        <div class="card">
-            <i class="fas fa-microphone"></i>
-            <h3>Live Comms</h3>
-            <p style="color: var(--text-muted); margin-top: 15px;">Obowiązek przebywania na oficjalnym callu turniejowym przez cały czas trwania sesji.</p>
-        </div>
-    </div>
-</section>
-
-<section id="resources">
-    <h2>Resources <span class="highlight">& Stats</span></h2>
-    <div class="grid">
-        <div class="card" style="text-align: center;">
-            <i class="fas fa-chart-line" style="color: var(--accent);"></i>
-            <h3>Leaderboard API</h3>
-            <p style="margin: 15px 0; font-size: 14px; color: var(--text-muted);">Pobierz dane o graczach w czasie rzeczywistym do swoich nakładek OBS.</p>
-            <button class="badge badge-open" style="cursor:pointer; width:100%; justify-content:center;">Połącz Discord</button>
-        </div>
-        <div class="card" style="text-align: center;">
-            <i class="fas fa-map-marked-alt" style="color: var(--secondary);"></i>
-            <h3>High-Res Map</h3>
-            <p style="margin: 15px 0; font-size: 14px; color: var(--text-muted);">Najnowsza wersja mapy sezonowej w rozdzielczości 4K (PNG).</p>
-            <button class="badge badge-count" style="cursor:pointer; width:100%; justify-content:center;">Pobierz Mapę</button>
-        </div>
-        <div class="card" style="text-align: center;">
-            <i class="fas fa-file-contract"></i>
-            <h3>Full Rulebook</h3>
-            <p style="margin: 15px 0; font-size: 14px; color: var(--text-muted);">Szczegółowy regulamin techniczny i zasady zachowania fair-play.</p>
-            <button class="badge badge-count" style="cursor:pointer; width:100%; justify-content:center;">Czytaj PDF</button>
-        </div>
-    </div>
-</section>
-
-<footer>
-    <div class="social-links">
-        <a href="#"><i class="fab fa-discord"></i></a>
-        <a href="#"><i class="fab fa-twitter"></i></a>
-        <a href="#"><i class="fab fa-youtube"></i></a>
-        <a href="#"><i class="fab fa-instagram"></i></a>
-    </div>
-    <div class="logo" style="font-size: 24px; margin-bottom: 20px;">FSBC<span style="color:var(--accent)">.</span></div>
-    <p style="color: var(--text-muted); font-size: 11px; letter-spacing: 3px; text-transform: uppercase;">&copy; 2026 FSBC Official Competitive League. Designed for the Best.</p>
-</footer>
-
-<script>
-    // --- DANE GRACZY ---
-    const players = [
-        {name:'szimicarson6', games:15, elims:26, wins:7, points:194, tournaments: 1},
-        {name:'ciolas', games:13, elims:23, wins:5, points:170, tournaments: 1},
-        {name:'stecufn1', games:15, elims:20, wins:1, points:148, tournaments: 1},
-        {name:'grzyb', games:15, elims:8, wins:2, points:116, tournaments: 1},
-        {name:'marpl', games:12, elims:12, wins:0, points:112, tournaments: 1},
-        {name:'blizio', games:15, elims:9, wins:0, points:80, tournaments: 1},
-        {name:'wolik', games:0, elims:0, wins:0, points:0, tournaments: 1}
-    ].sort((a,b) => b.points - a.points);
-
-    // --- CZĄSTECZKI TŁA ---
-    function createParticles() {
-        const container = document.getElementById('particle-container');
-        for (let i = 0; i < 50; i++) {
-            const p = document.createElement('div');
-            p.className = 'particle';
-            const size = Math.random() * 3 + 1 + 'px';
-            p.style.width = size;
-            p.style.height = size;
-            p.style.left = Math.random() * 100 + 'vw';
-            p.style.top = Math.random() * 100 + 'vh';
-            p.style.animationDuration = Math.random() * 10 + 10 + 's';
-            p.style.animationDelay = Math.random() * 5 + 's';
-            container.appendChild(p);
-        }
-    }
-    createParticles();
-
-    // --- RENDER KART GRACZY ---
-    const grid = document.getElementById('playerGrid');
-    players.slice(0, 6).forEach((p, i) => {
-        const winRate = p.games > 0 ? ((p.wins / p.games) * 100).toFixed(0) : 0;
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
-                <div class="rank-circle">${i+1}</div>
-                <div style="text-align:right">
-                    <div style="font-size:10px; color:var(--text-muted); text-transform:uppercase;">Punkty</div>
-                    <div style="font-size:20px; font-weight:900; color:var(--primary)">${p.points}</div>
-                </div>
-            </div>
-            <h3 style="font-size:24px; margin-bottom:20px;">${p.name}</h3>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; font-size:12px; color:var(--text-muted);">
-                <div>K/D: <strong style="color:#fff">${p.games > 0 ? (p.elims/p.games).toFixed(2) : 0}</strong></div>
-                <div>WinRate: <strong style="color:#fff">${winRate}%</strong></div>
-            </div>
-            <div style="height:4px; width:100%; background:rgba(255,255,255,0.05); border-radius:10px; margin-top:20px; overflow:hidden;">
-                <div style="height:100%; width:${winRate}%; background:var(--primary);"></div>
-            </div>
-        `;
-        grid.appendChild(card);
-    });
-
-    // --- RENDER TABELI ---
-    const tbody = document.getElementById('tb');
-    players.forEach((p, i) => {
-        tbody.innerHTML += `
-            <tr>
-                <td><div class="rank-circle">${i+1}</div></td>
-                <td><span style="font-size:16px;">${p.name}</span></td>
-                <td>${p.games}</td>
-                <td style="color:var(--gold)">${p.wins}</td>
-                <td>${p.elims}</td>
-                <td style="text-align:right; font-size:18px; color:var(--primary); font-weight:900;">${p.points}</td>
-            </tr>
-        `;
-    });
-
-    // --- ODLICZANIE ---
-    const targetDate = new Date('January 20, 2026 18:00:00').getTime();
-    function updateCountdown() {
-        const now = new Date().getTime();
-        const dist = targetDate - now;
+    <section id="hero" class="hero">
+        <p style="text-transform: uppercase; letter-spacing: 5px; font-weight: 700; color: var(--primary); margin-bottom: 15px;">Official Competitive Hub</p>
+        <h1>FSBC<br><span style="color:var(--primary)">LEAGUE</span></h1>
+        <p>Miejsce, gdzie rodzą się legendy. Sprawdź statystyki, zaplanuj drop i zdominuj lobby.</p>
         
-        const d = Math.floor(dist / (1000 * 60 * 60 * 24));
-        const h = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const m = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60));
-        const s = Math.floor((dist % (1000 * 60)) / 1000);
+        <div class="timer-box">
+            <div class="t-unit"><span id="d" class="t-val">00</span><span class="t-lbl">Dni</span></div>
+            <div class="t-unit"><span id="h" class="t-val">00</span><span class="t-lbl">Godz</span></div>
+            <div class="t-unit"><span id="m" class="t-val">00</span><span class="t-lbl">Min</span></div>
+            <div class="t-unit"><span id="s" class="t-val">00</span><span class="t-lbl">Sek</span></div>
+        </div>
+    </section>
 
-        document.getElementById('days').innerText = d.toString().padStart(2, '0');
-        document.getElementById('hours').innerText = h.toString().padStart(2, '0');
-        document.getElementById('minutes').innerText = m.toString().padStart(2, '0');
-        document.getElementById('seconds').innerText = s.toString().padStart(2, '0');
-    }
-    setInterval(updateCountdown, 1000);
-    updateCountdown();
+    <section id="map">
+        <h2 class="section-title">Drop <span>Map</span></h2>
+        <div class="map-container">
+            <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070" alt="Map" class="map-img">
+            
+            <div class="pin" style="top: 30%; left: 45%;" title="Strefa Alfa"></div>
+            <div class="pin" style="top: 65%; left: 20%;" title="Strefa Beta"></div>
+            <div class="pin" style="top: 50%; left: 75%;" title="Strefa Gamma"></div>
+        </div>
+    </section>
 
-    // --- OBSERVER SEKCIJI ---
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if(entry.isIntersecting) entry.target.classList.add('visible');
+    <section id="players">
+        <h2 class="section-title">Elita <span>Graczy</span></h2>
+        <div class="player-grid" id="pGrid"></div>
+    </section>
+
+    <section id="ranking">
+        <h2 class="section-title">Ranking <span>Sezonowy</span></h2>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Miejsce</th>
+                        <th>Gracz</th>
+                        <th>Mecze</th>
+                        <th>Zwycięstwa</th>
+                        <th>Eliminacje</th>
+                        <th style="text-align:right">Punkty</th>
+                    </tr>
+                </thead>
+                <tbody id="tbBody"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <footer>
+        <div class="socials">
+            <a href="#"><i class="fab fa-discord"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+        <div class="logo" style="font-size: 24px; margin-bottom: 10px;">FSBC</div>
+        <p style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted);">
+            &copy; 2026 FSBC Entertainment. Wszelkie prawa zastrzeżone.
+        </p>
+    </footer>
+
+    <script>
+        // DANE Z TWOJEJ LISTY
+        const players = [
+            {name:'szimicarson6', games:15, elims:26, wins:7, points:194},
+            {name:'ciolas', games:13, elims:23, wins:5, points:170},
+            {name:'stecufn1', games:15, elims:20, wins:1, points:148},
+            {name:'grzyb', games:15, elims:8, wins:2, points:116},
+            {name:'marpl', games:12, elims:12, wins:0, points:112},
+            {name:'blizio', games:15, elims:9, wins:0, points:80},
+            {name:'wolik', games:0, elims:0, wins:0, points:0}
+        ].sort((a,b) => b.points - a.points);
+
+        // RENDER KART
+        const pGrid = document.getElementById('pGrid');
+        players.slice(0, 6).forEach((p, i) => {
+            const wr = p.games > 0 ? ((p.wins/p.games)*100).toFixed(0) : 0;
+            pGrid.innerHTML += `
+                <div class="p-card">
+                    <div class="p-rank">Tier: ${i < 3 ? 'Elite' : 'Challenger'}</div>
+                    <div class="p-name">${p.name}</div>
+                    <div class="p-stats"><span>Win Rate</span><span>${wr}%</span></div>
+                    <div class="p-bar-bg"><div class="p-bar-fill" style="width:${wr}%"></div></div>
+                    <div style="display:flex; justify-content:space-between; font-size:12px; opacity:0.7;">
+                        <span>K/D: ${(p.games > 0 ? p.elims/p.games : 0).toFixed(2)}</span>
+                        <span>PKT: ${p.points}</span>
+                    </div>
+                </div>
+            `;
         });
-    }, { threshold: 0.1 });
-    document.querySelectorAll('section').forEach(sec => observer.observe(sec));
-</script>
 
+        // RENDER TABELI
+        const tb = document.getElementById('tbBody');
+        players.forEach((p, i) => {
+            tb.innerHTML += `
+                <tr>
+                    <td><span class="${i===0?'gold-txt':''}">${i+1}</span></td>
+                    <td class="${i===0?'gold-txt':''}">${p.name}</td>
+                    <td>${p.games}</td>
+                    <td>${p.wins}</td>
+                    <td>${p.elims}</td>
+                    <td style="text-align:right; color:var(--primary); font-weight:900;">${p.points}</td>
+                </tr>
+            `;
+        });
+
+        // LICZNIK
+        const end = new Date('January 20, 2026 18:00:00').getTime();
+        function updateTimer() {
+            const now = new Date().getTime();
+            const d = end - now;
+            document.getElementById('d').innerText = Math.floor(d/(1000*60*60*24)).toString().padStart(2,'0');
+            document.getElementById('h').innerText = Math.floor((d%(1000*60*60*24))/(1000*60*60)).toString().padStart(2,'0');
+            document.getElementById('m').innerText = Math.floor((d%(1000*60*60))/(1000*60)).toString().padStart(2,'0');
+            document.getElementById('s').innerText = Math.floor((d%(1000*60))/1000).toString().padStart(2,'0');
+        }
+        setInterval(updateTimer, 1000);
+
+        // PROSTE CZĄSTECZKI W TLE
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        let dots = [];
+        function initCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            dots = [];
+            for(let i=0; i<80; i++) dots.push({
+                x: Math.random()*canvas.width,
+                y: Math.random()*canvas.height,
+                v: Math.random()*0.5 + 0.2,
+                s: Math.random()*2
+            });
+        }
+        function draw() {
+            ctx.clearRect(0,0,canvas.width, canvas.height);
+            ctx.fillStyle = "rgba(99, 102, 241, 0.2)";
+            dots.forEach(d => {
+                ctx.beginPath();
+                ctx.arc(d.x, d.y, d.s, 0, Math.PI*2);
+                ctx.fill();
+                d.y -= d.v;
+                if(d.y < 0) d.y = canvas.height;
+            });
+            requestAnimationFrame(draw);
+        }
+        window.addEventListener('resize', initCanvas);
+        initCanvas();
+        draw();
+    </script>
 </body>
 </html>
