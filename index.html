@@ -23,10 +23,10 @@
             --text-muted: #94a3b8;
             --success: #2ecc71;
             --danger: #ef4444;
-            --starfall-gradient: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #030712 100%);
+            --empty-zone: #000000; /* CZARNY DLA PUSTYCH STREF */
         }
 
-        /* RESET I SCROLLOWANIE */
+        /* PODSTAWOWY RESET */
         * { 
             margin: 0; 
             padding: 0; 
@@ -40,16 +40,16 @@
             background-color: var(--bg-dark); 
             color: var(--text-main); 
             min-height: 100vh;
-            overflow-y: auto; /* Kluczowe: pozwala przewijać stronę w dół */
+            overflow-y: auto;
             overflow-x: hidden;
             padding-bottom: 80px;
         }
 
-        /* PEŁNE TŁO I ANIMACJE */
+        /* DYNAMICZNE TŁO */
         #dynamic-bg { 
             position: fixed; 
             inset: 0; 
-            background: var(--starfall-gradient); 
+            background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #030712 100%); 
             z-index: -2; 
             transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1); 
         }
@@ -63,17 +63,16 @@
             background-size: 45px 45px; 
             z-index: -1; 
             opacity: 0.12; 
-            pointer-events: none;
         }
 
-        /* 1. TOP HEADER (TO CO DODAŁEM TERAZ) */
+        /* 1. TOP HEADER (Tournaments / Stats) */
         .site-header {
             width: 100%;
             max-width: 1600px;
             margin: 0 auto;
             padding: 25px 40px 10px 40px;
             display: flex;
-            justify-content: center; /* Centralnie napisy */
+            justify-content: center;
             align-items: center;
             gap: 50px;
         }
@@ -109,7 +108,7 @@
             width: 100%;
         }
 
-        /* 2. TOP NAVBAR (PASEK Z MAPAMI) */
+        /* 2. TOP NAVBAR (MAPY) */
         .top-navbar { 
             width: 95%; 
             max-width: 1600px; 
@@ -191,22 +190,17 @@
             gap: 10px;
         }
 
-        .leaderboard-btn:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 15px 35px rgba(168, 85, 247, 0.5);
-        }
-
-        /* 3. GŁÓWNY UKŁAD (SIDEBAR + MAPA) */
-        .main-content {
+        /* 3. MAIN LAYOUT - RÓWNA WYSOKOŚĆ */
+        .main-container {
             display: flex;
             width: 95%;
             max-width: 1600px;
             margin: 0 auto;
             gap: 28px;
-            align-items: flex-start;
+            align-items: stretch; /* Kluczowe: Sidebar i Mapa mają tę samą wysokość */
         }
 
-        /* SIDEBAR PEŁNY */
+        /* SIDEBAR */
         #sidebar { 
             width: 400px; 
             min-width: 400px; 
@@ -219,10 +213,9 @@
             flex-direction: column; 
             gap: 30px; 
             box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-            height: auto;
         }
 
-        .profile-section {
+        .profile-card {
             background: var(--glass);
             border: 1px solid var(--glass-border);
             border-radius: 25px;
@@ -230,15 +223,9 @@
             display: flex;
             align-items: center;
             gap: 20px;
-            transition: all 0.3s ease;
         }
 
-        .profile-section:hover {
-            background: rgba(255,255,255,0.06);
-            border-color: var(--primary);
-        }
-
-        .profile-section img {
+        .profile-card img {
             width: 65px;
             height: 65px;
             border-radius: 50%;
@@ -246,36 +233,36 @@
             box-shadow: 0 0 20px var(--primary-glow);
         }
 
-        .user-info b { font-size: 18px; color: white; display: block; margin-bottom: 2px; }
-        .user-info span { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+        .user-meta b { font-size: 18px; color: white; display: block; }
+        .user-meta span { font-size: 13px; color: var(--text-muted); }
 
-        /* LISTA GRACZY JAK NA SCREENIE */
-        .player-list-header {
+        .player-list-section {
+            flex-grow: 1; /* Wypełnia przestrzeń */
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding: 0 10px;
+            flex-direction: column;
+            overflow: hidden;
         }
 
-        .player-list-header h3 {
+        .list-title {
             font-size: 12px;
             font-weight: 800;
             color: var(--text-muted);
             letter-spacing: 1.5px;
             text-transform: uppercase;
+            margin-bottom: 20px;
+            padding-left: 5px;
         }
 
-        .player-list-container {
+        .player-scroll-area {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-right: 10px;
             display: flex;
             flex-direction: column;
             gap: 12px;
-            max-height: 500px;
-            overflow-y: auto;
-            padding-right: 10px;
         }
 
-        .player-card {
+        .player-entry {
             display: flex;
             align-items: center;
             gap: 15px;
@@ -283,28 +270,26 @@
             background: rgba(255,255,255,0.03);
             border-radius: 18px;
             border: 1px solid transparent;
-            transition: all 0.2s ease;
+            transition: 0.3s ease;
         }
 
-        .player-card:hover {
+        .player-entry:hover {
             background: rgba(255,255,255,0.07);
-            border-color: var(--glass-border);
             transform: translateX(5px);
         }
 
-        .player-card img { width: 38px; height: 38px; border-radius: 50%; }
-        .player-card span { font-weight: 600; font-size: 14px; }
+        .player-entry img { width: 38px; height: 38px; border-radius: 50%; }
 
-        /* MAPA W RAMCE (OUTLINE) */
+        /* MAP FRAME */
         .map-frame {
             flex-grow: 1;
             background: var(--card-bg);
             backdrop-filter: blur(30px);
             border: 1px solid var(--glass-border);
             border-radius: 35px;
-            padding: 20px; /* To tworzy ramkę wokół mapy */
+            padding: 20px;
             box-shadow: 0 40px 80px rgba(0,0,0,0.6);
-            height: 850px;
+            height: 850px; /* Wysokość bazowa, do której dociąga Sidebar */
             position: relative;
         }
 
@@ -313,11 +298,10 @@
             height: 100%; 
             border-radius: 22px; 
             background: #0b1424; 
-            z-index: 1;
         }
 
-        /* TOOLTIPY I AVATARY NA MAPIE */
-        .map-avatar-stack {
+        /* MAP STYLING & AVATARS */
+        .avatar-cluster {
             display: flex;
             align-items: center;
             background: rgba(3, 7, 18, 0.9);
@@ -325,38 +309,26 @@
             border-radius: 35px;
             border: 2px solid #ffffff;
             backdrop-filter: blur(10px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
 
-        .stack-img {
+        .cluster-img {
             width: 34px;
             height: 34px;
             border-radius: 50%;
             border: 2px solid white;
             margin-right: -14px;
-            transition: transform 0.2s ease;
+            transition: 0.2s;
         }
 
-        .stack-img:hover {
-            transform: scale(1.2) translateY(-5px);
-            z-index: 10;
-        }
-
-        .stack-count {
+        .cluster-count {
             margin-left: 24px;
             font-weight: 800;
             font-size: 16px;
             color: #ffffff;
         }
 
-        .leaflet-tooltip-pane .zone-tooltip {
-            background: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
-        }
-
-        /* PRZYCISKI ADMINA */
-        .admin-btn {
+        /* ADMIN TOOLS */
+        .btn-draw {
             width: 100%;
             padding: 18px;
             border-radius: 20px;
@@ -364,47 +336,39 @@
             background: transparent;
             color: white;
             font-weight: 800;
-            font-size: 14px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 12px;
+            margin-bottom: 10px;
         }
 
-        .admin-btn:hover {
-            background: rgba(99, 102, 241, 0.1);
-            border-style: solid;
-        }
-
-        .admin-btn.active {
+        .btn-draw.active {
             background: var(--danger);
             border-color: var(--danger);
             border-style: solid;
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
         }
 
-        .logout-btn {
-            margin-top: auto;
+        .logout-link {
             text-align: center;
             font-size: 12px;
             color: var(--text-muted);
             text-decoration: none;
             font-weight: 600;
-            opacity: 0.6;
+            opacity: 0.5;
+            padding-top: 15px;
             transition: 0.3s;
-            padding: 10px;
         }
+        .logout-link:hover { opacity: 1; color: var(--danger); }
 
-        .logout-btn:hover { opacity: 1; color: var(--danger); }
-
-        /* CUSTOM SCROLLBAR */
-        ::-webkit-scrollbar { width: 8px; }
+        /* SCROLLBARS */
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
+        .zone-tooltip { background: transparent !important; border: none !important; box-shadow: none !important; }
     </style>
 </head>
 <body>
@@ -419,8 +383,8 @@
 
     <nav class="top-navbar">
         <div class="map-selector">
-            <button class="nav-btn active" id="btn-starfall" onclick="changeMap('starfall')">Starfall</button>
-            <button class="nav-btn" id="btn-venture" onclick="changeMap('venture')">Venture</button>
+            <button class="nav-btn active" id="btn-starfall" onclick="handleMapChange('starfall')">Starfall</button>
+            <button class="nav-btn" id="btn-venture" onclick="handleMapChange('venture')">Venture</button>
         </div>
 
         <div class="navbar-right">
@@ -428,45 +392,43 @@
                 <i class="fa-solid fa-users" style="color: var(--primary);"></i>
                 AKTYWNI: <span id="count-total">0</span>
             </div>
-            <a href="https://yunite.xyz/leaderboard/f406ce8e-205b-49ae-ae9d-076ea8c66aee" target="_blank" class="leaderboard-btn">
+            <a href="#" target="_blank" class="leaderboard-btn">
                 <i class="fa-solid fa-trophy"></i> LEADERBOARD
             </a>
         </div>
     </nav>
 
-    <div class="main-content">
+    <div class="main-container">
         <aside id="sidebar">
-            <div id="auth-box">
-                <a href="/auth/discord" style="text-decoration:none; background:#5865F2; color:white; padding:20px; border-radius:22px; display:flex; align-items:center; justify-content:center; gap:15px; font-weight:800; box-shadow: 0 10px 20px rgba(88, 101, 242, 0.3);">
-                    <i class="fa-brands fa-discord" style="font-size: 22px;"></i> ZALOGUJ PRZEZ DISCORD
+            <div id="auth-ui">
+                <a href="/auth/discord" style="text-decoration:none; background:#5865F2; color:white; padding:20px; border-radius:22px; display:flex; align-items:center; justify-content:center; gap:12px; font-weight:800;">
+                    <i class="fa-brands fa-discord" style="font-size: 20px;"></i> LOGOWANIE DISCORD
                 </a>
             </div>
 
-            <div id="logged-box" style="display: none;">
-                <div class="profile-section">
-                    <img id="u-avatar" src="" alt="User Avatar">
-                    <div class="user-info">
-                        <b id="u-name">Ładowanie...</b>
-                        <span id="u-role">Członek FSBC</span>
+            <div id="profile-ui" style="display: none;">
+                <div class="profile-card">
+                    <img id="u-avatar" src="" alt="User">
+                    <div class="user-meta">
+                        <b id="u-name">...</b>
+                        <span>Gracz FSBC</span>
                     </div>
                 </div>
 
-                <div id="admin-tools" style="display: none; margin-top: 20px;">
-                    <button id="drawBtn" class="admin-btn" onclick="toggleDrawMode()">
-                        <i class="fa-solid fa-plus-circle"></i> DODAJ NOWĄ STREFĘ
+                <div id="admin-section" style="display: none; margin-top: 20px;">
+                    <button id="drawBtn" class="btn-draw" onclick="toggleDrawing()">
+                        <i class="fa-solid fa-plus-circle"></i> NOWA STREFA
                     </button>
                 </div>
             </div>
 
             <div class="player-list-section">
-                <div class="player-list-header">
-                    <h3>Oznaczony (<span id="player-count-num">0</span>)</h3>
-                </div>
-                <div id="player-list-ui" class="player-list-container">
+                <h3 class="list-title">Oznaczeni (<span id="player-count">0</span>)</h3>
+                <div id="player-list-ui" class="player-scroll-area">
                     </div>
             </div>
 
-            <a href="/logout" class="logout-btn">Wyloguj sesję użytkownika</a>
+            <a href="/logout" class="logout-link">Wyloguj sesję użytkownika</a>
         </aside>
 
         <main class="map-frame">
@@ -476,197 +438,128 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        let currentUser = null, isDrawMode = false, firstPoint = null, allZones = [], currentActiveMap = 'starfall';
+        let currentUser = null, isDrawing = false, p1 = null, allZones = [], currentMap = 'starfall';
         
-        const mapConfigs = {
-            'starfall': { 
-                url: 'https://cdn.discordapp.com/attachments/1444651629633601669/1460615666422780035/image.png?ex=696a32d7&is=6968e157&hm=bcb83e25ab9e73e362e74158db4135db2dfb3b5780179687af5ae3b0e883f15b&', 
-                bounds: [[0, 0], [500, 500]] 
-            },
-            'venture': { 
-                url: 'https://cdn.discordapp.com/attachments/1444651629633601669/1461368359835799623/image.png?ex=696a4cd7&is=6968fb57&hm=2189699ad6534e675e1efdeccf200eaa414485fe773d68c6fa2fc39994dac61c&', 
-                bounds: [[0, 0], [500, 500]] 
-            }
+        const configs = {
+            'starfall': { url: 'https://cdn.discordapp.com/attachments/1444651629633601669/1460615666422780035/image.png?ex=696a32d7&is=6968e157&hm=bcb83e25ab9e73e362e74158db4135db2dfb3b5780179687af5ae3b0e883f15b&', bounds: [[0, 0], [500, 500]] },
+            'venture': { url: 'https://cdn.discordapp.com/attachments/1444651629633601669/1461368359835799623/image.png?ex=696a4cd7&is=6968fb57&hm=2189699ad6534e675e1efdeccf200eaa414485fe773d68c6fa2fc39994dac61c&', bounds: [[0, 0], [500, 500]] }
         };
 
-        // Inicjalizacja Mapy
-        const map = L.map('map', { 
-            crs: L.CRS.Simple, 
-            minZoom: -1, 
-            maxZoom: 2, 
-            zoomControl: false, 
-            attributionControl: false 
-        });
-        
-        let mapOverlay = L.imageOverlay(mapConfigs.starfall.url, mapConfigs.starfall.bounds).addTo(map);
-        map.fitBounds(mapConfigs.starfall.bounds);
+        const map = L.map('map', { crs: L.CRS.Simple, minZoom: -1, maxZoom: 2, zoomControl: false, attributionControl: false });
+        let overlay = L.imageOverlay(configs.starfall.url, configs.starfall.bounds).addTo(map);
+        map.fitBounds(configs.starfall.bounds);
 
-        // API: Pobieranie stref
-        async function fetchZones() {
+        async function init() {
+            try {
+                const res = await fetch('/api/user');
+                const u = await res.json();
+                if (u && u.id) {
+                    currentUser = u;
+                    document.getElementById('auth-ui').style.display = 'none';
+                    document.getElementById('profile-ui').style.display = 'block';
+                    document.getElementById('u-name').innerText = u.username;
+                    document.getElementById('u-avatar').src = u.avatar ? `https://cdn.discordapp.com/avatars/${u.id}/${u.avatar}.png` : 'https://via.placeholder.com/65';
+                    if (u.isAdmin) document.getElementById('admin-section').style.display = 'block';
+                }
+            } catch (e) {}
+            await refresh();
+            setInterval(refresh, 5000);
+        }
+
+        async function refresh() {
             try {
                 const res = await fetch('/api/zones');
                 const data = await res.json();
-                if (!isDrawMode) { 
-                    allZones = data; 
-                    renderAllZones(); 
-                    updatePlayerListUI();
-                }
-            } catch (e) { console.error("Błąd synchronizacji stref"); }
-        }
-
-        // Start Systemu
-        async function bootstrap() {
-            try {
-                const userRes = await fetch('/api/user');
-                const userData = await userRes.json();
-                if (userData && userData.id) {
-                    currentUser = userData;
-                    document.getElementById('auth-box').style.display = 'none';
-                    document.getElementById('logged-box').style.display = 'block';
-                    document.getElementById('u-name').innerText = userData.username;
-                    document.getElementById('u-avatar').src = userData.avatar ? `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png` : 'https://via.placeholder.com/65';
-                    if (userData.isAdmin) document.getElementById('admin-tools').style.display = 'block';
-                }
+                if (!isDrawing) { allZones = data; draw(); updateList(); }
             } catch (e) {}
-            await fetchZones();
-            setInterval(fetchZones, 5000);
         }
 
-        function changeMap(mapId) {
-            currentActiveMap = mapId;
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.id === `btn-${mapId}`));
-            mapOverlay.setUrl(mapConfigs[mapId].url);
-            renderAllZones();
-            updatePlayerListUI();
-        }
-
-        function renderAllZones() {
+        function draw() {
             map.eachLayer(l => { if (l instanceof L.Rectangle || l instanceof L.Tooltip) map.removeLayer(l); });
-            
-            const currentZones = allZones.filter(z => z.map === currentActiveMap);
-            
-            currentZones.forEach(zone => {
-                const count = zone.owners.length;
-                let col = count === 1 ? "#2ecc71" : (count > 1 ? "#ef4444" : "#ffffff");
+            allZones.filter(z => z.map === currentMap).forEach(z => {
+                const count = z.owners.length;
                 
-                const rect = L.rectangle([zone.p1, zone.p2], { 
-                    color: col, 
-                    weight: 2, 
-                    fillColor: col, 
-                    fillOpacity: count > 0 ? 0.45 : 0.05 
+                // ZMIANA: CZARNY DLA PUSTEJ STREFY
+                let color = count === 0 ? "#000000" : (count === 1 ? "#2ecc71" : "#ef4444");
+                let opac = count === 0 ? 0.35 : 0.45;
+
+                const rect = L.rectangle([z.p1, z.p2], { 
+                    color: color, weight: 2, fillColor: color, fillOpacity: opac 
                 }).addTo(map);
 
                 if (count > 0) {
-                    const avatarHtml = `
-                        <div class="map-avatar-stack" style="border-color: ${col}">
-                            ${zone.owners.map(o => `<img src="${o.avatar}" class="stack-img" title="${o.name}">`).join('')}
-                            <span class="stack-count">${count}</span>
-                        </div>`;
-                    
-                    rect.bindTooltip(avatarHtml, { 
-                        permanent: true, 
-                        direction: 'center', 
-                        className: 'zone-tooltip' 
-                    }).openTooltip();
+                    const html = `<div class="avatar-cluster" style="border-color:${color}">${z.owners.map(o => `<img src="${o.avatar}" class="cluster-img">`).join('')}<span class="cluster-count">${count}</span></div>`;
+                    rect.bindTooltip(html, { permanent: true, direction: 'center', className: 'zone-tooltip' }).openTooltip();
                 }
 
-                rect.on('click', (e) => {
-                    L.DomEvent.stopPropagation(e);
-                    if (!isDrawMode && currentUser) handleZoneToggle(zone);
+                rect.on('click', (e) => { 
+                    L.DomEvent.stopPropagation(e); 
+                    if (!isDrawing && currentUser) toggleUserInZone(z); 
                 });
 
-                // Usuwanie dla Admina (Prawy Przycisk)
+                // Usuwanie PPM dla Admina
                 rect.on('contextmenu', (e) => {
                     L.DomEvent.stopPropagation(e);
-                    if (currentUser?.isAdmin && confirm("Czy na pewno chcesz usunąć tę strefę?")) {
-                        allZones = allZones.filter(z => z.id !== zone.id);
-                        syncWithServer();
+                    if (currentUser?.isAdmin && confirm("Usunąć strefę?")) {
+                        allZones = allZones.filter(item => item.id !== z.id);
+                        push();
                     }
                 });
             });
-
-            const totalActive = currentZones.reduce((acc, z) => acc + z.owners.length, 0);
-            document.getElementById('count-total').innerText = totalActive;
+            document.getElementById('count-total').innerText = allZones.filter(z => z.map === currentMap).reduce((a, b) => a + b.owners.length, 0);
         }
 
-        function updatePlayerListUI() {
-            const listContainer = document.getElementById('player-list-ui');
-            const uniquePlayers = [];
-            
-            allZones.filter(z => z.map === currentActiveMap).forEach(z => {
-                z.owners.forEach(owner => {
-                    if(!uniquePlayers.find(p => p.name === owner.name)) {
-                        uniquePlayers.push(owner);
-                    }
-                });
+        function updateList() {
+            const list = document.getElementById('player-list-ui');
+            const players = [];
+            allZones.filter(z => z.map === currentMap).forEach(z => {
+                z.owners.forEach(o => { if(!players.find(p => p.name === o.name)) players.push(o); });
             });
-
-            document.getElementById('player-count-num').innerText = uniquePlayers.length;
-            listContainer.innerHTML = uniquePlayers.map(p => `
-                <div class="player-card">
-                    <img src="${p.avatar}" alt="P">
-                    <span>${p.name}</span>
-                </div>
-            `).join('');
+            document.getElementById('player-count').innerText = players.length;
+            list.innerHTML = players.map(p => `<div class="player-entry"><img src="${p.avatar}"><span>${p.name}</span></div>`).join('');
         }
 
-        async function handleZoneToggle(zone) {
-            const isAlreadyIn = zone.owners.some(o => o.name === currentUser.username);
-            
-            if (isAlreadyIn) {
+        async function toggleUserInZone(zone) {
+            const has = zone.owners.some(o => o.name === currentUser.username);
+            if (has) {
                 zone.owners = zone.owners.filter(o => o.name !== currentUser.username);
             } else {
-                // Usuń go ze wszystkich innych stref na tej mapie (można być tylko w jednej)
-                allZones.forEach(z => {
-                    if(z.map === currentActiveMap) {
-                        z.owners = z.owners.filter(o => o.name !== currentUser.username);
-                    }
-                });
-                zone.owners.push({ 
-                    name: currentUser.username, 
-                    avatar: document.getElementById('u-avatar').src 
-                });
+                allZones.forEach(z => { if(z.map === currentMap) z.owners = z.owners.filter(o => o.name !== currentUser.username); });
+                zone.owners.push({ name: currentUser.username, avatar: document.getElementById('u-avatar').src });
             }
-            syncWithServer();
+            push();
         }
 
-        async function syncWithServer() {
-            renderAllZones();
-            updatePlayerListUI();
-            await fetch('/api/zones', { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' }, 
-                body: JSON.stringify(allZones) 
-            });
+        async function push() {
+            draw(); updateList();
+            await fetch('/api/zones', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(allZones) });
         }
 
-        function toggleDrawMode() {
-            isDrawMode = !isDrawMode;
-            const btn = document.getElementById('drawBtn');
-            btn.classList.toggle('active');
-            btn.innerHTML = isDrawMode ? '<i class="fa-solid fa-times"></i> ANULUJ DODAWANIE' : '<i class="fa-solid fa-plus-circle"></i> DODAJ NOWĄ STREFĘ';
-            firstPoint = null;
+        function handleMapChange(m) {
+            currentMap = m;
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.id === `btn-${m}`));
+            overlay.setUrl(configs[m].url);
+            draw(); updateList();
+        }
+
+        function toggleDrawing() {
+            isDrawing = !isDrawing;
+            const b = document.getElementById('drawBtn');
+            b.classList.toggle('active');
+            b.innerHTML = isDrawing ? '<i class="fa-solid fa-times"></i> ANULUJ' : '<i class="fa-solid fa-plus-circle"></i> NOWA STREFA';
+            p1 = null;
         }
 
         map.on('click', (e) => {
-            if (!isDrawMode) return;
-            if (!firstPoint) {
-                firstPoint = e.latlng;
-            } else {
-                allZones.push({ 
-                    id: Date.now(), 
-                    map: currentActiveMap, 
-                    p1: [firstPoint.lat, firstPoint.lng], 
-                    p2: [e.latlng.lat, e.latlng.lng], 
-                    owners: [] 
-                });
-                firstPoint = null;
-                toggleDrawMode();
-                syncWithServer();
+            if (!isDrawing) return;
+            if (!p1) p1 = e.latlng;
+            else {
+                allZones.push({ id: Date.now(), map: currentMap, p1: [p1.lat, p1.lng], p2: [e.latlng.lat, e.latlng.lng], owners: [] });
+                p1 = null; toggleDrawing(); push();
             }
         });
 
-        bootstrap();
+        init();
     </script>
 </body>
 </html>
