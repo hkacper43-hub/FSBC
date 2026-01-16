@@ -13,9 +13,8 @@
             --primary-glow: rgba(99, 102, 241, 0.5);
             --secondary: #a855f7;
             --accent: #ec4899;
-            --bg-starfall: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #030712 100%);
-            --bg-venture: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000000 100%);
-            --sidebar-bg: rgba(3, 7, 18, 0.85);
+            --bg-dark: #030712;
+            --card-bg: rgba(3, 7, 18, 0.85);
             --glass: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.1);
             --text-main: #f8fafc;
@@ -24,134 +23,146 @@
             --danger: #ef4444;
         }
 
-        /* RESET I SCROLLOWANIE */
+        /* PODSTAWY I SCROLL */
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
         
         body { 
             font-family: 'Poppins', sans-serif; 
-            background-color: #030712; 
+            background-color: var(--bg-dark); 
             color: var(--text-main); 
             min-height: 100vh;
-            display: flex; 
-            flex-direction: column;
-            overflow-y: auto; /* WŁĄCZONE SCROLLOWANIE */
-            overflow-x: hidden;
+            overflow-y: auto; /* Włącza scrollowanie w dół */
+            padding-bottom: 50px;
         }
 
-        /* TŁO I EFEKTY WIZUALNE */
-        #dynamic-bg { position: fixed; inset: 0; background: var(--bg-starfall); z-index: -2; transition: background 0.8s ease; }
-        .grid-pattern { position: fixed; inset: 0; background-image: linear-gradient(var(--glass-border) 1px, transparent 1px), linear-gradient(90deg, var(--glass-border) 1px, transparent 1px); background-size: 40px 40px; z-index: -1; opacity: 0.15; }
+        /* EFEKTY TŁA */
+        #dynamic-bg { 
+            position: fixed; inset: 0; 
+            background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #030712 100%); 
+            z-index: -2; transition: opacity 1s ease; 
+        }
+        .grid-pattern { 
+            position: fixed; inset: 0; 
+            background-image: linear-gradient(var(--glass-border) 1px, transparent 1px), 
+                              linear-gradient(90deg, var(--glass-border) 1px, transparent 1px); 
+            background-size: 50px 50px; z-index: -1; opacity: 0.1; 
+        }
 
-        /* PASEK NAWIGACJI */
+        /* GÓRNY PANEL NAWIGACYJNY */
         .top-navbar { 
-            width: 96%; max-width: 1600px; margin: 20px auto; height: 80px; 
-            background: var(--sidebar-bg); backdrop-filter: blur(20px); 
-            border: 1px solid var(--glass-border); border-radius: 24px; 
+            width: 95%; max-width: 1600px; margin: 20px auto; height: 90px; 
+            background: var(--card-bg); backdrop-filter: blur(25px); 
+            border: 1px solid var(--glass-border); border-radius: 25px; 
             display: flex; align-items: center; justify-content: space-between; 
             padding: 0 40px; z-index: 1000;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
 
-        .logo-area { display: flex; align-items: center; gap: 15px; }
-        .logo-area h1 { 
-            font-size: 28px; font-weight: 800; letter-spacing: -1px;
-            background: linear-gradient(to right, var(--primary), var(--accent));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        .map-selector { 
+            display: flex; background: rgba(0,0,0,0.4); 
+            padding: 6px; border-radius: 18px; gap: 10px; 
+            border: 1px solid var(--glass-border); 
         }
-
-        .map-selector { display: flex; background: rgba(0,0,0,0.4); padding: 6px; border-radius: 18px; gap: 8px; border: 1px solid var(--glass-border); }
         .nav-btn { 
-            padding: 12px 28px; border: none; background: transparent; color: var(--text-muted); 
-            font-weight: 700; font-size: 13px; cursor: pointer; border-radius: 14px; 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-transform: uppercase;
+            padding: 14px 30px; border: none; background: transparent; 
+            color: var(--text-muted); font-weight: 700; font-size: 13px; 
+            cursor: pointer; border-radius: 14px; transition: all 0.4s ease;
+            text-transform: uppercase; letter-spacing: 1px;
         }
-        .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 8px 20px var(--primary-glow); transform: translateY(-2px); }
-
-        /* GŁÓWNY KONTENER DLA SIDEBARU I MAPY */
-        .main-wrapper {
-            display: flex; width: 96%; max-width: 1600px; margin: 0 auto 40px auto; 
-            gap: 24px; align-items: flex-start;
+        .nav-btn.active { 
+            background: var(--primary); color: white; 
+            box-shadow: 0 10px 25px var(--primary-glow); 
         }
 
-        /* SIDEBAR - TWOJE PEŁNE STYLE */
-        #sidebar { 
-            width: 380px; min-width: 380px; background: var(--sidebar-bg); backdrop-filter: blur(20px); 
-            border: 1px solid var(--glass-border); border-radius: 30px; 
-            display: flex; flex-direction: column; padding: 35px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            height: fit-content;
+        .nav-stats { display: flex; align-items: center; gap: 20px; }
+        .stat-badge { 
+            background: rgba(255,255,255,0.05); padding: 12px 25px; 
+            border-radius: 15px; border: 1px solid var(--glass-border); 
+            display: flex; align-items: center; gap: 12px; font-weight: 800; 
         }
-
-        .profile-card { 
-            background: var(--glass); border: 1px solid var(--glass-border); border-radius: 24px; 
-            padding: 20px; display: flex; align-items: center; gap: 18px; margin-bottom: 25px;
+        .leaderboard-btn { 
+            background: linear-gradient(45deg, var(--secondary), var(--accent)); 
+            color: white; text-decoration: none; padding: 14px 30px; 
+            border-radius: 15px; font-weight: 800; font-size: 13px; 
+            box-shadow: 0 10px 25px rgba(168, 85, 247, 0.4);
             transition: transform 0.3s ease;
         }
-        .profile-card:hover { transform: scale(1.02); background: rgba(255,255,255,0.05); }
-        .profile-card img { width: 60px; height: 60px; border-radius: 50%; border: 3px solid var(--primary); box-shadow: 0 0 15px var(--primary-glow); }
-        .user-meta b { font-size: 18px; color: white; display: block; }
-        .user-meta span { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+        .leaderboard-btn:hover { transform: translateY(-3px); }
 
-        /* LISTA GRACZY (JAK NA OBRAZKU) */
-        .player-list-section { margin-top: 10px; }
-        .section-label { font-size: 12px; font-weight: 700; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 15px; display: flex; justify-content: space-between; }
-        
+        /* UKŁAD GŁÓWNY (SIDEBAR + MAPA) */
+        .content-layout {
+            display: flex; width: 95%; max-width: 1600px; 
+            margin: 0 auto; gap: 25px; align-items: flex-start;
+        }
+
+        /* SIDEBAR - LISTA I PROFIL */
+        #sidebar { 
+            width: 380px; min-width: 380px; background: var(--card-bg); 
+            backdrop-filter: blur(25px); border: 1px solid var(--glass-border); 
+            border-radius: 30px; padding: 35px; display: flex; 
+            flex-direction: column; gap: 25px; box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+        }
+
+        .search-box {
+            position: relative; width: 100%; margin-bottom: 5px;
+        }
+        .search-box input {
+            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
+            padding: 15px 15px 15px 45px; border-radius: 15px; color: white; font-family: inherit;
+        }
+        .search-box i { position: absolute; left: 18px; top: 18px; color: var(--text-muted); }
+
+        .player-list-scroll {
+            max-height: 450px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;
+        }
         .player-item {
-            display: flex; align-items: center; gap: 12px; padding: 10px;
-            border-radius: 12px; background: transparent; transition: 0.2s;
+            display: flex; align-items: center; gap: 15px; padding: 12px;
+            background: rgba(255,255,255,0.02); border-radius: 15px; border: 1px solid transparent;
+            transition: 0.3s ease;
         }
-        .player-item img { width: 32px; height: 32px; border-radius: 50%; }
-        .player-item span { font-size: 14px; font-weight: 500; color: var(--text-main); }
+        .player-item:hover { background: var(--glass); border-color: var(--glass-border); }
+        .player-item img { width: 35px; height: 35px; border-radius: 50%; border: 1px solid var(--primary); }
+        .player-item span { font-weight: 600; font-size: 14px; }
 
-        /* MAPA W RAMCE (OUTLINE) */
-        #map-container { 
-            flex-grow: 1; height: 800px; position: relative;
-            background: var(--sidebar-bg); backdrop-filter: blur(20px); 
+        /* KONTENER MAPY Z OUTLINE */
+        .map-outline {
+            flex-grow: 1; background: var(--card-bg); backdrop-filter: blur(25px); 
             border: 1px solid var(--glass-border); border-radius: 30px; 
-            padding: 15px; /* OUTLINE */
-            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            padding: 18px; box-shadow: 0 30px 70px rgba(0,0,0,0.6);
+            height: 800px; position: relative;
         }
-        #map { width: 100%; height: 100%; border-radius: 20px; background-color: #0a192f; }
-
-        /* TWOJE PRZYCISKI ADMINISTRACYJNE */
-        #drawBtn { 
-            width: 100%; padding: 18px; border-radius: 16px; border: 1px solid var(--glass-border); 
-            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
-            color: white; font-weight: 700; font-size: 14px; cursor: pointer; transition: all 0.3s;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
+        #map { 
+            width: 100%; height: 100%; border-radius: 20px; 
+            background: #0d1117; z-index: 1;
         }
-        #drawBtn:hover { background: var(--glass); transform: translateY(-2px); border-color: var(--primary); }
-        #drawBtn.active { background: var(--danger); border-color: var(--danger); box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
 
-        /* LEADERBOARD I STATS */
-        .stat-item { background: var(--glass); padding: 10px 20px; border-radius: 15px; border: 1px solid var(--glass-border); display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 14px; }
-        .leaderboard-link { 
-            background: linear-gradient(45deg, var(--secondary), var(--accent)); color: white; 
-            text-decoration: none; padding: 12px 25px; border-radius: 15px; font-weight: 800; 
-            font-size: 13px; display: flex; align-items: center; gap: 10px; transition: 0.3s;
-            box-shadow: 0 5px 15px rgba(168, 85, 247, 0.3);
-        }
-        .leaderboard-link:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(168, 85, 247, 0.5); }
-
-        /* AVATARY NA MAPIE */
+        /* TWOJE AVATARY NA MAPIE */
         .avatar-badge-stack { 
-            display: flex; align-items: center; background: rgba(0, 0, 0, 0.8); 
-            padding: 6px 14px; border-radius: 30px; border: 2px solid white; 
-            backdrop-filter: blur(8px); box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            display: flex; align-items: center; background: rgba(0, 0, 0, 0.85); 
+            padding: 6px 15px; border-radius: 30px; border: 2.5px solid white; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
         }
-        .badge-img { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid white; margin-right: -12px; transition: 0.2s; }
-        .badge-img:hover { margin-right: 5px; transform: scale(1.2); z-index: 10; }
-        .badge-count { margin-left: 20px; font-weight: 800; font-size: 14px; color: white; }
+        .badge-img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid white; margin-right: -12px; }
+        .badge-count { margin-left: 22px; font-weight: 800; font-size: 15px; color: white; }
         .zone-tooltip { background: transparent !important; border: none !important; box-shadow: none !important; }
 
-        .logout-link { margin-top: auto; text-align: center; font-size: 12px; color: var(--text-muted); text-decoration: none; font-weight: 600; padding: 15px; opacity: 0.6; transition: 0.3s; }
-        .logout-link:hover { opacity: 1; color: var(--danger); }
+        /* PROFILE CARD */
+        .user-profile { 
+            background: var(--glass); padding: 20px; border-radius: 20px; 
+            border: 1px solid var(--glass-border); display: flex; align-items: center; gap: 15px;
+        }
+        .user-profile img { width: 55px; height: 55px; border-radius: 50%; border: 3px solid var(--primary); }
 
-        /* SCROLLBAR STYLE */
+        #adminBtn { 
+            width: 100%; padding: 18px; border-radius: 18px; border: 1.5px dashed var(--primary);
+            background: transparent; color: white; font-weight: 800; cursor: pointer; transition: 0.3s;
+        }
+        #adminBtn.active { background: var(--danger); border-style: solid; border-color: var(--danger); }
+
+        /* SCROLLBAR CUSTOM */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
     </style>
 </head>
 <body>
@@ -159,61 +170,58 @@
     <div class="grid-pattern"></div>
 
     <nav class="top-navbar">
-        <div class="logo-area">
-            <i class="fa-solid fa-shield-halved" style="color: var(--primary); font-size: 24px;"></i>
-            <h1>FSBC SYSTEM</h1>
-        </div>
-        
         <div class="map-selector">
             <button class="nav-btn active" id="btn-starfall" onclick="changeMap('starfall')">Starfall</button>
             <button class="nav-btn" id="btn-venture" onclick="changeMap('venture')">Venture</button>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 20px;">
-            <div class="stat-item"><i class="fa-solid fa-users"></i> AKTYWNI: <span id="count-total">0</span></div>
-            <a href="https://yunite.xyz/leaderboard/f406ce8e-205b-49ae-ae9d-076ea8c66aee" target="_blank" class="leaderboard-link">
+        <div class="nav-stats">
+            <div class="stat-badge"><i class="fa-solid fa-users" style="color: var(--primary);"></i> AKTYWNI: <span id="count-total">0</span></div>
+            <a href="https://yunite.xyz/leaderboard/f406ce8e-205b-49ae-ae9d-076ea8c66aee" target="_blank" class="leaderboard-btn">
                 <i class="fa-solid fa-trophy"></i> LEADERBOARD
             </a>
         </div>
     </nav>
 
-    <div class="main-wrapper">
+    <div class="content-layout">
         <aside id="sidebar">
-            <div id="auth-box">
-                <a href="/auth/discord" style="text-decoration:none; background:#5865F2; color:white; padding:20px; border-radius:20px; display:flex; align-items:center; justify-content:center; gap:12px; font-weight:800; box-shadow: 0 10px 20px rgba(88, 101, 242, 0.3);">
-                    <i class="fa-brands fa-discord" style="font-size: 20px;"></i> POŁĄCZ Z DISCORDEM
+            <div id="auth-section">
+                <a href="/auth/discord" style="text-decoration:none; background:#5865F2; color:white; padding:18px; border-radius:18px; display:block; text-align:center; font-weight:800;">
+                    <i class="fa-brands fa-discord"></i> ZALOGUJ DISCORD
                 </a>
             </div>
 
-            <div id="profile-box" style="display: none;">
-                <div class="profile-card">
-                    <img id="u-avatar" src="" alt="User">
-                    <div class="user-meta">
-                        <b id="u-name">...</b>
-                        <span id="u-role">Gracz FSBC</span>
+            <div id="logged-section" style="display: none;">
+                <div class="user-profile">
+                    <img id="u-avatar" src="" alt="Avatar">
+                    <div>
+                        <b id="u-name" style="font-size: 16px;">Nazwa</b><br>
+                        <span id="u-role" style="font-size: 12px; color: var(--text-muted);">Użytkownik FSBC</span>
                     </div>
                 </div>
-
-                <div id="admin-controls" style="display: none; border-top: 1px solid var(--glass-border); padding-top: 20px; margin-bottom: 20px;">
-                    <button id="drawBtn" onclick="toggleDrawMode()">
-                        <i class="fa-solid fa-plus-circle"></i> NOWA STREFA
-                    </button>
+                <div id="admin-panel" style="display: none; margin-top: 15px;">
+                    <button id="adminBtn" onclick="toggleDrawMode()"><i class="fa-solid fa-plus-circle"></i> NOWA STREFA</button>
                 </div>
             </div>
 
-            <div class="player-list-section">
-                <div class="section-label">
-                    <span>OZNACZENI GRACZE</span>
-                    <span id="player-count-ui" style="color: var(--primary);">0</span>
+            <div style="margin-top: 10px;">
+                <div class="search-box">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" placeholder="Szukaj gracza..." id="playerSearch">
                 </div>
-                <div id="player-list-ui" style="display: flex; flex-direction: column; gap: 8px;">
+                
+                <p style="font-size: 11px; font-weight: 800; color: var(--text-muted); margin: 15px 0 10px 5px; letter-spacing: 1px;">
+                    OZNACZENI (<span id="player-count-num">0</span>)
+                </p>
+
+                <div id="player-list-ui" class="player-list-scroll">
                     </div>
             </div>
 
-            <a href="/logout" class="logout-link"><i class="fa-solid fa-right-from-bracket"></i> WYLOGUJ SESJĘ</a>
+            <a href="/logout" style="margin-top: auto; text-align: center; font-size: 11px; color: var(--text-muted); text-decoration: none; font-weight: 600; opacity: 0.5;">WYLOGUJ SESJĘ</a>
         </aside>
 
-        <main id="map-container">
+        <main class="map-outline">
             <div id="map"></div>
         </main>
     </div>
@@ -225,17 +233,19 @@
         const mapConfigs = {
             'starfall': { 
                 url: 'https://cdn.discordapp.com/attachments/1444651629633601669/1460615666422780035/image.png?ex=696a32d7&is=6968e157&hm=bcb83e25ab9e73e362e74158db4135db2dfb3b5780179687af5ae3b0e883f15b&', 
-                bounds: [[0, 0], [500, 500]],
-                bg: 'var(--bg-starfall)'
+                bounds: [[0, 0], [500, 500]] 
             },
             'venture': { 
                 url: 'https://cdn.discordapp.com/attachments/1444651629633601669/1461368359835799623/image.png?ex=696a4cd7&is=6968fb57&hm=2189699ad6534e675e1efdeccf200eaa414485fe773d68c6fa2fc39994dac61c&', 
-                bounds: [[0, 0], [500, 500]],
-                bg: 'var(--bg-venture)'
+                bounds: [[0, 0], [500, 500]] 
             }
         };
 
-        const map = L.map('map', { crs: L.CRS.Simple, minZoom: -1, maxZoom: 2, zoomControl: false, attributionControl: false });
+        const map = L.map('map', { 
+            crs: L.CRS.Simple, minZoom: -1, maxZoom: 2, 
+            zoomControl: false, attributionControl: false 
+        });
+        
         let mapOverlay = L.imageOverlay(mapConfigs.starfall.url, mapConfigs.starfall.bounds).addTo(map);
         map.fitBounds(mapConfigs.starfall.bounds);
 
@@ -257,11 +267,11 @@
                 const userData = await userRes.json();
                 if (userData && userData.id) {
                     currentUser = userData;
-                    document.getElementById('auth-box').style.display = 'none';
-                    document.getElementById('profile-box').style.display = 'block';
+                    document.getElementById('auth-section').style.display = 'none';
+                    document.getElementById('logged-section').style.display = 'block';
                     document.getElementById('u-name').innerText = userData.username;
                     document.getElementById('u-avatar').src = userData.avatar ? `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png` : 'https://via.placeholder.com/60';
-                    if (userData.isAdmin) document.getElementById('admin-controls').style.display = 'block';
+                    if (userData.isAdmin) document.getElementById('admin-panel').style.display = 'block';
                 }
             } catch (e) {}
             await fetchZones();
@@ -271,23 +281,27 @@
         function changeMap(mapId) {
             currentActiveMap = mapId;
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.id === `btn-${mapId}`));
-            document.getElementById('dynamic-bg').style.background = mapConfigs[mapId].bg;
             mapOverlay.setUrl(mapConfigs[mapId].url);
             renderAllZones();
-            updatePlayerList();
         }
 
         function renderAllZones() {
             map.eachLayer(l => { if (l instanceof L.Rectangle || l instanceof L.Tooltip) map.removeLayer(l); });
+            
             allZones.filter(z => z.map === currentActiveMap).forEach(zoneData => {
                 const count = zoneData.owners.length;
                 let col = count === 1 ? "#2ecc71" : (count > 1 ? "#ef4444" : "#ffffff");
-                const rect = L.rectangle([zoneData.p1, zoneData.p2], { 
-                    color: col, weight: 2, fillColor: col, fillOpacity: count > 0 ? 0.4 : 0.1 
-                }).addTo(map);
                 
+                const rect = L.rectangle([zoneData.p1, zoneData.p2], { 
+                    color: col, weight: 2, fillColor: col, fillOpacity: count > 0 ? 0.4 : 0.05 
+                }).addTo(map);
+
                 if (count > 0) {
-                    const html = `<div class="avatar-badge-stack" style="border-color:${col}">${zoneData.owners.map(o => `<img src="${o.avatar}" class="badge-img" title="${o.name}">`).join('')}<span class="badge-count">${count}</span></div>`;
+                    const html = `
+                        <div class="avatar-badge-stack" style="border-color:${col}">
+                            ${zoneData.owners.map(o => `<img src="${o.avatar}" class="badge-img" title="${o.name}">`).join('')}
+                            <span class="badge-count">${count}</span>
+                        </div>`;
                     rect.bindTooltip(html, { permanent: true, direction: 'center', className: 'zone-tooltip' }).openTooltip();
                 }
 
@@ -296,26 +310,29 @@
                     if (!isDrawMode && currentUser) handleZoneClick(zoneData);
                 });
 
+                // Usuwanie dla Admina (PPM)
                 rect.on('contextmenu', (e) => {
                     L.DomEvent.stopPropagation(e);
-                    if (currentUser?.isAdmin && confirm("Usunąć strefę?")) {
+                    if (currentUser?.isAdmin && confirm("Usunąć tę strefę?")) {
                         allZones = allZones.filter(z => z.id !== zoneData.id);
-                        saveAndSync();
+                        saveZones();
                     }
                 });
             });
-            document.getElementById('count-total').innerText = allZones.filter(z => z.map === currentActiveMap).reduce((acc, z) => acc + z.owners.length, 0);
+            
+            const totalOnMap = allZones.filter(z => z.map === currentActiveMap).reduce((acc, z) => acc + z.owners.length, 0);
+            document.getElementById('count-total').innerText = totalOnMap;
         }
 
         function updatePlayerList() {
             const listContainer = document.getElementById('player-list-ui');
-            const activeOnMap = [];
+            const players = [];
             allZones.filter(z => z.map === currentActiveMap).forEach(z => {
-                z.owners.forEach(o => { if(!activeOnMap.find(p => p.name === o.name)) activeOnMap.push(o); });
+                z.owners.forEach(o => { if(!players.find(p => p.name === o.name)) players.push(o); });
             });
 
-            document.getElementById('player-count-ui').innerText = activeOnMap.length;
-            listContainer.innerHTML = activeOnMap.map(p => `
+            document.getElementById('player-count-num').innerText = players.length;
+            listContainer.innerHTML = players.map(p => `
                 <div class="player-item">
                     <img src="${p.avatar}" alt="">
                     <span>${p.name}</span>
@@ -328,13 +345,14 @@
             if (isInside) {
                 zone.owners = zone.owners.filter(o => o.name !== currentUser.username);
             } else {
-                allZones.forEach(z => { if (z.map === currentActiveMap) z.owners = z.owners.filter(o => o.name !== currentUser.username); });
+                // Usuwamy z innych stref na TEJ SAMEJ mapie
+                allZones.forEach(z => { if(z.map === currentActiveMap) z.owners = z.owners.filter(o => o.name !== currentUser.username); });
                 zone.owners.push({ name: currentUser.username, avatar: document.getElementById('u-avatar').src });
             }
-            saveAndSync();
+            saveZones();
         }
 
-        async function saveAndSync() {
+        async function saveZones() {
             renderAllZones();
             updatePlayerList();
             await fetch('/api/zones', { 
@@ -346,17 +364,26 @@
 
         function toggleDrawMode() {
             isDrawMode = !isDrawMode;
-            document.getElementById('drawBtn').classList.toggle('active');
-            document.getElementById('drawBtn').innerHTML = isDrawMode ? '<i class="fa-solid fa-times"></i> ANULUJ' : '<i class="fa-solid fa-plus-circle"></i> NOWA STREFA';
+            document.getElementById('adminBtn').classList.toggle('active');
+            document.getElementById('adminBtn').innerHTML = isDrawMode ? '<i class="fa-solid fa-times"></i> ANULUJ' : '<i class="fa-solid fa-plus-circle"></i> NOWA STREFA';
             firstPoint = null;
         }
 
         map.on('click', (e) => {
             if (!isDrawMode) return;
-            if (!firstPoint) firstPoint = e.latlng;
-            else {
-                allZones.push({ id: Date.now(), map: currentActiveMap, p1: [firstPoint.lat, firstPoint.lng], p2: [e.latlng.lat, e.latlng.lng], owners: [] });
-                firstPoint = null; toggleDrawMode(); saveAndSync();
+            if (!firstPoint) {
+                firstPoint = e.latlng;
+            } else {
+                allZones.push({ 
+                    id: Date.now(), 
+                    map: currentActiveMap, 
+                    p1: [firstPoint.lat, firstPoint.lng], 
+                    p2: [e.latlng.lat, e.latlng.lng], 
+                    owners: [] 
+                });
+                firstPoint = null;
+                toggleDrawMode();
+                saveZones();
             }
         });
 
