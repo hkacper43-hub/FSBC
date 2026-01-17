@@ -158,7 +158,7 @@
                     <i class="fa-solid fa-users"></i>
                     AKTYWNI: <span id="count-total">0</span>
                 </div>
-                <a href="#" class="leaderboard-btn">
+                <a href="https://yunite.xyz/leaderboard/f406ce8e-205b-49ae-ae9d-076ea8c66aee" class="leaderboard-btn">
                     <i class="fa-solid fa-trophy"></i>
                     LEADERBOARD
                 </a>
@@ -326,7 +326,7 @@
             map.eachLayer(l => { if (l instanceof L.Rectangle || l instanceof L.Tooltip) map.removeLayer(l); });
             allZones.filter(z => z.map === currentMap).forEach(z => {
                 const count = z.owners.length;
-                let color = count === 0 ? "#ffffff" : (count === 1 ? "#2ecc71" : "#ef4444");
+                let color = count === 0 ? "#00000" : (count === 1 ? "#2ecc71" : "#ef4444");
                 const rect = L.rectangle([z.p1, z.p2], { color: color, weight: 2, fillColor: color, fillOpacity: 0.3 }).addTo(map);
                 
                 if (count > 0) {
