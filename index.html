@@ -326,7 +326,7 @@
             map.eachLayer(l => { if (l instanceof L.Rectangle || l instanceof L.Tooltip) map.removeLayer(l); });
             allZones.filter(z => z.map === currentMap).forEach(z => {
                 const count = z.owners.length;
-                let color = count === 0 ? "#00000" : (count === 1 ? "#2ecc71" : "#ef4444");
+                let color = count === 0 ? "#fffff" : (count === 1 ? "#2ecc71" : "#ef4444");
                 const rect = L.rectangle([z.p1, z.p2], { color: color, weight: 2, fillColor: color, fillOpacity: 0.3 }).addTo(map);
                 
                 if (count > 0) {
