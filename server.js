@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 3000;
 // Pobierz te dane z Discord Developer Portal
 const CLIENT_ID = '1459649925485957266'; 
 const CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET;
-const CALLBACK_URL = 'https://https://fsbc.onrender.com//auth/discord/callback';
+const CALLBACK_URL = 'https://fsbc.onrender.com/auth/discord/callback';
 
 // Baza danych stref zapisywana do pliku, aby nie znikała
 let zones = [];
@@ -72,4 +72,5 @@ app.post('/api/zones', (req, res) => {
 });
 
 app.listen(PORT, () => console.log(`Serwer wystartował na porcie ${PORT}`));
+
 
