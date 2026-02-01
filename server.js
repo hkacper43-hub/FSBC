@@ -10,9 +10,9 @@ const PORT = process.env.PORT || 3000;
 
 // --- DANE KONFIGURACYJNE ---
 // Pobierz te dane z Discord Developer Portal
-const CLIENT_ID = 'TWÓJ_ID_KLIENTA'; 
-const CLIENT_SECRET = 'TWÓJ_SECRET_KLUCZ';
-const CALLBACK_URL = 'https://twoja-strona-render.onrender.com/auth/discord/callback';
+const CLIENT_ID = '1459649925485957266'; 
+const CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET;
+const CALLBACK_URL = 'https://https://fsbc.onrender.com//auth/discord/callback';
 
 // Baza danych stref zapisywana do pliku, aby nie znikała
 let zones = [];
@@ -31,7 +31,7 @@ passport.use(new DiscordStrategy({
     scope: ['identify'] // Wymagane dla poprawnej autoryzacji
 }, (accessToken, refreshToken, profile, done) => {
     // Dodajemy uprawnienia admina dla konkretnego użytkownika
-    profile.isAdmin = (profile.username === 'szimicarson6');
+    profile.isAdmin = (profile.username === 'bliziog');
     return done(null, profile);
 }));
 
@@ -72,3 +72,4 @@ app.post('/api/zones', (req, res) => {
 });
 
 app.listen(PORT, () => console.log(`Serwer wystartował na porcie ${PORT}`));
+
