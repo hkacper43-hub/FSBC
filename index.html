@@ -12,10 +12,10 @@
     <style>
         :root {
             --primary: #6366f1;
-            --primary-glow: rgba(99, 102, 241, 0.5);
+            --primary-glow: rgba(99, 102, 241, 0.4);
             --secondary: #a855f7;
             --bg-dark: #030712;
-            --card-bg: rgba(3, 7, 18, 0.9);
+            --card-bg: rgba(15, 23, 42, 0.9);
             --glass: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.1);
             --text-main: #f8fafc;
@@ -28,45 +28,56 @@
         #dynamic-bg { position: fixed; inset: 0; background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #030712 100%); z-index: -2; }
         .grid-pattern { position: fixed; inset: 0; background-image: linear-gradient(var(--glass-border) 1px, transparent 1px), linear-gradient(90deg, var(--glass-border) 1px, transparent 1px); background-size: 45px 45px; z-index: -1; opacity: 0.1; }
 
-        /* MENU */
-        .site-header { width: 100%; padding: 25px; display: flex; justify-content: center; gap: 40px; }
-        .header-nav-item { color: #fff; text-decoration: none; font-size: 14px; font-weight: 600; opacity: 0.6; transition: 0.3s; cursor: pointer; position: relative; }
-        .header-nav-item.active { opacity: 1; }
-        .header-nav-item.active::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 100%; height: 2px; background: var(--primary); }
+        /* HEADER NAV */
+        .site-header { width: 100%; padding: 25px; display: flex; justify-content: center; gap: 40px; background: rgba(0,0,0,0.2); backdrop-filter: blur(10px); }
+        .header-nav-item { color: #fff; text-decoration: none; font-size: 14px; font-weight: 600; opacity: 0.5; transition: 0.3s; cursor: pointer; position: relative; text-transform: uppercase; letter-spacing: 1px; }
+        .header-nav-item.active, .header-nav-item:hover { opacity: 1; }
+        .header-nav-item.active::after { content: ''; position: absolute; bottom: -8px; left: 0; width: 100%; height: 3px; background: var(--primary); border-radius: 2px; box-shadow: 0 0 10px var(--primary-glow); }
 
         /* WIDOKI */
-        .content-view { display: none; width: 100%; animation: fadeIn 0.4s ease; padding: 20px; }
+        .content-view { display: none; width: 100%; animation: slideUp 0.5s ease-out; padding: 40px 20px; }
         .content-view.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* KARTY TURNIEJÓW */
+        /* TURNIEJE */
         .view-container-wide { width: 95%; max-width: 1400px; margin: 0 auto; }
-        .section-title { font-size: clamp(32px, 5vw, 54px); font-weight: 800; margin-bottom: 40px; }
-        .tournaments-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
+        .section-title { font-size: 50px; font-weight: 800; margin-bottom: 40px; letter-spacing: -2px; }
+        .tournaments-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
         
         .info-card { 
-            background: var(--glass); border: 1px solid var(--glass-border); border-radius: 24px; padding: 30px; 
-            transition: 0.3s; cursor: pointer; position: relative; overflow: hidden;
+            background: var(--glass); border: 1px solid var(--glass-border); border-radius: 28px; padding: 35px; 
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; position: relative; overflow: hidden;
+            backdrop-filter: blur(10px);
         }
-        .info-card:hover { transform: translateY(-5px); border-color: var(--primary); background: rgba(255,255,255,0.05); }
-        .status-badge { padding: 4px 12px; border-radius: 8px; font-size: 10px; font-weight: 800; text-transform: uppercase; margin-bottom: 15px; display: inline-block; }
-
-        /* WIDOK ARCHIWUM */
-        .archive-layout { display: grid; grid-template-columns: 1fr 2fr; gap: 30px; margin-top: 20px; }
-        .stats-panel { background: var(--card-bg); border-radius: 24px; padding: 30px; border: 1px solid var(--glass-border); }
-        .archive-map-frame { height: 600px; background: #000; border-radius: 24px; overflow: hidden; border: 1px solid var(--glass-border); }
+        .info-card:hover { transform: translateY(-10px); border-color: var(--primary); background: rgba(99, 102, 241, 0.05); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
         
-        .winner-row { display: flex; align-items: center; gap: 15px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 15px; margin-bottom: 10px; }
-        .rank-circle { width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; }
+        /* POWRÓT / PRZYCISKI */
+        .back-btn {
+            display: inline-flex; align-items: center; gap: 10px; background: var(--glass); border: 1px solid var(--glass-border);
+            color: #fff; padding: 12px 24px; border-radius: 16px; cursor: pointer; font-weight: 600; transition: 0.3s;
+            margin-bottom: 30px; text-decoration: none;
+        }
+        .back-btn:hover { background: var(--primary); border-color: var(--primary); transform: translateX(-5px); box-shadow: 0 0 20px var(--primary-glow); }
+
+        /* ARCHIWUM LAYOUT */
+        .archive-layout { display: grid; grid-template-columns: 400px 1fr; gap: 30px; align-items: start; }
+        .stats-panel { background: var(--card-bg); border-radius: 30px; padding: 35px; border: 1px solid var(--glass-border); box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+        .archive-map-container { height: 700px; background: #000; border-radius: 30px; overflow: hidden; border: 2px solid var(--glass-border); position: relative; }
+        
+        /* LEADERBOARD */
+        .winner-row { display: flex; align-items: center; gap: 15px; padding: 20px; background: rgba(255,255,255,0.02); border-radius: 20px; margin-bottom: 12px; border: 1px solid transparent; }
+        .winner-row.top-1 { border-color: #fbbf24; background: rgba(251, 191, 36, 0.05); }
+        .rank-badge { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; }
 
         /* MAPA INTERAKTYWNA */
-        .map-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--card-bg); padding: 15px 30px; border-radius: 20px; }
-        .map-main-container { display: flex; gap: 20px; height: 750px; }
-        #map { flex: 1; border-radius: 24px; }
-        #sidebar { width: 350px; background: var(--card-bg); border-radius: 24px; padding: 25px; border: 1px solid var(--glass-border); }
+        #map, #archive-map { width: 100%; height: 100%; border-radius: 20px; background: #0b1424; }
+        .map-frame-active { display: flex; gap: 20px; height: 800px; }
+        #sidebar { width: 380px; background: var(--card-bg); border-radius: 30px; padding: 30px; border: 1px solid var(--glass-border); }
 
-        .btn-action { background: var(--primary); color: #fff; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; width: 100%; transition: 0.3s; }
-        .btn-action:hover { filter: brightness(1.2); }
+        .btn-main { background: var(--primary); color: #fff; border: none; padding: 16px; border-radius: 18px; font-weight: 700; cursor: pointer; width: 100%; transition: 0.3s; box-shadow: 0 10px 20px var(--primary-glow); }
+        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 15px 30px var(--primary-glow); }
+
+        .status-tag { padding: 6px 14px; border-radius: 10px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; display: inline-block; }
     </style>
 </head>
 <body>
@@ -75,95 +86,105 @@
     <div class="grid-pattern"></div>
 
     <header class="site-header">
-        <div class="header-nav-item active" id="nav-home" onclick="showView('home')">Home</div>
-        <div class="header-nav-item" id="nav-tournaments" onclick="showView('tournaments')">Tournaments</div>
-        <div class="header-nav-item" id="nav-info" onclick="showView('info')">Information</div>
+        <div class="header-nav-item active" id="nav-home" onclick="showView('home')">Główna</div>
+        <div class="header-nav-item" id="nav-tournaments" onclick="showView('tournaments')">Turnieje</div>
+        <div class="header-nav-item" id="nav-info" onclick="showView('info')">Zasady</div>
     </header>
 
     <div id="view-home" class="content-view active">
-        <div style="height: 70vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
-            <h1 style="font-size: 80px; font-weight: 800; letter-spacing: -4px;">FSBC <span style="color:var(--primary)">TACTICAL</span></h1>
-            <p style="color: var(--text-muted); max-width: 600px; margin-top: 10px;">Zarządzaj swoimi strefami zrzutu, analizuj poprzednie gry i przygotuj się na Solo Blitz Royale #5.</p>
-            <button class="btn-action" style="width: auto; padding: 15px 40px; margin-top: 30px; border-radius: 50px;" onclick="showView('tournaments')">ROZPOCZNIJ</button>
+        <div style="height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+            <h1 style="font-size: clamp(40px, 10vw, 90px); font-weight: 900; letter-spacing: -5px; line-height: 0.9;">FSBC<br><span style="color:var(--primary); filter: drop-shadow(0 0 15px var(--primary-glow))">TACTICAL</span></h1>
+            <p style="color: var(--text-muted); max-width: 550px; margin-top: 25px; font-size: 18px;">Archiwum zwycięstw i system planowania stref zrzutu dla elity Solo Blitz Royale.</p>
+            <button class="btn-main" style="width: auto; padding: 18px 50px; margin-top: 40px; border-radius: 50px;" onclick="showView('tournaments')">PRZEGLĄDAJ TURNIEJE</button>
         </div>
     </div>
 
     <div id="view-tournaments" class="content-view">
         <div class="view-container-wide">
-            <h1 class="section-title">Turnieje</h1>
-            <div class="tournaments-grid" id="tournaments-list">
-                </div>
+            <h1 class="section-title">Wybierz edycję</h1>
+            <div class="tournaments-grid" id="tournaments-list"></div>
         </div>
     </div>
 
     <div id="view-archive" class="content-view">
         <div class="view-container-wide">
-            <button onclick="showView('tournaments')" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-weight:700; margin-bottom:20px;">← POWRÓT DO LISTY</button>
-            <h1 id="archive-title" class="section-title">Turniej #1</h1>
+            <button class="back-btn" onclick="showView('tournaments')">
+                <i class="fa-solid fa-arrow-left"></i> POWRÓT DO TURNIEJÓW
+            </button>
+            
+            <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:30px;">
+                <div>
+                    <h1 id="archive-title" style="font-size:45px; font-weight:800; letter-spacing:-2px;">Turniej #1</h1>
+                    <p id="archive-date" style="color:var(--text-muted); font-weight:600"></p>
+                </div>
+                <div style="text-align:right">
+                    <span style="color:var(--text-muted); font-size:12px; text-transform:uppercase; font-weight:800">Mapa Archiwalna</span>
+                    <h3 style="color:var(--secondary)">VENTURE ISLAND</h3>
+                </div>
+            </div>
             
             <div class="archive-layout">
                 <div class="stats-panel">
-                    <h3 style="margin-bottom: 20px;">Wyniki Końcowe</h3>
-                    <div id="archive-leaderboard">
-                        </div>
+                    <h3 style="margin-bottom:25px; font-size:22px; display:flex; align-items:center; gap:10px;">
+                        <i class="fa-solid fa-trophy" style="color:#fbbf24"></i> Wyniki Finałowe
+                    </h3>
+                    <div id="archive-leaderboard"></div>
                 </div>
-                <div class="archive-map-frame" id="archive-map"></div>
+                <div class="archive-map-container">
+                    <div id="archive-map"></div>
+                </div>
             </div>
         </div>
     </div>
 
     <div id="view-map" class="content-view">
         <div class="view-container-wide">
-            <div class="map-nav">
-                <div style="display:flex; gap:10px;">
-                    <button class="btn-action active" id="btn-starfall" onclick="handleMapChange('starfall')" style="width:auto; padding:8px 20px;">Starfall</button>
-                    <button class="btn-action" id="btn-venture" onclick="handleMapChange('venture')" style="width:auto; padding:8px 20px; background:rgba(255,255,255,0.05);">Venture</button>
+            <div style="display:flex; justify-content:space-between; margin-bottom:25px; align-items:center">
+                <button class="back-btn" onclick="showView('tournaments')" style="margin-bottom:0">← POWRÓT</button>
+                <div style="display:flex; background:rgba(0,0,0,0.3); padding:8px; border-radius:20px; gap:10px;">
+                    <button class="btn-main" id="btn-starfall" onclick="handleMapChange('starfall')" style="width:auto; padding:10px 25px; font-size:12px;">STARFALL</button>
+                    <button class="btn-main" id="btn-venture" onclick="handleMapChange('venture')" style="width:auto; padding:10px 25px; font-size:12px; background:rgba(255,255,255,0.05); box-shadow:none;">VENTURE</button>
                 </div>
-                <button onclick="showView('tournaments')" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-weight:700;">ZAMKNIJ MAPĘ</button>
             </div>
-            <div class="map-main-container">
+            <div class="map-frame-active">
                 <aside id="sidebar">
-                    <div id="auth-ui"><a href="/auth/discord" class="btn-action" style="background:#5865F2; display:block; text-align:center; text-decoration:none;">ZALOGUJ PRZEZ DISCORD</a></div>
+                    <div id="auth-ui"><a href="/auth/discord" class="btn-main" style="background:#5865F2; display:block; text-align:center; text-decoration:none;">LOGOWANIE DISCORD</a></div>
                     <div id="profile-ui" style="display:none">
-                        <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;">
-                            <img id="u-avatar" src="" style="width:50px; border-radius:50%; border:2px solid var(--primary)">
-                            <div><b id="u-name"></b><br><small style="color:var(--text-muted)">Gracz Turniejowy</small></div>
+                        <div style="display:flex; align-items:center; gap:15px; margin-bottom:25px;">
+                            <img id="u-avatar" src="" style="width:60px; height:60px; border-radius:20px; border:2px solid var(--primary); padding:3px">
+                            <div><b id="u-name" style="font-size:18px"></b><br><span class="status-tag" style="background:var(--primary); margin:0; font-size:9px">Uczestnik #5</span></div>
                         </div>
-                        <button id="drawBtn" class="btn-action" onclick="toggleDrawing()" style="background:var(--secondary)">DODAJ SWÓJ SPOT</button>
+                        <button id="drawBtn" class="btn-main" onclick="toggleDrawing()" style="background:var(--secondary)">OZNACZ SWÓJ SPOT</button>
                     </div>
-                    <hr style="margin:20px 0; opacity:0.1">
-                    <div id="player-list-ui"></div>
+                    <div id="player-list-ui" style="margin-top:30px"></div>
                 </aside>
                 <div id="map"></div>
             </div>
         </div>
     </div>
 
-    <div id="view-info" class="content-view">
-        <div class="view-container-wide">
-            <h1 class="section-title">Regulamin</h1>
-            <p style="color:var(--text-muted)">1. Zakaz lootowania spotów przeciwnika do 3 strefy.<br>2. Zakaz teamowania.<br>3. Obowiązkowy voice-chat.</p>
-        </div>
-    </div>
-
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // DANE TURNIEJÓW
         const tournaments = [
             { id: 5, title: "FSBC Solo #5", status: "active", date: "Marzec 2026", winner: "TBD" },
-            { id: 4, title: "FSBC Solo #4", status: "finished", date: "Luty 2026", winner: "szimicarson6", results: [ {n: "szimicarson6", p: 450}, {n: "Gracz2", p: 320}, {n: "Gracz3", p: 210} ] },
-            { id: 3, title: "FSBC Solo #3", status: "finished", date: "Luty 2026", winner: "szimicarson6", results: [ {n: "szimicarson6", p: 510}, {n: "ProPlayer", p: 480}, {n: "Xyz", p: 300} ] },
-            { id: 2, title: "FSBC Solo #2", status: "finished", date: "Styczeń 2026", winner: "szimicarson6", results: [ {n: "szimicarson6", p: 390}, {n: "Lucky", p: 380}, {n: "Noob", p: 100} ] },
-            { id: 1, title: "FSBC Solo #1", status: "finished", date: "Styczeń 2026", winner: "szimicarson6", results: [ {n: "szimicarson6", p: 600}, {n: "Enemy", p: 400}, {n: "Bot", p: 50} ] },
+            { id: 4, title: "FSBC Solo #4", status: "finished", date: "25 Luty 2026", winner: "szimicarson6", results: [ {n: "szimicarson6", p: 450}, {n: "Kamilox", p: 310}, {n: "Vex", p: 290} ] },
+            { id: 3, title: "FSBC Solo #3", status: "finished", date: "12 Luty 2026", winner: "szimicarson6", results: [ {n: "szimicarson6", p: 520}, {n: "Maly", p: 480}, {n: "Zordon", p: 400} ] },
+            { id: 2, title: "FSBC Solo #2", status: "finished", date: "22 Styczeń 2026", winner: "szimicarson6", results: [ {n: "szimicarson6", p: 380}, {n: "Rafon", p: 360}, {n: "Goku", p: 210} ] },
+            { id: 1, title: "FSBC Solo #1", status: "finished", date: "06 Styczeń 2026", winner: "szimicarson6", results: [ {n: "szimicarson6", p: 610}, {n: "Szymon", p: 400}, {n: "Oskar", p: 380} ] },
         ];
 
-        let currentUser = null, isDrawing = false, p1 = null, allZones = [], currentMap = 'starfall';
-        let mainMap, archiveMap;
+        let activeMap, archMap, archOverlay, currentMap = 'starfall';
+        let currentUser = null, allZones = [];
 
-        // INICJALIZACJA
         function init() {
             renderTournaments();
-            initMaps();
+            const mapConf = { crs: L.CRS.Simple, minZoom: -1, maxZoom: 2, zoomControl: false, attributionControl: false };
+            activeMap = L.map('map', mapConf).setView([250, 250], 0);
+            archMap = L.map('archive-map', mapConf).setView([250, 250], 0);
+            
+            L.imageOverlay('https://i.ibb.co/dss8R1Ph/mapa.png', [[0,0],[500,500]]).addTo(activeMap);
+            archOverlay = L.imageOverlay('https://i.ibb.co/fzjBkhTX/image.png', [[0,0],[500,500]]).addTo(archMap);
+            
             checkUser();
             refreshZones();
         }
@@ -171,70 +192,56 @@
         function renderTournaments() {
             const container = document.getElementById('tournaments-list');
             container.innerHTML = tournaments.map(t => `
-                <div class="info-card" onclick="handleTournamentClick(${t.id})">
-                    <div class="status-badge" style="background:${t.status === 'active' ? 'var(--primary)' : 'rgba(255,255,255,0.1)'}">
-                        ${t.status === 'active' ? 'Nadchodzi' : 'Zakończony'}
-                    </div>
-                    <h2 style="margin-bottom:5px;">${t.title}</h2>
-                    <p style="color:var(--text-muted); font-size:13px; font-weight:600;">${t.date}</p>
-                    <div style="margin-top:20px; font-size:14px;">
-                        ${t.status === 'active' ? '<b style="color:var(--primary)">Kliknij, aby otworzyć mapę →</b>' : `Winner: <b>${t.winner}</b>`}
+                <div class="info-card" onclick="handleTClick(${t.id})">
+                    <span class="status-tag" style="background:${t.status === 'active' ? 'var(--primary)' : 'rgba(255,255,255,0.1)'}">
+                        ${t.status === 'active' ? 'Rejestracja' : 'Zakończony'}
+                    </span>
+                    <h2 style="font-size:26px; margin-bottom:5px;">${t.title}</h2>
+                    <p style="color:var(--text-muted); font-size:14px; font-weight:600;">${t.date}</p>
+                    <div style="margin-top:25px; display:flex; justify-content:space-between; align-items:center;">
+                        ${t.status === 'active' ? '<span style="color:var(--primary); font-weight:800">DOŁĄCZ TERAZ →</span>' : `<span>Zwycięzca: <b style="color:#fff">${t.winner}</b></span>`}
+                        <i class="fa-solid ${t.status === 'active' ? 'fa-bolt' : 'fa-circle-check'}" style="opacity:0.3"></i>
                     </div>
                 </div>
             `).join('');
         }
 
-        function handleTournamentClick(id) {
+        function handleTClick(id) {
             const t = tournaments.find(x => x.id === id);
-            if(t.status === 'active') {
-                showView('map');
-            } else {
-                openArchive(t);
-            }
+            if(t.status === 'active') { showView('map'); } 
+            else { openArchive(t); }
         }
 
         function openArchive(t) {
             showView('archive');
             document.getElementById('archive-title').innerText = t.title;
+            document.getElementById('archive-date').innerText = t.date;
+            
             const lb = document.getElementById('archive-leaderboard');
             lb.innerHTML = t.results.map((r, i) => `
-                <div class="winner-row">
-                    <div class="rank-circle" style="background:${i === 0 ? 'gold' : i === 1 ? '#c0c0c0' : '#cd7f32'}; color:#000">#${i+1}</div>
+                <div class="winner-row ${i === 0 ? 'top-1' : ''}">
+                    <div class="rank-badge" style="background:${i === 0 ? '#fbbf24' : i === 1 ? '#94a3b8' : '#b45309'}; color:#000">#${i+1}</div>
                     <div style="flex:1"><b>${r.n}</b></div>
-                    <div style="color:var(--primary)">${r.p} pkt</div>
+                    <div style="font-weight:800; color:var(--primary)">${r.p} PKT</div>
                 </div>
             `).join('');
             
-            // Symulacja mapy archiwalnej
-            setTimeout(() => archiveMap.invalidateSize(), 200);
-        }
-
-        function initMaps() {
-            const conf = { crs: L.CRS.Simple, minZoom: -1, maxZoom: 2, zoomControl: false, attributionControl: false };
-            mainMap = L.map('map', conf);
-            archiveMap = L.map('archive-map', conf);
-            
-            L.imageOverlay('https://i.ibb.co/dss8R1Ph/mapa.png', [[0,0],[500,500]]).addTo(mainMap);
-            L.imageOverlay('https://i.ibb.co/dss8R1Ph/mapa.png', [[0,0],[500,500]]).addTo(archiveMap);
-            
-            mainMap.setView([250, 250], 0);
-            archiveMap.setView([250, 250], 0);
+            setTimeout(() => archMap.invalidateSize(), 300);
         }
 
         function showView(v) {
-            document.querySelectorAll('.content-view').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.header-nav-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.content-view').forEach(e => e.classList.remove('active'));
+            document.querySelectorAll('.header-nav-item').forEach(e => e.classList.remove('active'));
             document.getElementById('view-' + v).classList.add('active');
             if(document.getElementById('nav-' + v)) document.getElementById('nav-' + v).classList.add('active');
-            if(v === 'map') setTimeout(() => mainMap.invalidateSize(), 200);
+            if(v === 'map') setTimeout(() => activeMap.invalidateSize(), 300);
             window.scrollTo(0,0);
         }
 
-        // LOGIKA MAPY (SKRÓCONA DO DZIAŁANIA)
         async function checkUser() {
             try {
-                const r = await fetch('/api/user');
-                const u = await r.json();
+                const res = await fetch('/api/user');
+                const u = await res.json();
                 if(u.id) {
                     currentUser = u;
                     document.getElementById('auth-ui').style.display='none';
@@ -247,25 +254,37 @@
 
         async function refreshZones() {
             try {
-                const r = await fetch('/api/zones');
-                allZones = await r.json();
+                const res = await fetch('/api/zones');
+                allZones = await res.json();
                 draw();
             } catch(e){}
         }
 
         function draw() {
-            mainMap.eachLayer(l => { if(l instanceof L.Rectangle) mainMap.removeLayer(l); });
+            activeMap.eachLayer(l => { if(l instanceof L.Rectangle) activeMap.removeLayer(l); });
             allZones.filter(z => z.map === currentMap).forEach(z => {
-                L.rectangle([z.p1, z.p2], { color: z.owners.length > 1 ? 'red' : 'green', fillOpacity: 0.3 }).addTo(mainMap)
+                const color = z.owners.length > 0 ? (z.owners.length > 1 ? '#ef4444' : '#22c55e') : '#ffffff';
+                L.rectangle([z.p1, z.p2], { color: color, weight: 2, fillOpacity: 0.3 }).addTo(activeMap)
                  .on('click', () => { if(currentUser) toggleZone(z); });
             });
         }
 
         async function toggleZone(z) {
-            const exists = z.owners.find(o => o.name === currentUser.username);
-            if(exists) z.owners = z.owners.filter(o => o.name !== currentUser.username);
-            else z.owners.push({ name: currentUser.username, avatar: document.getElementById('u-avatar').src });
+            const has = z.owners.find(o => o.name === currentUser.username);
+            if(has) z.owners = z.owners.filter(o => o.name !== currentUser.username);
+            else {
+                allZones.forEach(zone => { if(zone.map === currentMap) zone.owners = zone.owners.filter(o => o.name !== currentUser.username); });
+                z.owners.push({ name: currentUser.username, avatar: document.getElementById('u-avatar').src });
+            }
             await fetch('/api/zones', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(allZones)});
+            draw();
+        }
+
+        function handleMapChange(m) {
+            currentMap = m;
+            const img = m === 'starfall' ? 'https://i.ibb.co/dss8R1Ph/mapa.png' : 'https://i.ibb.co/fzjBkhTX/image.png';
+            activeMap.eachLayer(l => { if(l instanceof L.ImageOverlay) activeMap.removeLayer(l); });
+            L.imageOverlay(img, [[0,0],[500,500]]).addTo(activeMap);
             draw();
         }
 
