@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FSBC | PROFESSIONAL TACTICAL HUB</title>
+    <title>FSBC | TACTICAL HUB</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@700;800;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -15,7 +15,7 @@
             --primary-glow: rgba(99, 102, 241, 0.4);
             --bg-page: #0a0e1a;
             --bg-card: #111827;
-            --map-water: #1a1f2b; /* IDEALNY KOLOR Z TWOJEGO SCREENA */
+            --map-water: #1a1f2b; /* Twój kolor wody z mapy */
             --accent-gold: #fbbf24;
             --border: rgba(255, 255, 255, 0.08);
             --text: #f8fafc;
@@ -30,11 +30,10 @@
             background-color: var(--bg-page); 
             color: var(--text); 
             min-height: 100vh;
-            line-height: 1.5;
             overflow-x: hidden;
         }
 
-        /* SIATKA TAKTYCZNA */
+        /* SIATKA W TLE */
         .tactical-grid {
             position: fixed; inset: 0; z-index: -1;
             background-image: 
@@ -53,30 +52,30 @@
             display: flex; justify-content: space-between; align-items: center;
             position: sticky; top: 0; z-index: 1000;
         }
-        .logo { font-family: var(--font-title); font-size: 24px; font-weight: 900; letter-spacing: -1.5px; text-transform: uppercase; }
+        .logo { font-family: var(--font-title); font-size: 24px; font-weight: 900; text-transform: uppercase; }
         .logo span { color: var(--primary); }
         .nav { display: flex; gap: 40px; }
-        .nav-link { font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.5; cursor: pointer; transition: 0.3s; }
+        .nav-link { font-weight: 800; font-size: 13px; text-transform: uppercase; opacity: 0.5; cursor: pointer; transition: 0.3s; letter-spacing: 1px; }
         .nav-link:hover, .nav-link.active { opacity: 1; color: var(--primary); }
 
-        /* KONTENER WIDOKÓW */
-        .view { display: none; padding: 60px; max-width: 1440px; margin: 0 auto; animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        /* WIDOKI */
+        .view { display: none; padding: 60px; max-width: 1440px; margin: 0 auto; animation: slideUp 0.6s ease-out; }
         .view.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* TURNIEJE */
-        .t-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(440px, 1fr)); gap: 30px; margin-top: 50px; }
+        /* KARTY TURNIEJÓW */
+        .t-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 30px; margin-top: 50px; }
         .t-card { 
             background: var(--bg-card); border: 1px solid var(--border); border-radius: 32px; 
-            padding: 45px; cursor: pointer; transition: 0.4s; position: relative; overflow: hidden;
+            padding: 40px; cursor: pointer; transition: 0.4s; position: relative;
         }
         .t-card:hover { border-color: var(--primary); transform: translateY(-10px); }
-        .t-card.featured { border-color: var(--primary); border-width: 2px; }
-        .status-badge { padding: 6px 14px; border-radius: 10px; font-size: 11px; font-weight: 900; text-transform: uppercase; margin-bottom: 25px; display: inline-block; background: rgba(255,255,255,0.05); }
+        .t-card.featured { border: 2px solid var(--primary); }
+        .status-badge { padding: 6px 14px; border-radius: 10px; font-size: 11px; font-weight: 900; text-transform: uppercase; margin-bottom: 20px; display: inline-block; background: rgba(255,255,255,0.05); }
         .status-badge.live { background: var(--primary); }
 
-        /* WIDOK ARCHIWUM / MAPY */
-        .arch-split { display: grid; grid-template-columns: 460px 1fr; gap: 40px; margin-top: 40px; }
+        /* SEKCA MAPY */
+        .arch-split { display: grid; grid-template-columns: 450px 1fr; gap: 40px; margin-top: 40px; }
         .back-btn {
             background: #1e2533; border: 1px solid var(--border); color: #fff;
             padding: 12px 24px; border-radius: 14px; font-weight: 800; font-size: 12px;
@@ -85,29 +84,24 @@
         .map-frame { 
             aspect-ratio: 16/9; background-color: var(--map-water) !important; 
             border-radius: 32px; overflow: hidden; border: 1px solid var(--border); position: relative;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
         }
         #map { width: 100%; height: 100%; background: transparent !important; }
-        .leaflet-image-layer { object-fit: contain !important; }
 
-        /* LOGOWANIE DISCORD / WYNIKI */
+        /* PANEL BOCZNY */
         .side-panel { background: var(--bg-card); border-radius: 32px; padding: 40px; border: 1px solid var(--border); }
-        .rank-item { display: flex; align-items: center; justify-content: space-between; padding: 22px 28px; background: #1a202c; border-radius: 20px; margin-bottom: 15px; }
+        .rank-item { display: flex; align-items: center; justify-content: space-between; padding: 20px; background: #1a202c; border-radius: 18px; margin-bottom: 12px; }
         .rank-item.winner { border: 1px solid var(--accent-gold); background: rgba(251, 191, 36, 0.05); }
 
-        .discord-login-box {
-            text-align: center; padding: 40px 20px;
-            background: rgba(88, 101, 242, 0.05); border: 2px dashed rgba(88, 101, 242, 0.3);
-            border-radius: 24px;
-        }
+        /* PRZYCISK DISCORD */
+        .discord-box { text-align: center; padding: 30px 10px; border: 2px dashed rgba(88, 101, 242, 0.2); border-radius: 24px; }
         .btn-discord {
-            background: #5865F2; color: #fff; border: none; padding: 15px 30px; 
-            border-radius: 12px; font-weight: 800; display: flex; align-items: center; 
-            gap: 12px; margin: 20px auto 0; cursor: pointer; transition: 0.3s;
+            background: #5865F2; color: #fff; border: none; padding: 16px 32px; 
+            border-radius: 14px; font-weight: 800; display: flex; align-items: center; 
+            gap: 12px; margin: 20px auto 0; cursor: pointer; transition: 0.3s; text-decoration: none; justify-content: center;
         }
-        .btn-discord:hover { background: #4752c4; transform: scale(1.05); }
+        .btn-discord:hover { background: #4752c4; transform: scale(1.05); box-shadow: 0 10px 20px rgba(88, 101, 242, 0.3); }
 
-        footer { text-align: center; padding: 60px; color: var(--text-dim); font-size: 12px; font-weight: 700; opacity: 0.5; }
+        footer { text-align: center; padding: 60px; color: var(--text-dim); font-size: 11px; font-weight: 700; letter-spacing: 2px; }
     </style>
 </head>
 <body>
@@ -117,52 +111,46 @@
     <header>
         <div class="logo">FSBC<span>.Tactical</span></div>
         <nav class="nav">
-            <div class="nav-link active" id="btn-home" onclick="showView('home')">Home</div>
-            <div class="nav-link" id="btn-tourney" onclick="showView('tourney')">Turnieje</div>
-            <div class="nav-link" id="btn-rules" onclick="showView('rules')">Informacje</div>
+            <div class="nav-link active" onclick="showView('home')">Home</div>
+            <div class="nav-link" onclick="showView('tourney')">Turnieje</div>
+            <div class="nav-link" onclick="showView('rules')">Zasady</div>
         </nav>
     </header>
 
     <main id="v-home" class="view active">
-        <section style="text-align: center; padding: 100px 0;">
-            <h1 style="font-family: var(--font-title); font-size: 90px; line-height: 0.9; margin-bottom: 30px;">SYSTEM<br><span>TAKTYCZNY.</span></h1>
-            <p style="color: var(--text-dim); font-size: 20px; margin-bottom: 40px;">Zarządzaj swoją pozycją na mapie i śledź wyniki na żywo.</p>
-            <button class="btn-discord" style="padding: 20px 50px; font-size: 16px;" onclick="showView('tourney')">PRZEJDŹ DO WYBORU EDYCJI</button>
+        <section style="text-align: center; padding: 120px 0;">
+            <h1 style="font-family: var(--font-title); font-size: 80px; margin-bottom: 20px;">SYSTEM<br><span>OPERACYJNY.</span></h1>
+            <p style="color: var(--text-dim); font-size: 18px; margin-bottom: 40px;">Zarządzaj swoją pozycją taktyczną w Solo Blitz Royale.</p>
+            <button class="btn-discord" style="width: 300px;" onclick="showView('tourney')">ROZPOCZNIJ ANALIZĘ</button>
         </section>
     </main>
 
     <main id="v-tourney" class="view">
-        <h2 style="font-family: var(--font-title); font-size: 48px; margin-bottom: 40px;">Dostępne <span>Edycje</span></h2>
-        
+        <h2 style="font-family: var(--font-title); font-size: 42px; margin-bottom: 40px;">Wybierz <span>Edycję</span></h2>
         <div class="t-grid">
             <div class="t-card featured" onclick="openMap(5)">
                 <span class="status-badge live">Nadchodzący</span>
-                <h3 style="font-size: 34px; font-family: var(--font-title); margin-bottom: 10px;">FSBC Solo #5</h3>
-                <p style="color: var(--text-dim); font-weight: 800;">LUTY 2026</p>
-                <div style="margin-top: 40px; color: var(--primary); font-weight: 900;">OTWÓRZ MAPĘ I ZALOGUJ SIĘ →</div>
+                <h3 style="font-size: 30px;">FSBC Solo #5</h3>
+                <p style="color: var(--text-dim); font-weight: 700;">LUTY 2026</p>
             </div>
-
             <div class="t-card" onclick="openMap(4)">
                 <span class="status-badge">Zakończony</span>
-                <h3 style="font-size: 28px;">FSBC Solo #4</h3>
+                <h3 style="font-size: 26px;">FSBC Solo #4</h3>
                 <p style="color: var(--text-dim);">25.02.2026</p>
             </div>
-
             <div class="t-card" onclick="openMap(3)">
                 <span class="status-badge">Zakończony</span>
-                <h3 style="font-size: 28px;">FSBC Solo #3</h3>
+                <h3 style="font-size: 26px;">FSBC Solo #3</h3>
                 <p style="color: var(--text-dim);">12.02.2026</p>
             </div>
-
             <div class="t-card" onclick="openMap(2)">
                 <span class="status-badge">Zakończony</span>
-                <h3 style="font-size: 28px;">FSBC Solo #2</h3>
+                <h3 style="font-size: 26px;">FSBC Solo #2</h3>
                 <p style="color: var(--text-dim);">22.01.2026</p>
             </div>
-
             <div class="t-card" onclick="openMap(1)">
                 <span class="status-badge">Zakończony</span>
-                <h3 style="font-size: 28px;">FSBC Solo #1</h3>
+                <h3 style="font-size: 26px;">FSBC Solo #1</h3>
                 <p style="color: var(--text-dim);">06.01.2026</p>
             </div>
         </div>
@@ -170,11 +158,10 @@
 
     <main id="v-archive" class="view">
         <button class="back-btn" onclick="showView('tourney')"><i class="fa-solid fa-arrow-left"></i> POWRÓT</button>
-        <h2 id="arch-title" style="font-family: var(--font-title); font-size: 42px; margin-bottom: 40px;">FSBC Solo #1</h2>
+        <h2 id="arch-title" style="font-family: var(--font-title); font-size: 36px; margin-bottom: 30px;">Edycja</h2>
         
         <div class="arch-split">
-            <div class="side-panel" id="side-content">
-                </div>
+            <div class="side-panel" id="side-content"></div>
             <div class="map-frame">
                 <div id="map"></div>
             </div>
@@ -183,12 +170,16 @@
 
     <main id="v-rules" class="view">
         <div class="side-panel">
-            <h2 style="margin-bottom: 30px;">Zasady Główne</h2>
-            <p>1. Zakaz lootowania spotów przeciwnika do 3 strefy.<br>2. Obowiązek przebywania na Discordzie.</p>
+            <h2 style="margin-bottom: 20px;">Regulamin Operacyjny</h2>
+            <p style="color: var(--text-dim); line-height: 2;">
+                1. Zakaz lootowania spotów przeciwnika do zamknięcia 3 strefy.<br>
+                2. Autoryzacja Discord jest wymagana do rezerwacji spota.<br>
+                3. Każdy gracz ma prawo do jednego znacznika na mapie.
+            </p>
         </div>
     </main>
 
-    <footer>FSBC TACTICAL HUB &copy; 2026</footer>
+    <footer>FSBC TACTICAL HUB v4.0</footer>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
@@ -204,54 +195,45 @@
 
         function showView(v) {
             document.querySelectorAll('.view').forEach(e => e.classList.remove('active'));
-            document.querySelectorAll('.nav-link').forEach(e => e.classList.remove('active'));
             document.getElementById('v-' + v).classList.add('active');
-            if(document.getElementById('btn-' + v)) document.getElementById('btn-' + v).classList.add('active');
             window.scrollTo(0,0);
         }
 
         function openMap(id) {
             const data = db[id];
             const now = new Date();
-            
-            // Tytuł widoku
             document.getElementById('arch-title').innerText = data.title;
             const side = document.getElementById('side-content');
 
-            // Logika panelu bocznego
             if(data.type === 'future') {
                 if(now < data.regStart) {
-                    alert("System rejestracji mapy #5 zostanie otwarty 20 lutego o godzinie 13:00.");
-                    return; // Nie wpuszczaj dalej
-                } else {
-                    // Panel logowania Discord dla nadchodzącego turnieju
-                    side.innerHTML = `
-                        <div class="discord-login-box">
-                            <i class="fa-brands fa-discord" style="font-size: 50px; color: #5865F2;"></i>
-                            <h3 style="margin-top: 20px;">Wymagane Logowanie</h3>
-                            <p style="color: var(--text-dim); margin-top: 10px;">Aby wybrać swój spot na mapie #5, musisz zalogować się przez Discord.</p>
-                            <button class="btn-discord" onclick="alert('Łączenie z Discord...')">
-                                <i class="fa-brands fa-discord"></i> ZALOGUJ PRZEZ DISCORD
-                            </button>
-                        </div>
-                    `;
+                    alert("Rejestracja rusza 20 lutego o 13:00!");
+                    return;
                 }
-            } else {
-                // Tabela wyników dla zakończonych turniejów
+                // LOGOWANIE DISCORD - kieruje na Twój serwer (endpoint /login)
                 side.innerHTML = `
-                    <h4 style="margin-bottom: 25px; font-size: 12px; letter-spacing: 2px; color: var(--text-dim);">TABELA WYNIKÓW</h4>
+                    <div class="discord-box">
+                        <i class="fa-brands fa-discord" style="font-size: 40px; color: #5865F2;"></i>
+                        <h3 style="margin-top: 15px;">Wymagana Autoryzacja</h3>
+                        <p style="color: var(--text-dim); font-size: 14px; margin-top: 10px;">Zaloguj się, aby odblokować wybór spota.</p>
+                        <a href="/login" class="btn-discord">
+                            <i class="fa-brands fa-discord"></i> AUTORYZUJ DISCORD
+                        </a>
+                    </div>
+                `;
+            } else {
+                side.innerHTML = `
+                    <h4 style="margin-bottom: 20px; font-size: 12px; color: var(--text-dim);">WYNIKI KOŃCOWE</h4>
                     ${data.scores.map((s, i) => `
                         <div class="rank-item ${i === 0 ? 'winner' : ''}">
                             <span>#${i+1} ${s.n}</span>
-                            <span style="color:var(--primary); font-weight:900;">${s.p} PKT</span>
+                            <span style="color:var(--primary); font-weight:900;">${s.p}</span>
                         </div>
                     `).join('')}
                 `;
             }
 
             showView('archive');
-
-            // Obsługa mapy
             if(!leafletMap) {
                 leafletMap = L.map('map', { crs: L.CRS.Simple, minZoom: -1, maxZoom: 2, zoomControl: false, attributionControl: false });
             }
