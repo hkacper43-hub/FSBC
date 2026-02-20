@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FSBC - SYSTEM TAKTYCZNY</title>
+    <title>FSBC - PROFESSIONAL TACTICAL SYSTEM</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -13,95 +13,89 @@
         :root {
             --primary: #6366f1;
             --primary-glow: rgba(99, 102, 241, 0.4);
-            --secondary: #a855f7;
             --bg-dark: #030712;
-            --card-bg: rgba(15, 23, 42, 0.9);
-            --glass: rgba(255, 255, 255, 0.03);
+            --card-bg: rgba(15, 23, 42, 0.8);
+            --glass: rgba(255, 255, 255, 0.05);
             --glass-border: rgba(255, 255, 255, 0.1);
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
+            --font-main: 'Inter', sans-serif;
+            --font-title: 'Poppins', sans-serif;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
-        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
+        body { font-family: var(--font-main); background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
         
         #dynamic-bg { position: fixed; inset: 0; background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #030712 100%); z-index: -2; }
-        .grid-pattern { position: fixed; inset: 0; background-image: linear-gradient(var(--glass-border) 1px, transparent 1px), linear-gradient(90deg, var(--glass-border) 1px, transparent 1px); background-size: 45px 45px; z-index: -1; opacity: 0.1; }
 
-        /* HEADER NAV */
-        .site-header { width: 100%; padding: 25px; display: flex; justify-content: center; gap: 40px; background: rgba(0,0,0,0.2); backdrop-filter: blur(10px); }
-        .header-nav-item { color: #fff; text-decoration: none; font-size: 14px; font-weight: 600; opacity: 0.5; transition: 0.3s; cursor: pointer; position: relative; text-transform: uppercase; letter-spacing: 1px; }
-        .header-nav-item.active, .header-nav-item:hover { opacity: 1; }
-        .header-nav-item.active::after { content: ''; position: absolute; bottom: -8px; left: 0; width: 100%; height: 3px; background: var(--primary); border-radius: 2px; box-shadow: 0 0 10px var(--primary-glow); }
+        /* HEADER */
+        .site-header { width: 100%; padding: 20px; display: flex; justify-content: center; gap: 40px; background: rgba(0,0,0,0.4); backdrop-filter: blur(15px); border-bottom: 1px solid var(--glass-border); position: sticky; top: 0; z-index: 100; }
+        .header-nav-item { color: #fff; text-decoration: none; font-size: 13px; font-weight: 700; opacity: 0.6; transition: 0.3s; cursor: pointer; text-transform: uppercase; letter-spacing: 1.5px; }
+        .header-nav-item.active, .header-nav-item:hover { opacity: 1; color: var(--primary); }
 
         /* WIDOKI */
-        .content-view { display: none; width: 100%; animation: slideUp 0.5s ease-out; padding: 40px 20px; }
+        .content-view { display: none; width: 100%; animation: fadeIn 0.4s ease-out; padding: 40px 20px; }
         .content-view.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* TURNIEJE */
+        /* KARTY TURNIEJÓW */
         .view-container-wide { width: 95%; max-width: 1400px; margin: 0 auto; }
-        .section-title { font-size: 50px; font-weight: 800; margin-bottom: 40px; letter-spacing: -2px; }
-        .tournaments-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
+        .section-title { font-family: var(--font-title); font-size: 48px; font-weight: 800; margin-bottom: 40px; letter-spacing: -2px; }
+        .tournaments-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px; }
         
         .info-card { 
-            background: var(--glass); border: 1px solid var(--glass-border); border-radius: 28px; padding: 35px; 
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; position: relative; overflow: hidden;
-            backdrop-filter: blur(10px);
+            background: var(--card-bg); border: 1px solid var(--glass-border); border-radius: 24px; padding: 30px; 
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; position: relative; overflow: hidden;
         }
-        .info-card:hover { transform: translateY(-10px); border-color: var(--primary); background: rgba(99, 102, 241, 0.05); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
-        
-        /* POWRÓT / PRZYCISKI */
+        .info-card:hover { transform: scale(1.02); border-color: var(--primary); background: rgba(99, 102, 241, 0.05); }
+
+        /* PRZYCISK POWROTU */
         .back-btn {
-            display: inline-flex; align-items: center; gap: 10px; background: var(--glass); border: 1px solid var(--glass-border);
-            color: #fff; padding: 12px 24px; border-radius: 16px; cursor: pointer; font-weight: 600; transition: 0.3s;
-            margin-bottom: 30px; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 12px; background: var(--glass); border: 1px solid var(--glass-border);
+            color: #fff; padding: 14px 28px; border-radius: 18px; cursor: pointer; font-weight: 700; transition: 0.3s;
+            margin-bottom: 30px; text-transform: uppercase; font-size: 12px; letter-spacing: 1px;
         }
-        .back-btn:hover { background: var(--primary); border-color: var(--primary); transform: translateX(-5px); box-shadow: 0 0 20px var(--primary-glow); }
+        .back-btn:hover { background: rgba(255,255,255,0.1); transform: translateX(-5px); border-color: #fff; }
 
-        /* ARCHIWUM LAYOUT */
-        .archive-layout { display: grid; grid-template-columns: 400px 1fr; gap: 30px; align-items: start; }
-        .stats-panel { background: var(--card-bg); border-radius: 30px; padding: 35px; border: 1px solid var(--glass-border); box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
-        .archive-map-container { height: 700px; background: #000; border-radius: 30px; overflow: hidden; border: 2px solid var(--glass-border); position: relative; }
+        /* ARCHIWUM LAYOUT - MAPA W KWADRACIE */
+        .archive-layout { display: grid; grid-template-columns: 400px 1fr; gap: 30px; }
+        .stats-panel { background: var(--card-bg); border-radius: 28px; padding: 30px; border: 1px solid var(--glass-border); }
         
-        /* LEADERBOARD */
-        .winner-row { display: flex; align-items: center; gap: 15px; padding: 20px; background: rgba(255,255,255,0.02); border-radius: 20px; margin-bottom: 12px; border: 1px solid transparent; }
-        .winner-row.top-1 { border-color: #fbbf24; background: rgba(251, 191, 36, 0.05); }
-        .rank-badge { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; }
+        /* KLUCZOWA ZMIANA: MAPA IDEALNIE DOPASOWANA */
+        .archive-map-container { 
+            aspect-ratio: 1 / 1; /* Robi idealny kwadrat */
+            background: #000; 
+            border-radius: 28px; 
+            overflow: hidden; 
+            border: 1px solid var(--glass-border);
+            position: relative;
+        }
+        #archive-map { width: 100%; height: 100%; }
 
-        /* MAPA INTERAKTYWNA */
-        #map, #archive-map { width: 100%; height: 100%; border-radius: 20px; background: #0b1424; }
-        .map-frame-active { display: flex; gap: 20px; height: 800px; }
-        #sidebar { width: 380px; background: var(--card-bg); border-radius: 30px; padding: 30px; border: 1px solid var(--glass-border); }
+        /* LEAFLET OVERLAY FIX - dopasowanie obrazu mapy */
+        .leaflet-image-layer {
+            object-fit: cover !important; /* To sprawia, że obraz wypełnia kwadrat jak na Twoim screenie */
+        }
 
-        .btn-main { background: var(--primary); color: #fff; border: none; padding: 16px; border-radius: 18px; font-weight: 700; cursor: pointer; width: 100%; transition: 0.3s; box-shadow: 0 10px 20px var(--primary-glow); }
-        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 15px 30px var(--primary-glow); }
+        .winner-row { display: flex; align-items: center; gap: 15px; padding: 18px; background: rgba(255,255,255,0.03); border-radius: 18px; margin-bottom: 10px; }
+        .rank-badge { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 900; }
 
-        .status-tag { padding: 6px 14px; border-radius: 10px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; display: inline-block; }
+        .status-badge { padding: 6px 12px; border-radius: 8px; font-size: 10px; font-weight: 900; text-transform: uppercase; margin-bottom: 15px; display: inline-block; letter-spacing: 1px; }
     </style>
 </head>
 <body>
 
     <div id="dynamic-bg"></div>
-    <div class="grid-pattern"></div>
 
     <header class="site-header">
-        <div class="header-nav-item active" id="nav-home" onclick="showView('home')">Główna</div>
-        <div class="header-nav-item" id="nav-tournaments" onclick="showView('tournaments')">Turnieje</div>
-        <div class="header-nav-item" id="nav-info" onclick="showView('info')">Zasady</div>
+        <div class="header-nav-item active" onclick="showView('home')">Główna</div>
+        <div class="header-nav-item" onclick="showView('tournaments')">Turnieje</div>
+        <div class="header-nav-item" onclick="showView('info')">Informacje</div>
     </header>
-
-    <div id="view-home" class="content-view active">
-        <div style="height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
-            <h1 style="font-size: clamp(40px, 10vw, 90px); font-weight: 900; letter-spacing: -5px; line-height: 0.9;">FSBC<br><span style="color:var(--primary); filter: drop-shadow(0 0 15px var(--primary-glow))">TACTICAL</span></h1>
-            <p style="color: var(--text-muted); max-width: 550px; margin-top: 25px; font-size: 18px;">Archiwum zwycięstw i system planowania stref zrzutu dla elity Solo Blitz Royale.</p>
-            <button class="btn-main" style="width: auto; padding: 18px 50px; margin-top: 40px; border-radius: 50px;" onclick="showView('tournaments')">PRZEGLĄDAJ TURNIEJE</button>
-        </div>
-    </div>
 
     <div id="view-tournaments" class="content-view">
         <div class="view-container-wide">
-            <h1 class="section-title">Wybierz edycję</h1>
+            <h1 class="section-title">Wybierz Turniej</h1>
             <div class="tournaments-grid" id="tournaments-list"></div>
         </div>
     </div>
@@ -109,25 +103,14 @@
     <div id="view-archive" class="content-view">
         <div class="view-container-wide">
             <button class="back-btn" onclick="showView('tournaments')">
-                <i class="fa-solid fa-arrow-left"></i> POWRÓT DO TURNIEJÓW
+                <i class="fa-solid fa-chevron-left"></i> Powrót do listy
             </button>
-            
-            <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:30px;">
-                <div>
-                    <h1 id="archive-title" style="font-size:45px; font-weight:800; letter-spacing:-2px;">Turniej #1</h1>
-                    <p id="archive-date" style="color:var(--text-muted); font-weight:600"></p>
-                </div>
-                <div style="text-align:right">
-                    <span style="color:var(--text-muted); font-size:12px; text-transform:uppercase; font-weight:800">Mapa Archiwalna</span>
-                    <h3 style="color:var(--secondary)">VENTURE ISLAND</h3>
-                </div>
-            </div>
             
             <div class="archive-layout">
                 <div class="stats-panel">
-                    <h3 style="margin-bottom:25px; font-size:22px; display:flex; align-items:center; gap:10px;">
-                        <i class="fa-solid fa-trophy" style="color:#fbbf24"></i> Wyniki Finałowe
-                    </h3>
+                    <h2 id="archive-title" style="font-family: var(--font-title); font-size: 32px; margin-bottom: 10px;"></h2>
+                    <p id="archive-date" style="color: var(--text-muted); margin-bottom: 30px; font-weight: 600;"></p>
+                    
                     <div id="archive-leaderboard"></div>
                 </div>
                 <div class="archive-map-container">
@@ -137,155 +120,62 @@
         </div>
     </div>
 
-    <div id="view-map" class="content-view">
-        <div class="view-container-wide">
-            <div style="display:flex; justify-content:space-between; margin-bottom:25px; align-items:center">
-                <button class="back-btn" onclick="showView('tournaments')" style="margin-bottom:0">← POWRÓT</button>
-                <div style="display:flex; background:rgba(0,0,0,0.3); padding:8px; border-radius:20px; gap:10px;">
-                    <button class="btn-main" id="btn-starfall" onclick="handleMapChange('starfall')" style="width:auto; padding:10px 25px; font-size:12px;">STARFALL</button>
-                    <button class="btn-main" id="btn-venture" onclick="handleMapChange('venture')" style="width:auto; padding:10px 25px; font-size:12px; background:rgba(255,255,255,0.05); box-shadow:none;">VENTURE</button>
-                </div>
-            </div>
-            <div class="map-frame-active">
-                <aside id="sidebar">
-                    <div id="auth-ui"><a href="/auth/discord" class="btn-main" style="background:#5865F2; display:block; text-align:center; text-decoration:none;">LOGOWANIE DISCORD</a></div>
-                    <div id="profile-ui" style="display:none">
-                        <div style="display:flex; align-items:center; gap:15px; margin-bottom:25px;">
-                            <img id="u-avatar" src="" style="width:60px; height:60px; border-radius:20px; border:2px solid var(--primary); padding:3px">
-                            <div><b id="u-name" style="font-size:18px"></b><br><span class="status-tag" style="background:var(--primary); margin:0; font-size:9px">Uczestnik #5</span></div>
-                        </div>
-                        <button id="drawBtn" class="btn-main" onclick="toggleDrawing()" style="background:var(--secondary)">OZNACZ SWÓJ SPOT</button>
-                    </div>
-                    <div id="player-list-ui" style="margin-top:30px"></div>
-                </aside>
-                <div id="map"></div>
-            </div>
-        </div>
-    </div>
-
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         const tournaments = [
-            { id: 5, title: "FSBC Solo #5", status: "active", date: "Marzec 2026", winner: "TBD" },
-            { id: 4, title: "FSBC Solo #4", status: "finished", date: "25 Luty 2026", winner: "szimicarson6", results: [ {n: "szimicarson6", p: 450}, {n: "Kamilox", p: 310}, {n: "Vex", p: 290} ] },
-            { id: 3, title: "FSBC Solo #3", status: "finished", date: "12 Luty 2026", winner: "szimicarson6", results: [ {n: "szimicarson6", p: 520}, {n: "Maly", p: 480}, {n: "Zordon", p: 400} ] },
-            { id: 2, title: "FSBC Solo #2", status: "finished", date: "22 Styczeń 2026", winner: "szimicarson6", results: [ {n: "szimicarson6", p: 380}, {n: "Rafon", p: 360}, {n: "Goku", p: 210} ] },
-            { id: 1, title: "FSBC Solo #1", status: "finished", date: "06 Styczeń 2026", winner: "szimicarson6", results: [ {n: "szimicarson6", p: 610}, {n: "Szymon", p: 400}, {n: "Oskar", p: 380} ] },
+            { id: 5, title: "FSBC Solo #5", status: "active", date: "MARZEC 2026", winner: "TBD" },
+            { id: 4, title: "FSBC Solo #4", status: "finished", date: "25 LUTY 2026", winner: "szimicarson6", results: [{n:"szimicarson6", p:500}, {n:"Player2", p:420}, {n:"Player3", p:380}] },
+            { id: 1, title: "FSBC Solo #1", status: "finished", date: "06 STYCZEŃ 2026", winner: "szimicarson6", results: [{n:"szimicarson6", p:610}, {n:"Enemy", p:400}, {n:"Bot", p:50}] }
         ];
 
-        let activeMap, archMap, archOverlay, currentMap = 'starfall';
-        let currentUser = null, allZones = [];
+        let archMap;
 
         function init() {
             renderTournaments();
-            const mapConf = { crs: L.CRS.Simple, minZoom: -1, maxZoom: 2, zoomControl: false, attributionControl: false };
-            activeMap = L.map('map', mapConf).setView([250, 250], 0);
-            archMap = L.map('archive-map', mapConf).setView([250, 250], 0);
-            
-            L.imageOverlay('https://i.ibb.co/dss8R1Ph/mapa.png', [[0,0],[500,500]]).addTo(activeMap);
-            archOverlay = L.imageOverlay('https://i.ibb.co/fzjBkhTX/image.png', [[0,0],[500,500]]).addTo(archMap);
-            
-            checkUser();
-            refreshZones();
+            archMap = L.map('archive-map', { crs: L.CRS.Simple, minZoom: -1, maxZoom: 2, zoomControl: false, attributionControl: false });
+            archMap.setView([250, 250], 0);
         }
 
         function renderTournaments() {
             const container = document.getElementById('tournaments-list');
             container.innerHTML = tournaments.map(t => `
-                <div class="info-card" onclick="handleTClick(${t.id})">
-                    <span class="status-tag" style="background:${t.status === 'active' ? 'var(--primary)' : 'rgba(255,255,255,0.1)'}">
-                        ${t.status === 'active' ? 'Rejestracja' : 'Zakończony'}
-                    </span>
-                    <h2 style="font-size:26px; margin-bottom:5px;">${t.title}</h2>
-                    <p style="color:var(--text-muted); font-size:14px; font-weight:600;">${t.date}</p>
-                    <div style="margin-top:25px; display:flex; justify-content:space-between; align-items:center;">
-                        ${t.status === 'active' ? '<span style="color:var(--primary); font-weight:800">DOŁĄCZ TERAZ →</span>' : `<span>Zwycięzca: <b style="color:#fff">${t.winner}</b></span>`}
-                        <i class="fa-solid ${t.status === 'active' ? 'fa-bolt' : 'fa-circle-check'}" style="opacity:0.3"></i>
-                    </div>
+                <div class="info-card" onclick="openArchive(${t.id})">
+                    <span class="status-badge" style="background:${t.status === 'active' ? 'var(--primary)' : 'rgba(255,255,255,0.1)'}">${t.status === 'active' ? 'Nadchodzi' : 'Zakończony'}</span>
+                    <h2 style="font-family: var(--font-title); font-size: 28px; margin-bottom: 10px;">${t.title}</h2>
+                    <p style="color:var(--text-muted); font-weight:700; font-size:14px;">${t.date}</p>
+                    ${t.status === 'finished' ? `<p style="margin-top:20px; font-weight:600;">Zwycięzca: <span style="color:var(--primary)">${t.winner}</span></p>` : ''}
                 </div>
             `).join('');
         }
 
-        function handleTClick(id) {
+        function openArchive(id) {
             const t = tournaments.find(x => x.id === id);
-            if(t.status === 'active') { showView('map'); } 
-            else { openArchive(t); }
-        }
+            if(t.status === 'active') return alert("Turniej jeszcze się nie odbył!");
 
-        function openArchive(t) {
             showView('archive');
             document.getElementById('archive-title').innerText = t.title;
             document.getElementById('archive-date').innerText = t.date;
             
             const lb = document.getElementById('archive-leaderboard');
             lb.innerHTML = t.results.map((r, i) => `
-                <div class="winner-row ${i === 0 ? 'top-1' : ''}">
-                    <div class="rank-badge" style="background:${i === 0 ? '#fbbf24' : i === 1 ? '#94a3b8' : '#b45309'}; color:#000">#${i+1}</div>
-                    <div style="flex:1"><b>${r.n}</b></div>
-                    <div style="font-weight:800; color:var(--primary)">${r.p} PKT</div>
+                <div class="winner-row">
+                    <div class="rank-badge" style="background:${i === 0 ? '#fbbf24' : '#334155'}; color:#000">#${i+1}</div>
+                    <div style="flex:1; font-weight:700;">${r.n}</div>
+                    <div style="color:var(--primary); font-weight:800;">${r.p} PKT</div>
                 </div>
             `).join('');
+
+            // Ładowanie mapy Venture do kwadratu
+            archMap.eachLayer(layer => { if(layer instanceof L.ImageOverlay) archMap.removeLayer(layer); });
+            L.imageOverlay('https://i.ibb.co/fzjBkhTX/image.png', [[0, 0], [500, 500]]).addTo(archMap);
             
-            setTimeout(() => archMap.invalidateSize(), 300);
+            setTimeout(() => archMap.invalidateSize(), 100);
         }
 
         function showView(v) {
             document.querySelectorAll('.content-view').forEach(e => e.classList.remove('active'));
-            document.querySelectorAll('.header-nav-item').forEach(e => e.classList.remove('active'));
             document.getElementById('view-' + v).classList.add('active');
-            if(document.getElementById('nav-' + v)) document.getElementById('nav-' + v).classList.add('active');
-            if(v === 'map') setTimeout(() => activeMap.invalidateSize(), 300);
             window.scrollTo(0,0);
-        }
-
-        async function checkUser() {
-            try {
-                const res = await fetch('/api/user');
-                const u = await res.json();
-                if(u.id) {
-                    currentUser = u;
-                    document.getElementById('auth-ui').style.display='none';
-                    document.getElementById('profile-ui').style.display='block';
-                    document.getElementById('u-name').innerText = u.username;
-                    document.getElementById('u-avatar').src = `https://cdn.discordapp.com/avatars/${u.id}/${u.avatar}.png`;
-                }
-            } catch(e){}
-        }
-
-        async function refreshZones() {
-            try {
-                const res = await fetch('/api/zones');
-                allZones = await res.json();
-                draw();
-            } catch(e){}
-        }
-
-        function draw() {
-            activeMap.eachLayer(l => { if(l instanceof L.Rectangle) activeMap.removeLayer(l); });
-            allZones.filter(z => z.map === currentMap).forEach(z => {
-                const color = z.owners.length > 0 ? (z.owners.length > 1 ? '#ef4444' : '#22c55e') : '#ffffff';
-                L.rectangle([z.p1, z.p2], { color: color, weight: 2, fillOpacity: 0.3 }).addTo(activeMap)
-                 .on('click', () => { if(currentUser) toggleZone(z); });
-            });
-        }
-
-        async function toggleZone(z) {
-            const has = z.owners.find(o => o.name === currentUser.username);
-            if(has) z.owners = z.owners.filter(o => o.name !== currentUser.username);
-            else {
-                allZones.forEach(zone => { if(zone.map === currentMap) zone.owners = zone.owners.filter(o => o.name !== currentUser.username); });
-                z.owners.push({ name: currentUser.username, avatar: document.getElementById('u-avatar').src });
-            }
-            await fetch('/api/zones', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(allZones)});
-            draw();
-        }
-
-        function handleMapChange(m) {
-            currentMap = m;
-            const img = m === 'starfall' ? 'https://i.ibb.co/dss8R1Ph/mapa.png' : 'https://i.ibb.co/fzjBkhTX/image.png';
-            activeMap.eachLayer(l => { if(l instanceof L.ImageOverlay) activeMap.removeLayer(l); });
-            L.imageOverlay(img, [[0,0],[500,500]]).addTo(activeMap);
-            draw();
         }
 
         init();
