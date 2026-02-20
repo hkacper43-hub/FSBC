@@ -126,7 +126,13 @@
         .stats-table td:last-child { text-align: right; font-weight: 800; color: var(--primary); }
 
         /* KLASTRY NA MAPIE */
-        .avatar-cluster { display: flex; align-items: center; background: rgba(3, 7, 18, 0.9); padding: 7px 18px; border-radius: 35px; border: 2px solid white; }
+        .avatar-cluster 
+const rect = L.rectangle([z.p1, z.p2], { 
+    color: "#000000",      // To jest Twój czarny outline
+    weight: 3,             // Grubość obrysu
+    fillColor: color,      // Kolor środka zależny od ilości osób
+    fillOpacity: 0.4       // Przezroczystość wypełnienia
+}).addTo(map);
         .cluster-img { width: 34px; height: 34px; border-radius: 50%; border: 2px solid white; margin-right: -14px; }
         .cluster-count { margin-left: 24px; font-weight: 800; color: white; }
         .zone-tooltip { background: transparent !important; border: none !important; box-shadow: none !important; }
