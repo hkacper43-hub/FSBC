@@ -11,13 +11,12 @@
 
     <style>
         :root {
-            /* KOLORYSTYKA DOPASOWANA DO TWOICH SCREENÓW */
             --primary: #6366f1;
             --primary-glow: rgba(99, 102, 241, 0.4);
-            --bg-page: #0a0e1a;         /* Głęboki granat strony */
-            --bg-card: #111827;         /* Tło kart */
-            --map-water: #1a1f2b;       /* IDEALNIE DOPASOWANY KOLOR TWOJEJ MAPY */
-            --accent-gold: #fbbf24;     /* Kolor zwycięzcy */
+            --bg-page: #0a0e1a;
+            --bg-card: #111827;
+            --map-water: #1a1f2b; /* Kolor dopasowany do Twojej mapy */
+            --accent-gold: #fbbf24;
             --border: rgba(255, 255, 255, 0.08);
             --text: #f8fafc;
             --text-dim: #94a3b8;
@@ -25,7 +24,6 @@
             --font-title: 'Poppins', sans-serif;
         }
 
-        /* RESET I BAZA */
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
         body { 
             font-family: var(--font-main); 
@@ -36,7 +34,7 @@
             overflow-x: hidden;
         }
 
-        /* SIATKA TAKTYCZNA (GRID) W TLE */
+        /* TŁO Z SIATKĄ */
         .tactical-grid {
             position: fixed; inset: 0; z-index: -1;
             background-image: 
@@ -57,87 +55,53 @@
         }
         .logo { font-family: var(--font-title); font-size: 24px; font-weight: 900; letter-spacing: -1.5px; text-transform: uppercase; }
         .logo span { color: var(--primary); }
-        
         .nav { display: flex; gap: 40px; }
-        .nav-link { 
-            font-weight: 800; font-size: 13px; text-transform: uppercase; 
-            letter-spacing: 1.5px; opacity: 0.5; cursor: pointer; transition: 0.3s; 
-        }
+        .nav-link { font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.5; cursor: pointer; transition: 0.3s; }
         .nav-link:hover, .nav-link.active { opacity: 1; color: var(--primary); }
 
-        /* KONTENER GŁÓWNY */
+        /* WIDOKI */
         .view { display: none; padding: 60px; max-width: 1440px; margin: 0 auto; animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
         .view.active { display: block; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* STRONA STARTOWA */
+        /* HERO */
         .hero { text-align: center; padding: 100px 0; }
-        .hero-badge { background: rgba(99, 102, 241, 0.1); color: var(--primary); padding: 8px 16px; border-radius: 8px; font-weight: 900; font-size: 11px; margin-bottom: 25px; display: inline-block; border: 1px solid var(--primary); letter-spacing: 1px; }
         .hero h1 { font-family: var(--font-title); font-size: 90px; line-height: 0.9; margin-bottom: 30px; letter-spacing: -4px; }
         .hero h1 span { color: var(--primary); }
-        .hero-p { color: var(--text-dim); font-size: 20px; max-width: 700px; margin: 0 auto 50px; }
         .btn-cta { background: var(--primary); color: #fff; border: none; padding: 20px 50px; border-radius: 16px; font-weight: 900; font-size: 16px; cursor: pointer; transition: 0.4s; }
         .btn-cta:hover { transform: translateY(-5px); box-shadow: 0 15px 30px var(--primary-glow); }
 
-        /* TURNIEJE - GRID */
+        /* GRID TURNIEJÓW */
         .t-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(440px, 1fr)); gap: 30px; margin-top: 50px; }
         .t-card { 
             background: var(--bg-card); border: 1px solid var(--border); border-radius: 32px; 
             padding: 45px; cursor: pointer; transition: 0.4s; position: relative; overflow: hidden;
         }
-        .t-card:hover { border-color: var(--primary); transform: translateY(-10px); background: rgba(17, 24, 39, 0.8); }
-        .t-card.active-edge { border-width: 2px; border-color: var(--primary); }
+        .t-card:hover { border-color: var(--primary); transform: translateY(-10px); }
         .status-badge { padding: 6px 14px; border-radius: 10px; font-size: 11px; font-weight: 900; text-transform: uppercase; margin-bottom: 25px; display: inline-block; background: rgba(255,255,255,0.05); }
         .status-badge.live { background: var(--primary); }
 
-        /* WIDOK ARCHIWUM */
+        /* ARCHIWUM I MAPA */
         .arch-split { display: grid; grid-template-columns: 460px 1fr; gap: 40px; margin-top: 40px; }
-        
-        /* PRZYCISK POWRÓT (ZE SCREENA) */
         .back-btn {
             background: #1e2533; border: 1px solid var(--border); color: #fff;
             padding: 12px 24px; border-radius: 14px; font-weight: 800; font-size: 12px;
             cursor: pointer; display: inline-flex; align-items: center; gap: 10px; margin-bottom: 30px;
-            text-transform: uppercase; transition: 0.2s;
         }
-        .back-btn:hover { background: #2d3748; transform: translateX(-5px); }
-
-        /* MAPA - KLUCZ DO TWOJEGO PROBLEMU */
         .map-container { 
-            aspect-ratio: 16/9; 
-            background-color: var(--map-water) !important; /* Tutaj mapa się "wtapia" */
-            border-radius: 32px; 
-            overflow: hidden; 
-            border: 1px solid var(--border);
-            position: relative;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+            aspect-ratio: 16/9; background-color: var(--map-water) !important; 
+            border-radius: 32px; overflow: hidden; border: 1px solid var(--border); position: relative;
         }
         #map { width: 100%; height: 100%; background: transparent !important; }
-        .leaflet-image-layer { object-fit: contain !important; filter: contrast(1.05) saturate(1.1); }
 
-        /* TABELA WYNIKÓW */
+        /* LISTA WYNIKÓW */
         .leaderboard { background: var(--bg-card); border-radius: 32px; padding: 40px; border: 1px solid var(--border); }
-        .rank-item { 
-            display: flex; align-items: center; justify-content: space-between; 
-            padding: 22px 28px; background: #1a202c; border-radius: 20px; margin-bottom: 15px; 
-            border: 1px solid transparent; transition: 0.3s;
-        }
-        .rank-item.winner { border-color: var(--accent-gold); background: rgba(251, 191, 36, 0.04); }
-        .rank-pos { font-weight: 900; color: #fff; font-size: 22px; width: 50px; }
-        .rank-name { flex: 1; font-weight: 700; font-size: 18px; }
-        .rank-pts { font-weight: 900; color: var(--primary); font-family: 'JetBrains Mono'; font-size: 18px; }
+        .rank-item { display: flex; align-items: center; justify-content: space-between; padding: 22px 28px; background: #1a202c; border-radius: 20px; margin-bottom: 15px; }
+        .rank-item.winner { border-color: var(--accent-gold); background: rgba(251, 191, 36, 0.04); border: 1px solid var(--accent-gold); }
 
         /* REGULAMIN */
-        .rules-container { max-width: 900px; margin: 0 auto; }
         .rules-card { background: var(--bg-card); border-radius: 32px; padding: 50px; border: 1px solid var(--border); margin-bottom: 30px; }
-        .rule-entry { display: flex; gap: 30px; margin-bottom: 40px; }
-        .rule-num { min-width: 50px; height: 50px; background: var(--primary); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 22px; box-shadow: 0 5px 15px var(--primary-glow); }
-        .rule-content h4 { font-size: 20px; margin-bottom: 8px; color: #fff; font-family: var(--font-title); }
-        .rule-content p { color: var(--text-dim); font-size: 16px; }
-
-        /* STOPKA */
-        footer { text-align: center; padding: 60px; color: var(--text-dim); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; opacity: 0.5; }
-
+        footer { text-align: center; padding: 60px; color: var(--text-dim); font-size: 12px; font-weight: 700; opacity: 0.5; }
     </style>
 </head>
 <body>
@@ -155,64 +119,43 @@
 
     <main id="v-home" class="view active">
         <section class="hero">
-            <div class="hero-badge">OPERACYJNY SYSTEM TAKTYCZNY</div>
             <h1>SYSTEM<br><span>TAKTYCZNY.</span></h1>
-            <p class="hero-p">Analizuj historię zrzutów, sprawdzaj wyniki i przygotuj się do nadchodzącej edycji Solo Blitz.</p>
-            <button class="btn-cta" onclick="showView('tourney')">ZOBACZ TURNIEJE</button>
+            <p style="color: var(--text-dim); margin-bottom: 40px;">Analizuj zrzuty i statystyki z oficjalnych edycji Solo Blitz.</p>
+            <button class="btn-cta" onclick="showView('tourney')">PRZEJDŹ DO TURNIEJÓW</button>
         </section>
     </main>
 
     <main id="v-tourney" class="view">
-        <h2 style="font-family: var(--font-title); font-size: 48px; margin-bottom: 10px;">Dostępne <span>Edycje</span></h2>
-        <p style="color: var(--text-dim); margin-bottom: 40px;">Wybierz sezon, aby zobaczyć mapę taktyczną i tabelę wyników.</p>
+        <h2 style="font-family: var(--font-title); font-size: 48px; margin-bottom: 40px;">Dostępne <span>Edycje</span></h2>
         
         <div class="t-grid">
-            <div class="t-card active-edge" onclick="alert('Zapisy na mapę #5 ruszają 1 marca!')">
+            <div class="t-card" style="border-color: var(--primary); border-width: 2px;" onclick="handleRegistration()">
                 <span class="status-badge live">Nadchodzący</span>
                 <h3 style="font-size: 34px; font-family: var(--font-title); margin-bottom: 10px;">FSBC Solo #5</h3>
-                <p style="color: var(--text-dim); font-weight: 800; font-size: 18px;">MARZEC 2026</p>
-                <div style="margin-top: 40px; color: var(--primary); font-weight: 900;">REJESTRACJA WKRÓTCE <i class="fa-solid fa-arrow-right"></i></div>
+                <p style="color: var(--text-dim); font-weight: 800;">LUTY 2026</p>
+                <div id="reg-status" style="margin-top: 40px; color: var(--primary); font-weight: 900;">
+                    SPRAWDZANIE STATUSU...
+                </div>
             </div>
 
             <div class="t-card" onclick="openArch(4)">
                 <span class="status-badge">Zakończony</span>
-                <h3 style="font-size: 28px; margin-bottom: 5px;">FSBC Solo #4</h3>
+                <h3 style="font-size: 28px;">FSBC Solo #4</h3>
                 <p style="color: var(--text-dim);">25.02.2026</p>
-                <p style="margin-top: 25px; font-weight: 700;">MVP: <span style="color: var(--accent-gold)">szimicarson6</span></p>
             </div>
-
-            <div class="t-card" onclick="openArch(3)">
-                <span class="status-badge">Zakończony</span>
-                <h3 style="font-size: 28px; margin-bottom: 5px;">FSBC Solo #3</h3>
-                <p style="color: var(--text-dim);">12.02.2026</p>
-                <p style="margin-top: 25px; font-weight: 700;">MVP: <span style="color: var(--accent-gold)">szimicarson6</span></p>
-            </div>
-
-            <div class="t-card" onclick="openArch(2)">
-                <span class="status-badge">Zakończony</span>
-                <h3 style="font-size: 28px; margin-bottom: 5px;">FSBC Solo #2</h3>
-                <p style="color: var(--text-dim);">22.01.2026</p>
-                <p style="margin-top: 25px; font-weight: 700;">MVP: <span style="color: var(--accent-gold)">szimicarson6</span></p>
-            </div>
-
             <div class="t-card" onclick="openArch(1)">
                 <span class="status-badge">Zakończony</span>
-                <h3 style="font-size: 28px; margin-bottom: 5px;">FSBC Solo #1</h3>
+                <h3 style="font-size: 28px;">FSBC Solo #1</h3>
                 <p style="color: var(--text-dim);">06.01.2026</p>
-                <p style="margin-top: 25px; font-weight: 700;">MVP: <span style="color: var(--accent-gold)">szimicarson6</span></p>
             </div>
         </div>
     </main>
 
     <main id="v-archive" class="view">
-        <button class="back-btn" onclick="showView('tourney')">
-            <i class="fa-solid fa-arrow-left"></i> Powrót
-        </button>
+        <button class="back-btn" onclick="showView('tourney')"><i class="fa-solid fa-arrow-left"></i> POWRÓT</button>
         <h2 id="arch-title" style="font-family: var(--font-title); font-size: 42px; margin-bottom: 40px;">FSBC Solo #1</h2>
-        
         <div class="arch-split">
             <div class="leaderboard">
-                <h4 style="margin-bottom: 30px; font-size: 12px; letter-spacing: 2px; font-weight: 900; color: var(--text-dim); text-transform: uppercase;">Finalna Klasyfikacja</h4>
                 <div id="results-target"></div>
             </div>
             <div class="map-container">
@@ -222,115 +165,77 @@
     </main>
 
     <main id="v-rules" class="view">
-        <div class="rules-container">
-            <h2 style="font-family: var(--font-title); font-size: 50px; margin-bottom: 40px; text-align: center;">KODEKS <span>WALKI</span></h2>
-            
-            <div class="rules-card">
-                <div class="rule-entry">
-                    <div class="rule-num">01</div>
-                    <div class="rule-content">
-                        <h4>OCHRONA SPOTÓW</h4>
-                        <p>Absolutny zakaz atakowania i lootowania graczy na ich wyznaczonych spotach do momentu zamknięcia 3 strefy. Naruszenie grozi dyskwalifikacją.</p>
-                    </div>
-                </div>
-                <div class="rule-entry">
-                    <div class="rule-num">02</div>
-                    <div class="rule-content">
-                        <h4>PRZEDMIOTY SPECJALNE</h4>
-                        <p>Zabrania się używania przedmiotów mitycznych oraz pojazdów z modyfikacjami, chyba że regulamin danej edycji mówi inaczej.</p>
-                    </div>
-                </div>
-                <div class="rule-entry" style="margin-bottom: 0;">
-                    <div class="rule-num">03</div>
-                    <div class="rule-content">
-                        <h4>KOMUNIKACJA</h4>
-                        <p>Wszyscy gracze muszą przebywać na kanale głosowym Discord podczas trwania turnieju w celu weryfikacji punktów.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="rules-card" style="background: linear-gradient(135deg, var(--bg-card), #1e1b4b);">
-                <h3 style="margin-bottom: 30px; font-family: var(--font-title);">System Punktacji</h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                    <div style="background: rgba(255,255,255,0.03); padding: 25px; border-radius: 20px; border: 1px solid var(--border);">
-                        <span style="font-size: 11px; font-weight: 900; color: var(--text-dim); display: block; margin-bottom: 5px;">VICTORY ROYALE</span>
-                        <b style="font-size: 32px; color: var(--accent-gold);">+100 PKT</b>
-                    </div>
-                    <div style="background: rgba(255,255,255,0.03); padding: 25px; border-radius: 20px; border: 1px solid var(--border);">
-                        <span style="font-size: 11px; font-weight: 900; color: var(--text-dim); display: block; margin-bottom: 5px;">ELIMINACJA</span>
-                        <b style="font-size: 32px; color: var(--primary);">+15 PKT</b>
-                    </div>
-                </div>
-            </div>
+        <div class="rules-card">
+            <h2 style="margin-bottom: 30px;">Zasady Główne</h2>
+            <p style="color: var(--text-dim);">1. Zakaz lootowania spotów przeciwnika do 3 strefy.<br>2. Obowiązek przebywania na Discordzie.</p>
         </div>
     </main>
 
-    <footer>
-        FSBC Tactical Portal &copy; 2026 | Developed for szimicarson6
-    </footer>
+    <footer>FSBC TACTICAL HUB &copy; 2026</footer>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // BAZA DANYCH TURNIEJÓW
         const db = {
-            1: { title: "FSBC Solo #1", scores: [{n:"szimicarson6", p:600}, {n:"Gracz_A", p:400}, {n:"Gracz_B", p:350}] },
-            2: { title: "FSBC Solo #2", scores: [{n:"szimicarson6", p:540}, {n:"Nitro", p:420}, {n:"Ghost", p:310}] },
-            3: { title: "FSBC Solo #3", scores: [{n:"szimicarson6", p:580}, {n:"Kamil", p:490}, {n:"Oskar", p:410}] },
-            4: { title: "FSBC Solo #4", scores: [{n:"szimicarson6", p:505}, {n:"Player1", p:445}, {n:"Szymon", p:390}] }
+            1: { title: "FSBC Solo #1", scores: [{n:"szimicarson6", p:600}, {n:"Gracz_A", p:400}] },
+            4: { title: "FSBC Solo #4", scores: [{n:"szimicarson6", p:505}, {n:"Oskar", p:445}] }
         };
 
+        const REG_DATE = new Date("2026-02-20T13:00:00");
         let leafletMap;
 
-        // NAWIGACJA
+        // Funkcja sprawdzająca czy zapisy już trwają
+        function updateRegStatus() {
+            const now = new Date();
+            const statusEl = document.getElementById('reg-status');
+            if (now >= REG_DATE) {
+                statusEl.innerHTML = "REJESTRACJA OTWARTA <i class='fa-solid fa-check'></i>";
+                statusEl.style.color = "#10b981"; // Zielony
+            } else {
+                statusEl.innerHTML = "REJESTRACJA WKRÓTCE <i class='fa-solid fa-clock'></i>";
+            }
+        }
+
+        function handleRegistration() {
+            const now = new Date();
+            if (now < REG_DATE) {
+                alert("System rejestracji mapy #5 zostanie otwarty 20 lutego o godzinie 13:00.");
+            } else {
+                alert("Otwieranie formularza rejestracji...");
+                // Tutaj możesz dodać window.location.href = "link_do_formularza";
+            }
+        }
+
         function showView(v) {
             document.querySelectorAll('.view').forEach(e => e.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(e => e.classList.remove('active'));
-            
             document.getElementById('v-' + v).classList.add('active');
-            const navLink = document.getElementById('btn-' + v);
-            if(navLink) navLink.classList.add('active');
-            
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if(document.getElementById('btn-' + v)) document.getElementById('btn-' + v).classList.add('active');
+            if(v === 'tourney') updateRegStatus();
+            window.scrollTo(0,0);
         }
 
-        // OTWIERANIE ARCHIWUM
         function openArch(id) {
             const data = db[id];
             document.getElementById('arch-title').innerText = data.title;
-            
             const list = document.getElementById('results-target');
             list.innerHTML = data.scores.map((s, i) => `
                 <div class="rank-item ${i === 0 ? 'winner' : ''}">
-                    <div><span class="rank-pos">#${i+1}</span><span class="rank-name">${s.n}</span></div>
-                    <div class="rank-pts">${s.p} PKT</div>
+                    <span>#${i+1} ${s.n}</span>
+                    <span style="color:var(--primary); font-weight:900;">${s.p} PKT</span>
                 </div>
             `).join('');
-
             showView('archive');
-            
-            // INICJALIZACJA MAPY (Zabezpieczenie przed błędami)
             if(!leafletMap) {
-                leafletMap = L.map('map', { 
-                    crs: L.CRS.Simple, 
-                    minZoom: -1, 
-                    maxZoom: 2, 
-                    zoomControl: false, 
-                    attributionControl: false 
-                });
+                leafletMap = L.map('map', { crs: L.CRS.Simple, minZoom: -1, maxZoom: 2, zoomControl: false, attributionControl: false });
             }
-            
-            // Czyszczenie starych warstw mapy
-            leafletMap.eachLayer(layer => { if(layer instanceof L.ImageOverlay) leafletMap.removeLayer(layer); });
-            
-            // ŁADOWANIE MAPY (Obrazek z linku)
+            leafletMap.eachLayer(l => { if(l instanceof L.ImageOverlay) leafletMap.removeLayer(l); });
             L.imageOverlay('https://i.ibb.co/fzjBkhTX/image.png', [[0,0], [500,500]]).addTo(leafletMap);
             leafletMap.setView([250, 250], 0);
-            
-            // FIX DLA ROZMIARU MAPY
             setTimeout(() => { leafletMap.invalidateSize(); }, 250);
         }
 
-        console.log("FSBC Hub: System Gotowy.");
+        setInterval(updateRegStatus, 60000); // Odświeżaj status co minutę
+        window.onload = updateRegStatus;
     </script>
 </body>
 </html>
