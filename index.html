@@ -3,350 +3,311 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FSBC - PRO TACTICAL HUB</title>
+    <title>FSBC | PROFESSIONAL TACTICAL HUB</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@700;800;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
+            /* KOLORYSTYKA DOPASOWANA DO TWOICH SCREENÓW */
             --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --primary-glow: rgba(99, 102, 241, 0.5);
-            --bg-dark: #020617;
-            --card-bg: #0f172a;
-            --glass: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
+            --primary-glow: rgba(99, 102, 241, 0.4);
+            --bg-page: #0a0e1a;         /* Głęboki niebieski/czarny strony */
+            --bg-card: #111827;         /* Tło kart */
+            --map-water: #1b212d;       /* DOKŁADNY KOLOR WODY Z TWOJEJ MAPY */
+            --accent-gold: #fbbf24;     /* Złoto dla zwycięzcy */
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #f8fafc;
+            --text-dim: #94a3b8;
+            --font-main: 'Inter', sans-serif;
+            --font-title: 'Poppins', sans-serif;
         }
 
-        /* PODSTAWY */
+        /* PODSTAWOWA KONFIGURACJA */
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
         body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: var(--bg-dark); 
-            color: var(--text-main); 
-            line-height: 1.6;
-            overflow-x: hidden;
+            font-family: var(--font-main); 
+            background-color: var(--bg-page); 
+            color: var(--text); 
+            min-height: 100vh;
+            line-height: 1.5;
         }
 
-        /* EFEKTY TŁA */
-        .bg-fx {
+        /* EFEKT SIATKI TAKTYCZNEJ W TLE */
+        .tactical-grid {
             position: fixed; inset: 0; z-index: -1;
-            background: radial-gradient(circle at 20% 30%, #1e1b4b 0%, transparent 40%),
-                        radial-gradient(circle at 80% 70%, #312e81 0%, transparent 40%),
-                        #020617;
-        }
-        .grid-fx {
-            position: fixed; inset: 0; z-index: -1;
-            background-image: linear-gradient(var(--glass-border) 1px, transparent 1px), 
-                              linear-gradient(90deg, var(--glass-border) 1px, transparent 1px);
-            background-size: 60px 60px; opacity: 0.15;
+            background-image: 
+                linear-gradient(var(--border) 1px, transparent 1px), 
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 50px 50px;
+            mask-image: radial-gradient(circle at center, black, transparent 80%);
         }
 
-        /* NAWIGACJA */
-        .header {
-            background: rgba(2, 6, 23, 0.85);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--glass-border);
-            padding: 25px 0; position: sticky; top: 0; z-index: 1000;
+        /* NAGŁÓWEK (HEADER) */
+        .top-nav {
+            background: rgba(10, 14, 26, 0.85);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 60px;
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 1000;
         }
-        .nav-inner {
-            max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 40px;
-        }
-        .brand { font-family: 'Poppins', sans-serif; font-size: 26px; font-weight: 900; letter-spacing: -1.5px; text-transform: uppercase; }
-        .brand span { color: var(--primary); text-shadow: 0 0 15px var(--primary-glow); }
+        .brand-logo { font-family: var(--font-title); font-size: 24px; font-weight: 900; letter-spacing: -1.5px; }
+        .brand-logo span { color: var(--primary); }
         
-        .nav-menu { display: flex; gap: 45px; }
-        .nav-item { 
-            text-decoration: none; color: var(--text-main); font-weight: 800; font-size: 13px; 
-            text-transform: uppercase; letter-spacing: 2px; opacity: 0.5; transition: 0.4s; cursor: pointer;
+        .nav-links { display: flex; gap: 35px; }
+        .nav-link { 
+            font-weight: 800; font-size: 13px; text-transform: uppercase; 
+            letter-spacing: 1.5px; opacity: 0.5; cursor: pointer; transition: 0.3s; 
         }
-        .nav-item:hover, .nav-item.active { opacity: 1; color: var(--primary); }
+        .nav-link:hover, .nav-link.active { opacity: 1; color: var(--primary); }
 
-        /* STRONA GŁÓWNA - HERO */
-        .hero { 
-            height: 85vh; display: flex; align-items: center; justify-content: center; 
-            text-align: center; padding: 0 20px;
+        /* GŁÓWNY KONTENER WIDOKÓW */
+        .main-view { display: none; padding: 60px; max-width: 1400px; margin: 0 auto; animation: slideUp 0.5s ease-out; }
+        .main-view.active { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* STRONA GŁÓWNA - HERO SECTION */
+        .hero-layout { text-align: center; padding: 120px 0; }
+        .hero-tag { background: rgba(99, 102, 241, 0.1); color: var(--primary); padding: 8px 16px; border-radius: 8px; font-weight: 900; font-size: 12px; margin-bottom: 25px; display: inline-block; border: 1px solid var(--primary); }
+        .hero-layout h1 { font-family: var(--font-title); font-size: clamp(40px, 8vw, 90px); line-height: 0.85; margin-bottom: 30px; letter-spacing: -4px; }
+        .hero-layout h1 em { font-style: normal; color: var(--primary); }
+        .hero-desc { color: var(--text-dim); font-size: 20px; max-width: 650px; margin: 0 auto 50px; }
+
+        /* PRZYCISKI */
+        .btn-call { background: var(--primary); color: #fff; border: none; padding: 18px 45px; border-radius: 14px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        .btn-call:hover { transform: translateY(-3px); box-shadow: 0 10px 25px var(--primary-glow); }
+
+        /* KARTY TURNIEJÓW */
+        .tourney-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 30px; margin-top: 40px; }
+        .tourney-card { 
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 28px; 
+            padding: 45px; cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative;
         }
-        .hero-title { 
-            font-family: 'Poppins', sans-serif; font-size: clamp(45px, 9vw, 110px); 
-            line-height: 0.85; font-weight: 900; margin-bottom: 35px; letter-spacing: -5px;
-        }
-        .hero-title em { font-style: normal; color: var(--primary); }
-        .hero-sub { color: var(--text-muted); font-size: 22px; max-width: 700px; margin: 0 auto 50px auto; font-weight: 500; }
+        .tourney-card:hover { border-color: var(--primary); transform: translateY(-8px); }
+        .card-status { padding: 6px 14px; border-radius: 10px; font-size: 11px; font-weight: 900; text-transform: uppercase; margin-bottom: 25px; display: inline-block; background: rgba(255,255,255,0.05); }
+        .status-live { background: var(--primary); color: #fff; }
+
+        /* SEKCJA ARCHIWUM (Z MAPĄ) */
+        .archive-split { display: grid; grid-template-columns: 450px 1fr; gap: 40px; margin-top: 40px; }
         
-        .hero-btns { display: flex; gap: 25px; justify-content: center; }
-        .btn-p { background: var(--primary); color: #fff; padding: 18px 45px; border-radius: 18px; font-weight: 900; border: none; cursor: pointer; transition: 0.3s; font-size: 16px; }
-        .btn-p:hover { transform: translateY(-5px); box-shadow: 0 15px 30px var(--primary-glow); }
-        .btn-s { background: var(--glass); color: #fff; padding: 18px 45px; border-radius: 18px; font-weight: 900; border: 1px solid var(--glass-border); cursor: pointer; transition: 0.3s; }
-        .btn-s:hover { background: #fff; color: #000; }
-
-        /* TURNIEJE - LISTA */
-        .container { max-width: 1400px; margin: 80px auto; padding: 0 40px; }
-        .section-header { margin-bottom: 60px; }
-        .section-header h2 { font-size: 50px; font-family: 'Poppins'; letter-spacing: -2px; }
-
-        .t-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 35px; }
-        .t-card {
-            background: var(--card-bg); border: 1px solid var(--glass-border); border-radius: 35px;
-            padding: 45px; transition: 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); cursor: pointer; position: relative;
+        /* PRZYCISK POWRÓT - IDENTYCZNY JAK NA TWOIM SCREENIE */
+        .back-control {
+            background: #1e2533; border: 1px solid var(--border); color: #fff;
+            padding: 10px 20px; border-radius: 12px; font-weight: 800; font-size: 12px;
+            cursor: pointer; display: inline-flex; align-items: center; gap: 10px; margin-bottom: 25px;
+            text-transform: uppercase; transition: 0.2s;
         }
-        .t-card:hover { transform: scale(1.03); border-color: var(--primary); }
-        .t-card.featured { border: 2px solid var(--primary); box-shadow: 0 0 40px rgba(99, 102, 241, 0.1); }
-        
-        .badge { display: inline-block; padding: 6px 16px; border-radius: 10px; font-size: 11px; font-weight: 900; text-transform: uppercase; margin-bottom: 25px; letter-spacing: 1px; }
-        .badge-active { background: var(--primary); color: #fff; }
-        .badge-done { background: rgba(255,255,255,0.05); color: var(--text-muted); }
+        .back-control:hover { background: #2d3748; }
 
-        /* ARCHIWUM - UKŁAD Z MAPĄ */
-        .arch-wrap { display: grid; grid-template-columns: 480px 1fr; gap: 40px; margin-top: 40px; }
-        .score-panel { background: var(--card-bg); border-radius: 35px; padding: 45px; border: 1px solid var(--glass-border); }
-        
-        /* FIX MAPY - IDEALNE WPASOWANIE */
-        .map-frame { 
+        /* MAPA - IDEALNE WPASOWANIE W KOLOR WODY */
+        .map-wrapper { 
             aspect-ratio: 1/1; 
-            background: #000; 
-            border-radius: 35px; 
+            background-color: var(--map-water) !important; /* To usuwa czarne krawędzie */
+            border-radius: 30px; 
             overflow: hidden; 
-            border: 1px solid var(--glass-border);
+            border: 1px solid var(--border);
             position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
         }
-        #archive-map { width: 100%; height: 100%; background: #000; }
-        
-        /* Kluczowa reguła dla obrazka mapy */
-        .leaflet-image-layer { 
-            object-fit: cover !important; 
-            border-radius: 35px;
+        #leaflet-map-container { width: 100%; height: 100%; background: transparent !important; }
+        .leaflet-image-layer { object-fit: contain !important; }
+
+        /* WYNIKI - WIZUALIZACJA ZE SCREENA */
+        .leaderboard-panel { background: var(--bg-card); border-radius: 30px; padding: 40px; border: 1px solid var(--border); }
+        .score-entry { 
+            display: flex; align-items: center; justify-content: space-between; 
+            padding: 20px 25px; background: #1a202c; border-radius: 18px; margin-bottom: 15px; 
+            border: 1px solid transparent; transition: 0.3s;
         }
+        .score-entry.gold-medal { border-color: var(--accent-gold); background: rgba(251, 191, 36, 0.05); }
+        .score-rank { font-weight: 900; color: #fff; font-size: 20px; min-width: 45px; }
+        .score-name { flex: 1; font-weight: 700; font-size: 18px; }
+        .score-val { font-weight: 900; color: var(--primary); font-family: 'JetBrains Mono'; }
 
-        /* WYNIKI */
-        .rank-item { display: flex; align-items: center; gap: 20px; padding: 22px; background: rgba(255,255,255,0.02); border-radius: 22px; margin-bottom: 15px; transition: 0.3s; }
-        .rank-item:hover { background: rgba(255,255,255,0.05); }
-        .num { font-weight: 900; font-size: 24px; min-width: 40px; }
-        .name { flex: 1; font-weight: 700; font-size: 18px; }
-        .pts { font-weight: 900; color: var(--primary); font-size: 18px; }
-        .winner-fx { border: 1px solid #fbbf24; background: rgba(251, 191, 36, 0.05) !important; }
-
-        /* REGULAMIN */
-        .info-grid { max-width: 900px; margin: 0 auto; }
-        .info-block { background: var(--card-bg); border-radius: 35px; padding: 50px; border: 1px solid var(--glass-border); margin-bottom: 40px; }
-        .info-block h3 { font-family: 'Poppins'; font-size: 30px; margin-bottom: 30px; color: var(--primary); }
-        .rule { display: flex; gap: 25px; margin-bottom: 30px; }
-        .rule-dot { background: var(--primary); min-width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 18px; }
-
-        /* SYSTEM WIDOKÓW */
-        .view { display: none; animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .view.active { display: block; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        /* REGULAMIN - ROZBUDOWANY */
+        .rules-wrapper { max-width: 1000px; margin: 0 auto; }
+        .rule-card { background: var(--bg-card); border-radius: 30px; padding: 50px; border: 1px solid var(--border); margin-bottom: 30px; }
+        .rule-title { font-family: var(--font-title); font-size: 32px; margin-bottom: 30px; color: var(--primary); }
+        .rule-row { display: flex; gap: 25px; margin-bottom: 35px; }
+        .rule-index { min-width: 45px; height: 45px; background: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 20px; }
 
     </style>
 </head>
 <body>
 
-    <div class="bg-fx"></div>
-    <div class="grid-fx"></div>
+    <div class="tactical-grid"></div>
 
-    <header class="header">
-        <div class="nav-inner">
-            <div class="brand">FSBC<span>.HUB</span></div>
-            <nav class="nav-menu">
-                <div class="nav-item active" id="btn-home" onclick="go('home')">Home</div>
-                <div class="nav-item" id="btn-tournaments" onclick="go('tournaments')">Turnieje</div>
-                <div class="nav-item" id="btn-rules" onclick="go('rules')">Regulamin</div>
-            </nav>
-        </div>
+    <header class="top-nav">
+        <div class="brand-logo">FSBC<span>.TACTICAL</span></div>
+        <nav class="nav-links">
+            <div class="nav-link active" id="n-home" onclick="nav('home')">Home</div>
+            <div class="nav-link" id="n-tourneys" onclick="nav('tourneys')">Turnieje</div>
+            <div class="nav-link" id="n-info" onclick="nav('info')">Informacje</div>
+        </nav>
     </header>
 
-    <main id="v-home" class="view active">
-        <section class="hero">
-            <div>
-                <div class="badge badge-active" style="margin-bottom: 20px;">SYSTEM OPERACYJNY v4.0</div>
-                <h1 class="hero-title">MAPY I <em>TAKTYKA.</em></h1>
-                <p class="hero-sub">Zarządzaj swoimi spotami, analizuj historię zwycięstw i przygotuj się na nadchodzące starcie w edycji #5.</p>
-                <div class="hero-btns">
-                    <button class="btn-p" onclick="go('tournaments')">DOŁĄCZ DO GRY</button>
-                    <button class="btn-s" onclick="go('rules')">ZASADY FSBC</button>
+    <section id="v-home" class="main-view active">
+        <div class="hero-layout">
+            <div class="hero-tag">SST-SYSTEM v4.2 ONLINE</div>
+            <h1>CENTRUM<br><em>TAKTYCZNE.</em></h1>
+            <p class="hero-desc">Zintegrowany system analizy zrzutów oraz archiwum oficjalnych rozgrywek Solo Blitz Royale.</p>
+            <button class="btn-call" onclick="nav('tourneys')">ROZPOCZNIJ PRZEGLĄDANIE</button>
+        </div>
+    </section>
+
+    <section id="v-tourneys" class="main-view">
+        <h2 style="font-family: var(--font-title); font-size: 45px; margin-bottom: 15px;">Dostępne <span>Edycje</span></h2>
+        <p style="color: var(--text-dim); margin-bottom: 40px;">Wybierz interesujący Cię sezon, aby zobaczyć mapę i statystyki.</p>
+        
+        <div class="tourney-grid">
+            <div class="tourney-card" style="border-width: 2px; border-color: var(--primary);" onclick="alert('System rejestracji mapy #5 zostanie otwarty 1 marca.')">
+                <span class="card-status status-live">Nadchodzący</span>
+                <h3 style="font-size: 32px; font-family: var(--font-title);">FSBC Solo #5</h3>
+                <p style="color: var(--text-dim); font-weight: 700; margin-top: 5px;">MARZEC 2026</p>
+                <div style="margin-top: 40px; display: flex; align-items: center; gap: 10px;">
+                    <span style="color: var(--primary); font-weight: 900;">DOŁĄCZ DO MAPY</span>
+                    <i class="fa-solid fa-arrow-right" style="color: var(--primary)"></i>
                 </div>
             </div>
-        </section>
-    </main>
 
-    <main id="v-tournaments" class="view">
-        <div class="container">
-            <div class="section-header">
-                <h2>HISTORIA <span>WALK</span></h2>
-                <p style="color:var(--text-muted)">Wybierz edycję, aby zobaczyć mapę taktyczną i wyniki.</p>
+            <div class="tourney-card" onclick="openArchive(4)">
+                <span class="card-status">Zakończony</span>
+                <h3 style="font-size: 28px;">FSBC Solo #4</h3>
+                <p style="color: var(--text-dim);">25 Luty 2026</p>
+                <div style="margin-top: 30px; font-weight: 800;">MVP: <span style="color: var(--accent-gold)">szimicarson6</span></div>
             </div>
+
+            <div class="tourney-card" onclick="openArchive(3)">
+                <span class="card-status">Zakończony</span>
+                <h3 style="font-size: 28px;">FSBC Solo #3</h3>
+                <p style="color: var(--text-dim);">12 Luty 2026</p>
+                <div style="margin-top: 30px; font-weight: 800;">MVP: <span style="color: var(--accent-gold)">szimicarson6</span></div>
+            </div>
+
+            <div class="tourney-card" onclick="openArchive(2)">
+                <span class="card-status">Zakończony</span>
+                <h3 style="font-size: 28px;">FSBC Solo #2</h3>
+                <p style="color: var(--text-dim);">22 Styczeń 2026</p>
+                <div style="margin-top: 30px; font-weight: 800;">MVP: <span style="color: var(--accent-gold)">szimicarson6</span></div>
+            </div>
+
+            <div class="tourney-card" onclick="openArchive(1)">
+                <span class="card-status">Zakończony</span>
+                <h3 style="font-size: 28px;">FSBC Solo #1</h3>
+                <p style="color: var(--text-dim);">06 Styczeń 2026</p>
+                <div style="margin-top: 30px; font-weight: 800;">MVP: <span style="color: var(--accent-gold)">szimicarson6</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="v-archive" class="main-view">
+        <button class="back-control" onclick="nav('tourneys')">
+            <i class="fa-solid fa-chevron-left"></i> Powrót do listy
+        </button>
+        <h2 id="arch-page-title" style="font-family: var(--font-title); font-size: 40px; margin-bottom: 35px;">FSBC Solo #1</h2>
+        
+        <div class="archive-split">
+            <div class="leaderboard-panel">
+                <h4 style="margin-bottom: 30px; font-size: 14px; letter-spacing: 2px; font-weight: 900; color: var(--text-dim); text-transform: uppercase;">Finalna Klasyfikacja</h4>
+                <div id="results-target"></div>
+            </div>
+            <div class="map-wrapper">
+                <div id="leaflet-map-container"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="v-info" class="main-view">
+        <div class="rules-wrapper">
+            <h2 style="font-family: var(--font-title); font-size: 50px; margin-bottom: 40px;">Regulamin <span>Gry</span></h2>
             
-            <div class="t-grid">
-                <div class="t-card featured" onclick="alert('Zapisy na mapę #5 ruszają wkrótce!')">
-                    <span class="badge badge-active">AKTUALNY / REJESTRACJA</span>
-                    <h2 class="t-title" style="font-size:35px; font-family:'Poppins';">FSBC Solo #5</h2>
-                    <p style="color:var(--text-muted); font-weight:600; margin-top:10px;">DATA: MARZEC 2026</p>
-                    <button class="btn-p" style="width:100%; margin-top:35px;">PLANUJ ZRZUT</button>
+            <div class="rule-card">
+                <h3 class="rule-title">Zasady Rozgrywki</h3>
+                <div class="rule-row">
+                    <div class="rule-index">01</div>
+                    <div>
+                        <b style="font-size: 18px; display: block; margin-bottom: 5px;">ZAKAZ GRIEFOWANIA</b>
+                        <p style="color: var(--text-dim);">Całkowity zakaz lootowania oraz atakowania przeciwnika na jego wyznaczonym spocie taktycznym do momentu zamknięcia się 3 strefy.</p>
+                    </div>
                 </div>
-
-                <div class="t-card" onclick="viewArch(4)">
-                    <span class="badge badge-done">ZAKOŃCZONY</span>
-                    <h2 class="t-title" style="font-size:30px; font-family:'Poppins';">FSBC Solo #4</h2>
-                    <p style="color:var(--text-muted); font-weight:600;">25 Luty 2026</p>
-                    <div style="margin-top:30px; font-weight:800;">ZWYCIĘZCA: <span style="color:gold">szimicarson6</span></div>
+                <div class="rule-row">
+                    <div class="rule-index">02</div>
+                    <div>
+                        <b style="font-size: 18px; display: block; margin-bottom: 5px;">PRZEDMIOTY ZAKAZANE</b>
+                        <p style="color: var(--text-dim);">Używanie młotów impulsowych, przedmiotów mitycznych oraz pojazdów opancerzonych jest zabronione (chyba że regulamin edycji stanowi inaczej).</p>
+                    </div>
                 </div>
+            </div>
 
-                <div class="t-card" onclick="viewArch(3)">
-                    <span class="badge badge-done">ZAKOŃCZONY</span>
-                    <h2 class="t-title" style="font-size:30px; font-family:'Poppins';">FSBC Solo #3</h2>
-                    <p style="color:var(--text-muted); font-weight:600;">12 Luty 2026</p>
-                    <div style="margin-top:30px; font-weight:800;">ZWYCIĘZCA: <span style="color:gold">szimicarson6</span></div>
-                </div>
-
-                <div class="t-card" onclick="viewArch(2)">
-                    <span class="badge badge-done">ZAKOŃCZONY</span>
-                    <h2 class="t-title" style="font-size:30px; font-family:'Poppins';">FSBC Solo #2</h2>
-                    <p style="color:var(--text-muted); font-weight:600;">22 Styczeń 2026</p>
-                    <div style="margin-top:30px; font-weight:800;">ZWYCIĘZCA: <span style="color:gold">szimicarson6</span></div>
-                </div>
-
-                <div class="t-card" onclick="viewArch(1)">
-                    <span class="badge badge-done">ZAKOŃCZONY</span>
-                    <h2 class="t-title" style="font-size:30px; font-family:'Poppins';">FSBC Solo #1</h2>
-                    <p style="color:var(--text-muted); font-weight:600;">06 Styczeń 2026</p>
-                    <div style="margin-top:30px; font-weight:800;">ZWYCIĘZCA: <span style="color:gold">szimicarson6</span></div>
+            <div class="rule-card">
+                <h3 class="rule-title">Punktacja Oficjalna</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div style="background: rgba(255,255,255,0.03); padding: 25px; border-radius: 20px;">
+                        <span style="display: block; font-size: 12px; font-weight: 900; color: var(--text-dim);">VICTORY ROYALE</span>
+                        <b style="font-size: 32px; color: var(--accent-gold);">+100 PKT</b>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); padding: 25px; border-radius: 20px;">
+                        <span style="display: block; font-size: 12px; font-weight: 900; color: var(--text-dim);">ELIMINACJA</span>
+                        <b style="font-size: 32px; color: var(--primary);">+15 PKT</b>
+                    </div>
                 </div>
             </div>
         </div>
-    </main>
-
-    <main id="v-archive" class="view">
-        <div class="container">
-            <button class="btn-s" onclick="go('tournaments')" style="margin-bottom:30px;">← POWRÓT DO LISTY</button>
-            <h1 id="arch-title" style="font-size: 55px; font-family:'Poppins'; letter-spacing:-2px;">FSBC Solo #1</h1>
-
-            <div class="arch-wrap">
-                <div class="score-panel">
-                    <h3 style="margin-bottom:35px; letter-spacing:1px; font-weight:900;">HALL OF FAME</h3>
-                    <div id="results-list">
-                        </div>
-                </div>
-                <div class="map-frame">
-                    <div id="archive-map"></div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <main id="v-rules" class="view">
-        <div class="container">
-            <div class="info-grid">
-                <h2 class="hero-title" style="font-size: 60px; text-align: left;">KODEKS <span>WALKI</span></h2>
-                
-                <div class="info-block">
-                    <h3>Zasady Ogólne</h3>
-                    <div class="rule">
-                        <div class="rule-dot">1</div>
-                        <div>
-                            <b>Ochrona Spotów</b>
-                            <p style="color:var(--text-muted)">Zakaz lootowania i atakowania gracza na jego spocie do zamknięcia 3 strefy.</p>
-                        </div>
-                    </div>
-                    <div class="rule">
-                        <div class="rule-dot">2</div>
-                        <div>
-                            <b>Zakazane Przedmioty</b>
-                            <p style="color:var(--text-muted)">Używanie przedmiotów mitycznych oraz młotów bez zgody administracji jest banowalne.</p>
-                        </div>
-                    </div>
-                    <div class="rule">
-                        <div class="rule-dot">3</div>
-                        <div>
-                            <b>Komunikacja</b>
-                            <p style="color:var(--text-muted)">Każdy uczestnik musi znajdować się na kanale głosowym Discord podczas trwania turnieju.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="info-block">
-                    <h3>System Punktacji</h3>
-                    <ul style="list-style: none; padding: 0;">
-                        <li style="padding: 15px 0; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between;">
-                            <span>Victory Royale</span> <b>+100 PKT</b>
-                        </li>
-                        <li style="padding: 15px 0; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between;">
-                            <span>Eliminacja</span> <b>+15 PKT</b>
-                        </li>
-                        <li style="padding: 15px 0; display: flex; justify-content: space-between;">
-                            <span>Top 5 Placement</span> <b>+30 PKT</b>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </main>
+    </section>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        const db = {
-            1: { title: "FSBC Solo #1", date: "06.01.2026", scores: [{n:"szimicarson6", p:600}, {n:"Gracz_A", p:400}, {n:"Gracz_B", p:350}] },
-            2: { title: "FSBC Solo #2", date: "22.01.2026", scores: [{n:"szimicarson6", p:450}, {n:"Kamilox", p:420}, {n:"Maly", p:310}] },
-            3: { title: "FSBC Solo #3", date: "12.02.2026", scores: [{n:"szimicarson6", p:580}, {n:"Vex_Player", p:510}, {n:"Xen", p:480}] },
-            4: { title: "FSBC Solo #4", date: "25.02.2026", scores: [{n:"szimicarson6", p:490}, {n:"Oskar01", p:440}, {n:"Szymon_X", p:410}] }
+        const tournamentDb = {
+            1: { title: "FSBC Solo #1", scores: [{n:"szimicarson6", p:610}, {n:"Gracz_A", p:420}, {n:"Gracz_B", p:380}, {n:"Player_X", p:310}] },
+            2: { title: "FSBC Solo #2", scores: [{n:"szimicarson6", p:540}, {n:"Kamilox", p:490}, {n:"Maly", p:330}, {n:"Vex", p:290}] },
+            3: { title: "FSBC Solo #3", scores: [{n:"szimicarson6", p:585}, {n:"Nitro", p:510}, {n:"Xenon", p:440}, {n:"Ghost", p:300}] },
+            4: { title: "FSBC Solo #4", scores: [{n:"szimicarson6", p:505}, {n:"Oskar09", p:445}, {n:"Szymon_PRO", p:410}, {n:"Lucky", p:390}] }
         };
 
-        let leafletMap;
+        let tacticalMap;
 
-        // Inicjalizacja Mapy
-        function initMap() {
-            leafletMap = L.map('archive-map', {
-                crs: L.CRS.Simple,
-                minZoom: -1,
-                maxZoom: 2,
-                zoomControl: false,
-                attributionControl: false
-            });
-            leafletMap.setView([250, 250], 0);
+        function nav(target) {
+            document.querySelectorAll('.main-view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             
-            // Domyślny obrazek mapy Venture
-            L.imageOverlay('https://i.ibb.co/fzjBkhTX/image.png', [[0,0], [500,500]]).addTo(leafletMap);
-        }
-
-        // Nawigacja między sekcjami
-        function go(viewId) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            
-            document.getElementById('v-' + viewId).classList.add('active');
-            const btn = document.getElementById('btn-' + viewId);
-            if(btn) btn.classList.add('active');
+            document.getElementById('v-' + target).classList.add('active');
+            const navLink = document.getElementById('n-' + target);
+            if(navLink) navLink.classList.add('active');
             
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Otwieranie Archiwum
-        function viewArch(id) {
-            const data = db[id];
-            document.getElementById('arch-title').innerText = data.title;
+        function openArchive(id) {
+            const data = tournamentDb[id];
+            document.getElementById('arch-page-title').innerText = data.title;
             
-            const list = document.getElementById('results-list');
+            const list = document.getElementById('results-target');
             list.innerHTML = data.scores.map((s, i) => `
-                <div class="rank-item ${i === 0 ? 'winner-fx' : ''}">
-                    <div class="num" style="color:${i === 0 ? '#fbbf24' : '#fff'}">#${i+1}</div>
-                    <div class="name">${s.n}</div>
-                    <div class="pts">${s.p} PKT</div>
+                <div class="score-entry ${i === 0 ? 'gold-medal' : ''}">
+                    <div><span class="score-rank">#${i+1}</span><span class="score-name">${s.n}</span></div>
+                    <div class="score-val">${s.p} PKT</div>
                 </div>
             `).join('');
 
-            go('archive');
+            nav('archive');
             
-            // Wymuszenie odświeżenia mapy w kontenerze
-            setTimeout(() => { 
-                leafletMap.invalidateSize(); 
-            }, 200);
+            if(!tacticalMap) {
+                tacticalMap = L.map('leaflet-map-container', { crs: L.CRS.Simple, minZoom: -1, maxZoom: 2, zoomControl: false, attributionControl: false });
+            }
+            
+            tacticalMap.eachLayer(layer => { if(layer instanceof L.ImageOverlay) tacticalMap.removeLayer(layer); });
+            
+            // MAPA VENTURE Z TWOJEGO LINKU
+            L.imageOverlay('https://i.ibb.co/fzjBkhTX/image.png', [[0,0], [500,500]]).addTo(tacticalMap);
+            tacticalMap.setView([250, 250], 0);
+            
+            setTimeout(() => { tacticalMap.invalidateSize(); }, 250);
         }
 
-        window.onload = initMap;
+        window.onload = () => { console.log("FSBC Tactical Hub Loaded"); };
     </script>
 </body>
 </html>
