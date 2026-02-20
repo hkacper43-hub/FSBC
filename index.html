@@ -1,815 +1,391 @@
 <!DOCTYPE html>
-
 <html lang="pl">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>FSBC - SYSTEM TAKTYCZNY MAP</title>
-
     
-
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-
-
     <style>
-
         :root {
-
             --primary: #6366f1;
-
             --primary-glow: rgba(99, 102, 241, 0.5);
-
             --secondary: #a855f7;
-
             --accent: #d946ef;
-
             --bg-dark: #030712;
-
             --card-bg: rgba(3, 7, 18, 0.85);
-
             --glass: rgba(255, 255, 255, 0.03);
-
             --glass-border: rgba(255, 255, 255, 0.12);
-
             --text-main: #f8fafc;
-
             --text-muted: #94a3b8;
-
             --danger: #ef4444;
-
         }
-
-
 
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; -webkit-font-smoothing: antialiased; }
-
         body { font-family: 'Poppins', sans-serif; background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; overflow-x: hidden; padding-bottom: 80px; }
-
         
-
         #dynamic-bg { position: fixed; inset: 0; background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #030712 100%); z-index: -2; }
-
         .grid-pattern { position: fixed; inset: 0; background-image: linear-gradient(var(--glass-border) 1px, transparent 1px), linear-gradient(90deg, var(--glass-border) 1px, transparent 1px); background-size: 45px 45px; z-index: -1; opacity: 0.12; }
 
-
-
         /* GŁÓWNE MENU (TOP) */
-
         .site-header { width: 100%; max-width: 1600px; margin: 0 auto; padding: 25px 40px 10px 40px; display: flex; justify-content: center; gap: 50px; }
-
         .header-nav-item { color: #ffffff; text-decoration: none; font-size: 15px; font-weight: 500; letter-spacing: 0.8px; opacity: 0.7; transition: 0.3s; position: relative; cursor: pointer; }
-
         .header-nav-item:hover, .header-nav-item.active { opacity: 1; }
-
         .header-nav-item::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 2px; background: var(--primary); transition: 0.3s; }
-
         .header-nav-item.active::after { width: 100%; }
 
-
-
         /* WIDOKI */
-
         .content-view { display: none; width: 100%; animation: fadeIn 0.4s ease forwards; }
-
         .content-view.active { display: block; }
-
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-
-
-        /* POZIOMY NAVBAR MAPY (ZGODNIE ZE SCREENEM) */
-
-        .top-navbar { 
-
-            width: 95%; 
-
-            max-width: 1600px; 
-
-            margin: 10px auto 30px auto; 
-
-            background: var(--card-bg); 
-
-            backdrop-filter: blur(30px); 
-
-            border: 1px solid var(--glass-border); 
-
-            border-radius: 28px; 
-
-            display: flex; 
-
-            align-items: center; 
-
-            justify-content: space-between; 
-
-            padding: 20px 45px; 
-
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); 
-
+        /* STYL STRONY GŁÓWNEJ (HOME) */
+        .hero-section { height: 70vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
+        .hero-title { font-size: 90px; font-weight: 800; background: linear-gradient(to right, #fff, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; margin-bottom: 20px; letter-spacing: -4px; }
+        .hero-subtitle { font-size: 18px; color: var(--text-muted); max-width: 600px; margin-bottom: 40px; }
+        
+        .cta-button { 
+            background: var(--primary); color: white; padding: 18px 45px; border-radius: 50px; text-decoration: none; 
+            font-weight: 700; font-size: 18px; box-shadow: 0 10px 30px var(--primary-glow); transition: 0.3s; border: none; cursor: pointer;
         }
+        .cta-button:hover { transform: scale(1.05); background: #7c7ff5; }
 
+        .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+        .feature-card { 
+            background: var(--glass); border: 1px solid var(--glass-border); padding: 30px; border-radius: 25px; 
+            text-align: center; transition: 0.3s; cursor: pointer;
+        }
+        .feature-card:hover { background: rgba(255,255,255,0.06); transform: translateY(-10px); border-color: var(--primary); }
+        .feature-card i { font-size: 40px; color: var(--primary); margin-bottom: 20px; }
 
-
+        /* POZIOMY NAVBAR MAPY */
+        .top-navbar { width: 95%; max-width: 1600px; margin: 10px auto 30px auto; background: var(--card-bg); backdrop-filter: blur(30px); border: 1px solid var(--glass-border); border-radius: 28px; display: flex; align-items: center; justify-content: space-between; padding: 20px 45px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); }
         .map-selector { display: flex; background: rgba(0,0,0,0.45); padding: 7px; border-radius: 20px; gap: 12px; border: 1px solid var(--glass-border); }
-
         .nav-btn { padding: 14px 35px; border: none; background: transparent; color: var(--text-muted); font-weight: 700; font-size: 13px; cursor: pointer; border-radius: 16px; transition: 0.4s; text-transform: uppercase; }
-
         .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 10px 25px var(--primary-glow); }
 
-
-
         .navbar-right-group { display: flex; align-items: center; gap: 20px; }
-
         .stat-badge { background: rgba(255,255,255,0.05); padding: 14px 25px; border-radius: 20px; border: 1px solid var(--glass-border); font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 12px; color: white; }
-
         .stat-badge i { color: var(--primary); font-size: 18px; }
 
-
-
-        .leaderboard-btn { 
-
-            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); 
-
-            color: white; 
-
-            text-decoration: none; 
-
-            padding: 14px 30px; 
-
-            border-radius: 20px; 
-
-            font-weight: 800; 
-
-            font-size: 14px; 
-
-            display: flex; 
-
-            align-items: center; 
-
-            gap: 12px; 
-
-            transition: 0.3s; 
-
-            box-shadow: 0 8px 20px rgba(236, 72, 153, 0.3); 
-
-        }
-
+        .leaderboard-btn { background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color: white; text-decoration: none; padding: 14px 30px; border-radius: 20px; font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 12px; transition: 0.3s; box-shadow: 0 8px 20px rgba(236, 72, 153, 0.3); }
         .leaderboard-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(236, 72, 153, 0.5); }
 
-
-
         /* GŁÓWNY LAYOUT MAPY */
-
         .main-container { display: flex; width: 95%; max-width: 1600px; margin: 0 auto; gap: 28px; }
-
         #sidebar { width: 400px; min-width: 400px; background: var(--card-bg); border: 1px solid var(--glass-border); border-radius: 35px; padding: 40px; display: flex; flex-direction: column; gap: 30px; }
-
         .map-frame { flex-grow: 1; background: var(--card-bg); border: 1px solid var(--glass-border); border-radius: 35px; padding: 20px; height: 850px; position: relative; }
-
         #map { width: 100%; height: 100%; border-radius: 22px; background: #0b1424; }
 
-
-
         /* ELEMENTY SIDEBARA */
-
-        .discord-login-btn { 
-
-            background: #5865F2; color: white; text-decoration: none; padding: 20px; border-radius: 22px; 
-
-            display: flex; align-items: center; justify-content: center; gap: 15px; font-weight: 800; transition: 0.3s; width: 100%;
-
-        }
-
+        .discord-login-btn { background: #5865F2; color: white; text-decoration: none; padding: 20px; border-radius: 22px; display: flex; align-items: center; justify-content: center; gap: 15px; font-weight: 800; transition: 0.3s; width: 100%; }
         .discord-login-btn:hover { background: #4752c4; transform: scale(1.02); }
-
-
-
         .profile-card { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 25px; padding: 25px; display: flex; align-items: center; gap: 20px; }
-
         .profile-card img { width: 60px; height: 60px; border-radius: 50%; border: 3px solid var(--primary); }
-
         .user-meta b { font-size: 18px; display: block; }
-
         .user-meta span { color: var(--text-muted); font-size: 13px; }
 
-
-
-        .player-entry { display: flex; align-items: center; gap: 15px; padding: 16px 20px; background: rgba(255,255,255,0.03); border-radius: 20px; margin-bottom: 12px; border: 1px solid transparent; transition: 0.3s; }
-
-        .player-entry:hover { background: rgba(255,255,255,0.06); border-color: var(--glass-border); }
-
-        .player-entry img { width: 42px; height: 42px; border-radius: 50%; }
-
-
-
         /* SEKACJE TURNIEJOWE I INFO */
-
         .view-container-wide { width: 95%; max-width: 1600px; margin: 40px auto; }
-
         .section-title { font-size: 64px; font-weight: 800; color: #fff; margin-bottom: 40px; letter-spacing: -2px; }
-
-        
-
         .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-bottom: 60px; }
-
         .info-card { background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); border-radius: 30px; padding: 40px; position: relative; overflow: hidden; }
-
         .info-card h3 { font-size: 24px; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; }
-
         .info-card p { color: var(--text-muted); line-height: 1.7; font-size: 15px; }
 
-
-
         .rules-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
-
         .rule-card { background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); border-radius: 25px; padding: 35px; position: relative; }
-
         .rule-number { position: absolute; top: 20px; right: 25px; font-size: 40px; font-weight: 900; opacity: 0.1; }
-
         .rule-card h4 { font-size: 22px; font-weight: 800; margin-bottom: 15px; }
 
-
-
         .penalty-box { width: 100%; border: 2px dashed #ef4444; border-radius: 25px; padding: 40px; text-align: center; background: rgba(239, 68, 68, 0.05); }
-
         .penalty-value { font-size: 36px; font-weight: 900; color: #fff; letter-spacing: 2px; }
 
-
-
         .stats-table { width: 100%; border-collapse: collapse; }
-
         .stats-table td { padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 15px; }
-
         .stats-table td:last-child { text-align: right; font-weight: 800; color: var(--primary); }
 
-
-
         /* KLASTRY NA MAPIE */
-
         .avatar-cluster { display: flex; align-items: center; background: rgba(3, 7, 18, 0.9); padding: 7px 18px; border-radius: 35px; border: 2px solid white; }
-
         .cluster-img { width: 34px; height: 34px; border-radius: 50%; border: 2px solid white; margin-right: -14px; }
-
         .cluster-count { margin-left: 24px; font-weight: 800; color: white; }
-
         .zone-tooltip { background: transparent !important; border: none !important; box-shadow: none !important; }
-
-
-
         .circle-decor { position: absolute; width: 200px; height: 200px; background: var(--primary); filter: blur(100px); opacity: 0.1; bottom: -50px; right: -50px; z-index: -1; }
-
     </style>
-
 </head>
-
 <body>
 
-
-
     <div id="dynamic-bg"></div>
-
     <div class="grid-pattern"></div>
 
-
-
     <header class="site-header">
-
-        <div class="header-nav-item active" id="nav-map" onclick="showView('map')">Map</div>
-
+        <div class="header-nav-item active" id="nav-home" onclick="showView('home')">Home</div>
+        <div class="header-nav-item" id="nav-map" onclick="showView('map')">Map</div>
         <div class="header-nav-item" id="nav-tournaments" onclick="showView('tournaments')">Tournaments</div>
-
         <div class="header-nav-item" id="nav-stats" onclick="showView('stats')">Stats</div>
-
         <div class="header-nav-item" id="nav-info" onclick="showView('info')">Information</div>
-
     </header>
 
+    <div id="view-home" class="content-view active">
+        <section class="hero-section">
+            <h1 class="hero-title">FSBC SYSTEM</h1>
+            <p class="hero-subtitle">Najbardziej zaawansowany system planowania taktycznego dla Twoich rozgrywek. Monitoruj mapę, zarządzaj strefami i wygrywaj turnieje.</p>
+            <button class="cta-button" onclick="showView('map')">WEJDŹ DO SYSTEMU <i class="fa-solid fa-arrow-right"></i></button>
+        </section>
 
+        <div class="feature-grid">
+            <div class="feature-card" onclick="showView('map')">
+                <i class="fa-solid fa-map-location-dot"></i>
+                <h3>Interaktywna Mapa</h3>
+                <p>Oznaczaj swoje pozycje i sprawdzaj gdzie są inni w czasie rzeczywistym.</p>
+            </div>
+            <div class="feature-card" onclick="showView('tournaments')">
+                <i class="fa-solid fa-trophy"></i>
+                <h3>Turnieje</h3>
+                <p>Bądź na bieżąco z nadchodzącymi eventami i wynikami Solo Blitz Royale.</p>
+            </div>
+            <div class="feature-card" onclick="showView('info')">
+                <i class="fa-solid fa-book"></i>
+                <h3>Regulamin</h3>
+                <p>Poznaj zasady gry, system punktacji i unikaj kar punktowych.</p>
+            </div>
+        </div>
+    </div>
 
-    <div id="view-map" class="content-view active">
-
+    <div id="view-map" class="content-view">
         <nav class="top-navbar">
-
             <div class="map-selector">
-
                 <button class="nav-btn active" id="btn-starfall" onclick="handleMapChange('starfall')">STARFALL</button>
-
                 <button class="nav-btn" id="btn-venture" onclick="handleMapChange('venture')">VENTURE</button>
-
             </div>
-
             
-
             <div class="navbar-right-group">
-
                 <div class="stat-badge">
-
                     <i class="fa-solid fa-users"></i>
-
                     AKTYWNI: <span id="count-total">0</span>
-
                 </div>
-
                 <a href="https://yunite.xyz/leaderboard/f406ce8e-205b-49ae-ae9d-076ea8c66aee" class="leaderboard-btn">
-
                     <i class="fa-solid fa-trophy"></i>
-
                     LEADERBOARD
-
                 </a>
-
             </div>
-
         </nav>
 
-
-
         <div class="main-container">
-
             <aside id="sidebar">
-
                 <div id="auth-ui">
-
                     <a href="/auth/discord" class="discord-login-btn">
-
                         <i class="fa-brands fa-discord"></i> LOGOWANIE DISCORD
-
                     </a>
-
                 </div>
-
                 <div id="profile-ui" style="display: none;">
-
                     <div class="profile-card">
-
                         <img id="u-avatar" src="">
-
                         <div class="user-meta">
-
                             <b id="u-name">Użytkownik</b>
-
                             <span>Gracz FSBC</span>
-
                         </div>
-
                     </div>
-
                     <div id="admin-section" style="display: none; margin-top: 20px;">
-
                         <button id="drawBtn" class="nav-btn active" style="width:100%; background:var(--secondary);" onclick="toggleDrawing()">NOWA STREFA</button>
-
                     </div>
-
                 </div>
-
-
 
                 <div class="player-list-section">
-
                     <h3 style="font-size:12px; color:var(--text-muted); margin-bottom:15px; text-transform:uppercase; letter-spacing:1px;">
-
                         Oznaczeni (<span id="player-count">0</span>)
-
                     </h3>
-
                     <div id="player-list-ui"></div>
-
                 </div>
-
             </aside>
 
-
-
             <main class="map-frame">
-
                 <div id="map"></div>
-
             </main>
-
         </div>
-
     </div>
-
-
 
     <div id="view-tournaments" class="content-view">
-
         <div class="view-container-wide">
-
             <h1 class="section-title">Turnieje</h1>
-
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:30px;">
-
                 <div class="info-card" style="border: 2px solid var(--primary);">
-
                     <div class="circle-decor"></div>
-
                     <div style="background:rgba(99,102,241,0.2); color:var(--primary); padding:6px 16px; border-radius:10px; display:inline-block; font-size:11px; font-weight:800; margin-bottom:20px;">NADCHODZI</div>
-
                     <div style="font-size:32px; font-weight:800; color:#fff;">FSBC Solo #2</div>
-
                     <div style="margin-top:40px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Styczeń 2026</div>
-
                 </div>
-
                 <div class="info-card">
-
                     <div style="background:rgba(255,255,255,0.1); color:#fff; padding:6px 16px; border-radius:10px; display:inline-block; font-size:11px; font-weight:800; margin-bottom:20px;">ZAKOŃCZONY</div>
-
                     <div style="font-size:32px; font-weight:800; color:#fff;">FSBC Solo #1</div>
-
                     <div style="color:#fff; margin-top:5px; font-size:18px;">Zwycięzca: <span style="font-weight:800;">szimicarson6</span></div>
-
                     <div style="margin-top:30px; color:var(--text-muted); font-weight:700;">06.01.2026</div>
-
                 </div>
-
             </div>
-
         </div>
-
     </div>
-
-
 
     <div id="view-info" class="content-view">
-
         <div class="view-container-wide">
-
             <h1 class="section-title">Ogólne Informacje</h1>
-
             <div class="info-grid">
-
                 <div class="info-card"><h3>📅 Harmonogram</h3><p>Turniej zostanie ogłoszony wkrótce! Czas do ogłoszenia widoczny na liczniku powyżej.</p></div>
-
                 <div class="info-card"><h3>📜 Regulamin</h3><p>Fair play i całkowity zakaz teamowania. Pełny regulamin techniczny na Discordzie.</p></div>
-
                 <div class="info-card"><h3>💰 Nagrody</h3><p>Przewidziane nagrody finansowe dla topowych graczy turnieju.</p></div>
-
             </div>
-
-
 
             <h1 class="section-title">Zasady Gry</h1>
-
             <div class="rules-grid">
-
                 <div class="rule-card"><span class="rule-number">01</span><h4 style="color:var(--primary);">Lootowanie</h4><p>Nie można lootować enemy spota do <b>3 zone</b>.</p></div>
-
                 <div class="rule-card"><span class="rule-number">02</span><h4 style="color:var(--secondary);">Zakazy</h4><p>Zakaz używania młota impulsowego</p></div>
-
-                <div class="rule-card"><span class="rule-number">03</span><h4 style="color:var(--accent);">Fighting</h4><p>Można się fightować bez ograniczeń od momentu pojawienia się <b>4 zone</b> nie można koło kogoś stać przez pół gry.</p></div>
-
-                <div class="rule-card"><span class="rule-number">04</span><h4 style="color:#2ecc71;">Komunikacja</h4><p>Obowiązek przebywania na oficjalnym callu turniejowym przez cały czas gry.</p></div>
-
+                <div class="rule-card"><span class="rule-number">03</span><h4 style="color:var(--accent);">Fighting</h4><p>Można się fightować bez ograniczeń od momentu pojawienia się <b>4 zone</b>.</p></div>
+                <div class="rule-card"><span class="rule-number">04</span><h4 style="color:#2ecc71;">Komunikacja</h4><p>Obowiązek przebywania na oficjalnym callu.</p></div>
             </div>
-
             <div class="penalty-box">
-
                 <div style="color:#ef4444; font-weight:800; text-transform:uppercase; margin-bottom:10px; letter-spacing:2px;">⚠️ Kara za złamanie zasad</div>
-
                 <div class="penalty-value">-20 PUNKTÓW</div>
-
             </div>
-
-
-
-            <h1 class="section-title" style="margin-top:80px;">Informacja o Turnieju</h1>
-
-            <div class="info-grid">
-
-                <div class="info-card">
-
-                    <h3>🏆 System Punktacji</h3>
-
-                    <table class="stats-table">
-
-                        <tr><td>Top 1</td><td>+10 PKT</td></tr>
-
-                        <tr><td>Top 2</td><td>+8 PKT</td></tr>
-
-                        <tr><td>Top 3</td><td>+6 PKT</td></tr>
-
-                        <tr><td>Top 4-6</td><td>+4 PKT</td></tr>
-
-                        <tr><td>Frag (max 2 fragi)</td><td>+1 PKT</td></tr>
-
-                    </table>
-
-                </div>
-
-                <div class="info-card">
-
-                    <h3>🎮 Format</h3>
-
-                    <table class="stats-table">
-
-                        <tr><td>Tryb</td><td>Solo Blitz Royale</td></tr>
-
-                        <tr><td>Liczba gier</td><td>15 gier</td></tr>
-
-                        <tr><td>Limit graczy</td><td>10 osób</td></tr>
-
-                    </table>
-
-                </div>
-
-                <div class="info-card">
-
-                    <h3>🛠️ Wymagania</h3>
-
-                    <p>Wymagane zweryfikowane konto Discord oraz pozwolenie od organizatora (szimicarson6).</p>
-
-                </div>
-
-            </div>
-
         </div>
-
     </div>
-
-
 
     <div id="view-stats" class="content-view">
-
         <div class="view-container-wide">
-
             <h1 class="section-title">Leaderboard</h1>
-
             <p style="color:var(--text-muted);">Rankingi zostaną zaktualizowane po rozpoczęciu Turnieju #2.</p>
-
         </div>
-
     </div>
 
-
-
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
     <script>
-
-        // --- LOGIKA APLIKACJI ---
-
         let currentUser = null, isDrawing = false, p1 = null, allZones = [], currentMap = 'starfall';
-
         
-
         const configs = {
-
             'starfall': { url: 'https://i.ibb.co/dss8R1Ph/mapa.png', bounds: [[0, 0], [500, 500]] },
-
             'venture': { url: 'https://i.ibb.co/fzjBkhTX/image.png', bounds: [[0, 0], [500, 500]] }
-
         };
 
-
-
         const map = L.map('map', { crs: L.CRS.Simple, minZoom: -1, maxZoom: 2, zoomControl: false, attributionControl: false });
-
         let overlay = L.imageOverlay(configs.starfall.url, configs.starfall.bounds).addTo(map);
-
         map.fitBounds(configs.starfall.bounds);
 
-
-
         function showView(v) {
-
             document.querySelectorAll('.content-view').forEach(el => el.classList.remove('active'));
-
             document.querySelectorAll('.header-nav-item').forEach(el => el.classList.remove('active'));
-
             document.getElementById('view-' + v).classList.add('active');
-
             document.getElementById('nav-' + v).classList.add('active');
-
             if(v === 'map') setTimeout(() => map.invalidateSize(), 100);
-
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-
-
 
         async function init() {
-
             try {
-
                 const res = await fetch('/api/user');
-
                 const u = await res.json();
-
                 if (u && u.id) {
-
                     currentUser = u;
-
                     document.getElementById('auth-ui').style.display = 'none';
-
                     document.getElementById('profile-ui').style.display = 'block';
-
                     document.getElementById('u-name').innerText = u.username;
-
                     document.getElementById('u-avatar').src = u.avatar ? `https://cdn.discordapp.com/avatars/${u.id}/${u.avatar}.png` : 'https://via.placeholder.com/65';
-
                     if (u.isAdmin) document.getElementById('admin-section').style.display = 'block';
-
                 }
-
             } catch (e) {}
-
             refresh();
-
             setInterval(refresh, 5000);
-
         }
-
-
 
         async function refresh() {
-
             try {
-
                 const res = await fetch('/api/zones');
-
                 const data = await res.json();
-
                 if (!isDrawing) { allZones = data; draw(); updateList(); }
-
             } catch (e) {}
-
         }
-
-
 
         function draw() {
-
             map.eachLayer(l => { if (l instanceof L.Rectangle || l instanceof L.Tooltip) map.removeLayer(l); });
-
             allZones.filter(z => z.map === currentMap).forEach(z => {
-
                 const count = z.owners.length;
-
-                let color = count === 0 ? "#fffff" : (count === 1 ? "#2ecc71" : "#ef4444");
-
+                let color = count === 0 ? "#ffffff" : (count === 1 ? "#2ecc71" : "#ef4444");
                 const rect = L.rectangle([z.p1, z.p2], { color: color, weight: 2, fillColor: color, fillOpacity: 0.3 }).addTo(map);
-
                 
-
                 if (count > 0) {
-
                     const html = `<div class="avatar-cluster">${z.owners.map(o => `<img src="${o.avatar}" class="cluster-img">`).join('')}<span class="cluster-count">${count}</span></div>`;
-
                     rect.bindTooltip(html, { permanent: true, direction: 'center', className: 'zone-tooltip' }).openTooltip();
-
                 }
 
-
-
                 rect.on('click', (e) => { 
-
                     L.DomEvent.stopPropagation(e); 
-
                     if (currentUser) toggleUserInZone(z); 
-
                 });
-
-
 
                 rect.on('contextmenu', (e) => {
-
                     L.DomEvent.stopPropagation(e);
-
                     if (currentUser?.isAdmin && confirm("Czy na pewno chcesz usunąć tę strefę?")) {
-
                         allZones = allZones.filter(item => item.id !== z.id);
-
                         push();
-
                     }
-
                 });
-
             });
-
             document.getElementById('count-total').innerText = allZones.filter(z => z.map === currentMap).reduce((a, b) => a + b.owners.length, 0);
-
         }
-
-
 
         async function toggleUserInZone(zone) {
-
             const has = zone.owners.some(o => o.name === currentUser.username);
-
             if (has) {
-
                 zone.owners = zone.owners.filter(o => o.name !== currentUser.username);
-
             } else {
-
                 allZones.forEach(z => { if(z.map === currentMap) z.owners = z.owners.filter(o => o.name !== currentUser.username); });
-
                 zone.owners.push({ name: currentUser.username, avatar: document.getElementById('u-avatar').src });
-
             }
-
             push();
-
         }
-
-
 
         async function push() {
-
             await fetch('/api/zones', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(allZones) });
-
             draw(); updateList();
-
         }
-
-
 
         function toggleDrawing() {
-
             isDrawing = !isDrawing;
-
             document.getElementById('drawBtn').innerText = isDrawing ? 'ANULUJ RYSOWANIE' : 'NOWA STREFA';
-
             p1 = null;
-
         }
-
-
 
         map.on('click', (e) => {
-
             if (!isDrawing) return;
-
             if (!p1) p1 = e.latlng;
-
             else {
-
                 allZones.push({ id: Date.now(), map: currentMap, p1: [p1.lat, p1.lng], p2: [e.latlng.lat, e.latlng.lng], owners: [] });
-
                 p1 = null; toggleDrawing(); push();
-
             }
-
         });
 
-
-
         function handleMapChange(m) {
-
             currentMap = m;
-
             document.querySelectorAll('.map-selector .nav-btn').forEach(b => b.classList.toggle('active', b.id === `btn-${m}`));
-
             overlay.setUrl(configs[m].url);
-
             draw(); updateList();
-
         }
-
-
 
         function updateList() {
-
             const players = [];
-
             allZones.filter(z => z.map === currentMap).forEach(z => {
-
                 z.owners.forEach(o => { if(!players.find(p => p.name === o.name)) players.push(o); });
-
             });
-
             document.getElementById('player-count').innerText = players.length;
-
             document.getElementById('player-list-ui').innerHTML = players.map(p => `
-
                 <div class="player-entry">
-
                     <img src="${p.avatar}">
-
                     <span>${p.name}</span>
-
                 </div>
-
             `).join('');
-
         }
 
-
-
         init();
-
     </script>
-
 </body>
-
 </html>
