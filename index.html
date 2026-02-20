@@ -107,6 +107,10 @@
         .cluster-count { margin-left: 24px; font-weight: 800; color: white; }
         .zone-tooltip { background: transparent !important; border: none !important; box-shadow: none !important; }
         .circle-decor { position: absolute; width: 200px; height: 200px; background: var(--primary); filter: blur(100px); opacity: 0.1; bottom: -50px; right: -50px; z-index: -1; }
+
+        /* Dodatkowy styl dla klikalnej karty */
+        .clickable-card { cursor: pointer; transition: transform 0.3s, border-color 0.3s; }
+        .clickable-card:hover { transform: scale(1.02); border-color: var(--accent) !important; }
     </style>
 </head>
 <body>
@@ -179,12 +183,14 @@
         <div class="view-container-wide">
             <h1 class="section-title">Historia Turniejów</h1>
             <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap:30px;">
-                <div class="info-card" style="border: 2px solid var(--primary);">
+                <div class="info-card clickable-card" style="border: 2px solid var(--primary);" onclick="enterTournamentMap('starfall')">
                     <div class="circle-decor"></div>
                     <div style="background:rgba(99,102,241,0.2); color:var(--primary); padding:6px 16px; border-radius:10px; display:inline-block; font-size:11px; font-weight:800; margin-bottom:20px;">NADCHODZI</div>
                     <div style="font-size:32px; font-weight:800; color:#fff;">FSBC Solo #5</div>
+                    <div style="margin-top:10px; color:var(--text-main); font-size: 14px; opacity: 0.8;">Kliknij, aby otworzyć mapę taktyczną dla tego wydarzenia.</div>
                     <div style="margin-top:40px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Marzec 2026</div>
                 </div>
+
                 <div class="info-card">
                     <div style="background:rgba(255,255,255,0.1); color:#fff; padding:6px 16px; border-radius:10px; display:inline-block; font-size:11px; font-weight:800; margin-bottom:20px;">ZAKOŃCZONY</div>
                     <div style="font-size:32px; font-weight:800; color:#fff;">FSBC Solo #4</div>
@@ -261,6 +267,16 @@
             document.getElementById('nav-' + v).classList.add('active');
             if(v === 'map') setTimeout(() => map.invalidateSize(), 150);
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Nowa funkcja obsługująca kliknięcie w turniej
+        function enterTournamentMap(mapName) {
+            // Przełączamy widok
+            showView('map');
+            // Ustawiamy mapę (Starfall/Venture)
+            handleMapChange(mapName);
+            // Można tu dodać logikę ładowania specyficznych danych dla turnieju #5
+            console.log("System załadowany dla FSBC #5");
         }
 
         async function init() {
