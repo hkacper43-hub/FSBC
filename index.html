@@ -44,39 +44,23 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* HOME SECTION */
-        .hero-section { height: 75vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
+        .hero-section { height: 70vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
         .hero-title { font-size: clamp(40px, 8vw, 90px); font-weight: 800; background: linear-gradient(to right, #fff, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1; margin-bottom: 20px; letter-spacing: -4px; }
         .hero-subtitle { font-size: 18px; color: var(--text-muted); max-width: 700px; margin-bottom: 40px; line-height: 1.6; }
         
         .hero-buttons { display: flex; flex-direction: column; align-items: center; gap: 15px; }
-
         .cta-button { 
             background: var(--primary); color: white; padding: 18px 45px; border-radius: 50px; text-decoration: none; 
             font-weight: 700; font-size: 18px; box-shadow: 0 10px 30px var(--primary-glow); transition: 0.3s; border: none; cursor: pointer;
         }
         .cta-button:hover { transform: translateY(-3px); box-shadow: 0 15px 35px var(--primary-glow); }
 
-        /* Nowy przycisk Discord pod napisem */
         .hero-discord-btn {
-            background: rgba(88, 101, 242, 0.1);
-            color: var(--discord);
-            border: 1px solid rgba(88, 101, 242, 0.4);
-            padding: 12px 30px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: 0.3s;
+            background: rgba(88, 101, 242, 0.1); color: var(--discord); border: 1px solid rgba(88, 101, 242, 0.4);
+            padding: 12px 30px; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 14px;
+            display: flex; align-items: center; gap: 10px; transition: 0.3s;
         }
-        .hero-discord-btn:hover {
-            background: var(--discord);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(88, 101, 242, 0.3);
-        }
+        .hero-discord-btn:hover { background: var(--discord); color: white; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(88, 101, 242, 0.3); }
 
         .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; max-width: 1200px; margin: 0 auto; padding: 0 40px 60px 40px; }
         .feature-card { 
@@ -102,14 +86,14 @@
         .map-frame { flex-grow: 1; background: var(--card-bg); border: 1px solid var(--glass-border); border-radius: 35px; padding: 20px; height: 850px; position: relative; }
         #map { width: 100%; height: 100%; border-radius: 22px; background: #0b1424; }
 
-        /* LISTA GRACZY I DISCORD */
+        /* LISTA GRACZY */
         .discord-login-btn { background: #5865F2; color: white; text-decoration: none; padding: 20px; border-radius: 22px; display: flex; align-items: center; justify-content: center; gap: 15px; font-weight: 800; transition: 0.3s; width: 100%; }
-        .discord-login-btn:hover { background: #4752c4; transform: scale(1.02); }
         .profile-card { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 25px; padding: 25px; display: flex; align-items: center; gap: 20px; }
         .profile-card img { width: 60px; height: 60px; border-radius: 50%; border: 3px solid var(--primary); }
         .player-entry { display: flex; align-items: center; gap: 15px; padding: 16px 20px; background: rgba(255,255,255,0.03); border-radius: 20px; margin-bottom: 12px; border: 1px solid transparent; transition: 0.3s; }
-        
-        /* TURNIEJE I INFO */
+        .player-entry img { width: 40px; height: 40px; border-radius: 50%; }
+
+        /* INFO I TURNIEJE */
         .view-container-wide { width: 95%; max-width: 1600px; margin: 40px auto; }
         .section-title { font-size: 64px; font-weight: 800; color: #fff; margin-bottom: 40px; letter-spacing: -2px; }
         .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-bottom: 60px; }
@@ -122,19 +106,15 @@
         .rule-number { position: absolute; top: 20px; right: 25px; font-size: 40px; font-weight: 900; opacity: 0.1; }
         .penalty-box { width: 100%; border: 2px dashed #ef4444; border-radius: 25px; padding: 40px; text-align: center; background: rgba(239, 68, 68, 0.05); }
         .penalty-value { font-size: 36px; font-weight: 900; color: #fff; letter-spacing: 2px; }
-        .stats-table { width: 100%; border-collapse: collapse; }
-        .stats-table td { padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 15px; }
-        .stats-table td:last-child { text-align: right; font-weight: 800; color: var(--primary); }
 
-        /* MAP ELEMENTS */
+        /* MAP CLUSTER */
         .avatar-cluster { display: flex; align-items: center; background: rgba(3, 7, 18, 0.9); padding: 7px 18px; border-radius: 35px; border: 2px solid white; }
         .cluster-img { width: 34px; height: 34px; border-radius: 50%; border: 2px solid white; margin-right: -14px; }
         .cluster-count { margin-left: 24px; font-weight: 800; color: white; }
         .zone-tooltip { background: transparent !important; border: none !important; box-shadow: none !important; }
+        .clickable-card { cursor: pointer; transition: 0.3s; }
+        .clickable-card:hover { transform: scale(1.02); border-color: var(--primary) !important; }
         .circle-decor { position: absolute; width: 200px; height: 200px; background: var(--primary); filter: blur(100px); opacity: 0.1; bottom: -50px; right: -50px; z-index: -1; }
-
-        .clickable-card { cursor: pointer; transition: transform 0.3s, border-color 0.3s; }
-        .clickable-card:hover { transform: scale(1.02); border-color: var(--accent) !important; }
     </style>
 </head>
 <body>
@@ -154,10 +134,9 @@
         <section class="hero-section">
             <h1 class="hero-title">FSBC SYSTEM</h1>
             <p class="hero-subtitle">Profesjonalne narzędzie do zarządzania strefami i taktyką. Monitoruj ruchy graczy, analizuj mapy i dominuj w turniejach Solo Blitz Royale.</p>
-            
             <div class="hero-buttons">
                 <button class="cta-button" onclick="showView('map')">URUCHOM SYSTEM <i class="fa-solid fa-arrow-right"></i></button>
-                <a href="/auth/discord" class="hero-discord-btn"><i class="fa-brands fa-discord"></i> LOGOWANIE DISCORD</a>
+                <a href="/auth/discord" id="hero-discord-link" class="hero-discord-btn"><i class="fa-brands fa-discord"></i> LOGOWANIE DISCORD</a>
             </div>
         </section>
 
@@ -207,9 +186,61 @@
         </div>
     </div>
 
+    <div id="view-tournaments" class="content-view">
+        <div class="view-container-wide">
+            <h1 class="section-title">Historia Turniejów</h1>
+            <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap:30px;">
+                <div class="info-card clickable-card" style="border: 2px solid var(--primary);" onclick="enterTournamentMap('starfall')">
+                    <div class="circle-decor"></div>
+                    <div style="background:rgba(99,102,241,0.2); color:var(--primary); padding:6px 16px; border-radius:10px; display:inline-block; font-size:11px; font-weight:800; margin-bottom:20px;">NADCHODZI</div>
+                    <div style="font-size:32px; font-weight:800; color:#fff;">FSBC Solo #5</div>
+                    <div style="margin-top:10px; color:var(--text-main); font-size: 14px; opacity: 0.8;">Kliknij, aby otworzyć mapę taktyczną dla tego wydarzenia.</div>
+                    <div style="margin-top:40px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Marzec 2026</div>
+                </div>
+                <div class="info-card">
+                    <div style="background:rgba(255,255,255,0.1); color:#fff; padding:6px 16px; border-radius:10px; display:inline-block; font-size:11px; font-weight:800; margin-bottom:20px;">ZAKOŃCZONY</div>
+                    <div style="font-size:32px; font-weight:800; color:#fff;">FSBC Solo #4</div>
+                    <div style="color:#fff; margin-top:5px; font-size:18px;">Zwycięzca: <span style="font-weight:800;">TBD</span></div>
+                    <div style="margin-top:30px; color:var(--text-muted); font-weight:700;">Luty 2026</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-info" class="content-view">
+        <div class="view-container-wide">
+            <h1 class="section-title">Informacje</h1>
+            <div class="info-grid">
+                <div class="info-card"><h3>📅 Harmonogram</h3><p>Turnieje odbywają się cyklicznie. Dokładne daty publikujemy na Discordzie.</p></div>
+                <div class="info-card"><h3>📜 Regulamin</h3><p>Fair play to podstawa. Zakaz teamowania i używania exploitów.</p></div>
+                <div class="info-card"><h3>💰 Nagrody</h3><p>Dla najlepszych graczy przewidziane są nagrody pieniężne i prestiżowe rangi.</p></div>
+            </div>
+            <h1 class="section-title">Zasady Gry</h1>
+            <div class="rules-grid">
+                <div class="rule-card"><span class="rule-number">01</span><h4 style="color:var(--primary);">Lootowanie</h4><p>Zakaz lootowania enemy spota do 3 strefy.</p></div>
+                <div class="rule-card"><span class="rule-number">02</span><h4 style="color:var(--secondary);">Zakazy</h4><p>Całkowity zakaz używania młota impulsowego.</p></div>
+                <div class="rule-card"><span class="rule-number">03</span><h4 style="color:var(--accent);">Fighting</h4><p>Walka dozwolona bez ograniczeń od momentu pojawienia się 4 strefy.</p></div>
+                <div class="rule-card"><span class="rule-number">04</span><h4 style="color:#2ecc71;">Voice Chat</h4><p>Obowiązkowa obecność na kanale głosowym podczas gier.</p></div>
+            </div>
+            <div class="penalty-box">
+                <div style="color:#ef4444; font-weight:800; text-transform:uppercase; margin-bottom:10px;">⚠️ Kara za złamanie regulaminu</div>
+                <div class="penalty-value">-20 PUNKTÓW</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-stats" class="content-view">
+        <div class="view-container-wide">
+            <h1 class="section-title">Statystyki</h1>
+            <div class="info-card" style="width: 100%; text-align: center;">
+                <p style="font-size: 20px;">System statystyk jest obecnie integrowany z Yunite.</p>
+                <a href="https://yunite.xyz/leaderboard/f406ce8e-205b-49ae-ae9d-076ea8c66aee" class="cta-button" style="display:inline-block; margin-top:20px;">ZOBACZ RANKING</a>
+            </div>
+        </div>
+    </div>
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // ... (Twój istniejący skrypt pozostaje bez zmian) ...
         let currentUser = null, isDrawing = false, p1 = null, allZones = [], currentMap = 'starfall';
         const configs = {
             'starfall': { url: 'https://i.ibb.co/dss8R1Ph/mapa.png', bounds: [[0, 0], [500, 500]] },
@@ -225,7 +256,7 @@
             document.querySelectorAll('.header-nav-item').forEach(el => el.classList.remove('active'));
             document.getElementById('view-' + v).classList.add('active');
             document.getElementById('nav-' + v).classList.add('active');
-            if(v === 'map') setTimeout(() => map.invalidateSize(), 150);
+            if(v === 'map') setTimeout(() => map.invalidateSize(), 200);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -241,8 +272,7 @@
                 if (u && u.id) {
                     currentUser = u;
                     document.getElementById('auth-ui').style.display = 'none';
-                    // Ukrywamy też przycisk Discord na stronie głównej po zalogowaniu
-                    if(document.querySelector('.hero-discord-btn')) document.querySelector('.hero-discord-btn').style.display = 'none';
+                    if(document.getElementById('hero-discord-link')) document.getElementById('hero-discord-link').style.display = 'none';
                     document.getElementById('profile-ui').style.display = 'block';
                     document.getElementById('u-name').innerText = u.username;
                     document.getElementById('u-avatar').src = u.avatar ? `https://cdn.discordapp.com/avatars/${u.id}/${u.avatar}.png` : 'https://via.placeholder.com/65';
@@ -252,15 +282,55 @@
             refresh(); setInterval(refresh, 5000);
         }
 
-        // ... (Reszta Twoich funkcji: refresh, draw, toggleUserInZone, push, toggleDrawing, handleMapChange, updateList) ...
         async function refresh() { try { const res = await fetch('/api/zones'); const data = await res.json(); if (!isDrawing) { allZones = data; draw(); updateList(); } } catch (e) {} }
-        function draw() { map.eachLayer(l => { if (l instanceof L.Rectangle || l instanceof L.Tooltip) map.removeLayer(l); }); allZones.filter(z => z.map === currentMap).forEach(z => { const count = z.owners.length; let color = count === 0 ? "#ffffff" : (count === 1 ? "#2ecc71" : "#ef4444"); const rect = L.rectangle([z.p1, z.p2], { color: color, weight: 2, fillColor: color, fillOpacity: 0.3 }).addTo(map); if (count > 0) { const html = `<div class="avatar-cluster">${z.owners.map(o => `<img src="${o.avatar}" class="cluster-img">`).join('')}<span class="cluster-count">${count}</span></div>`; rect.bindTooltip(html, { permanent: true, direction: 'center', className: 'zone-tooltip' }).openTooltip(); } rect.on('click', (e) => { L.DomEvent.stopPropagation(e); if (currentUser) toggleUserInZone(z); }); rect.on('contextmenu', (e) => { L.DomEvent.stopPropagation(e); if (currentUser?.isAdmin && confirm("Usunąć strefę?")) { allZones = allZones.filter(item => item.id !== z.id); push(); } }); }); document.getElementById('count-total').innerText = allZones.filter(z => z.map === currentMap).reduce((a, b) => a + b.owners.length, 0); }
-        async function toggleUserInZone(zone) { const has = zone.owners.some(o => o.name === currentUser.username); if (has) zone.owners = zone.owners.filter(o => o.name !== currentUser.username); else { allZones.forEach(z => { if(z.map === currentMap) z.owners = z.owners.filter(o => o.name !== currentUser.username); }); zone.owners.push({ name: currentUser.username, avatar: document.getElementById('u-avatar').src }); } push(); }
+        
+        function draw() {
+            map.eachLayer(l => { if (l instanceof L.Rectangle || l instanceof L.Tooltip) map.removeLayer(l); });
+            allZones.filter(z => z.map === currentMap).forEach(z => {
+                const count = z.owners.length;
+                let color = count === 0 ? "#ffffff" : (count === 1 ? "#2ecc71" : "#ef4444");
+                const rect = L.rectangle([z.p1, z.p2], { color: color, weight: 2, fillColor: color, fillOpacity: 0.3 }).addTo(map);
+                if (count > 0) {
+                    const html = `<div class="avatar-cluster">${z.owners.map(o => `<img src="${o.avatar}" class="cluster-img">`).join('')}<span class="cluster-count">${count}</span></div>`;
+                    rect.bindTooltip(html, { permanent: true, direction: 'center', className: 'zone-tooltip' }).openTooltip();
+                }
+                rect.on('click', (e) => { L.DomEvent.stopPropagation(e); if (currentUser) toggleUserInZone(z); });
+                rect.on('contextmenu', (e) => {
+                    L.DomEvent.stopPropagation(e);
+                    if (currentUser?.isAdmin && confirm("Usunąć strefę?")) { allZones = allZones.filter(item => item.id !== z.id); push(); }
+                });
+            });
+            document.getElementById('count-total').innerText = allZones.filter(z => z.map === currentMap).reduce((a, b) => a + b.owners.length, 0);
+        }
+
+        async function toggleUserInZone(zone) {
+            const has = zone.owners.some(o => o.name === currentUser.username);
+            if (has) zone.owners = zone.owners.filter(o => o.name !== currentUser.username);
+            else {
+                allZones.forEach(z => { if(z.map === currentMap) z.owners = z.owners.filter(o => o.name !== currentUser.username); });
+                zone.owners.push({ name: currentUser.username, avatar: document.getElementById('u-avatar').src });
+            }
+            push();
+        }
+
         async function push() { await fetch('/api/zones', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(allZones) }); draw(); updateList(); }
         function toggleDrawing() { isDrawing = !isDrawing; document.getElementById('drawBtn').innerText = isDrawing ? 'ANULUJ' : 'NOWA STREFA'; p1 = null; }
         map.on('click', (e) => { if (!isDrawing) return; if (!p1) p1 = e.latlng; else { allZones.push({ id: Date.now(), map: currentMap, p1: [p1.lat, p1.lng], p2: [e.latlng.lat, e.latlng.lng], owners: [] }); p1 = null; toggleDrawing(); push(); } });
-        function handleMapChange(m) { currentMap = m; document.querySelectorAll('.map-selector .nav-btn').forEach(b => b.classList.toggle('active', b.id === `btn-${m}`)); overlay.setUrl(configs[m].url); draw(); updateList(); }
-        function updateList() { const players = []; allZones.filter(z => z.map === currentMap).forEach(z => { z.owners.forEach(o => { if(!players.find(p => p.name === o.name)) players.push(o); }); }); document.getElementById('player-count').innerText = players.length; document.getElementById('player-list-ui').innerHTML = players.map(p => `<div class="player-entry"><img src="${p.avatar}"><span>${p.name}</span></div>`).join(''); }
+        
+        function handleMapChange(m) {
+            currentMap = m;
+            document.querySelectorAll('.map-selector .nav-btn').forEach(b => b.classList.toggle('active', b.id === `btn-${m}`));
+            overlay.setUrl(configs[m].url);
+            draw(); updateList();
+        }
+
+        function updateList() {
+            const players = [];
+            allZones.filter(z => z.map === currentMap).forEach(z => { z.owners.forEach(o => { if(!players.find(p => p.name === o.name)) players.push(o); }); });
+            document.getElementById('player-count').innerText = players.length;
+            document.getElementById('player-list-ui').innerHTML = players.map(p => `<div class="player-entry"><img src="${p.avatar}"><span>${p.name}</span></div>`).join('');
+        }
+
         init();
     </script>
 </body>
