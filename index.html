@@ -24,7 +24,7 @@
             --danger: #ef4444;
             --discord: #5865F2;
             --success: #2ecc71;
-            --map-border: #1a1e29; /* Twoja ciemna ramka */
+            --map-border: #1a1e29;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; -webkit-font-smoothing: antialiased; }
@@ -80,12 +80,11 @@
         }
         .header-nav-item.active::after { width: 100%; }
 
-        /* --- WIDOKI --- */
         .content-view { display: none; width: 100%; animation: viewFadeIn 0.5s ease forwards; }
         .content-view.active { display: block; }
         @keyframes viewFadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- STRONA GŁÓWNA --- */
+        /* --- STRONA GŁÓWNA & PROFIL --- */
         .hero-section { height: 75vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
         .hero-title { 
             font-size: clamp(50px, 10vw, 100px); 
@@ -99,7 +98,23 @@
         }
         .hero-subtitle { font-size: 19px; color: var(--text-muted); max-width: 750px; margin-bottom: 45px; line-height: 1.6; font-weight: 300; }
         
-        .hero-buttons { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .hero-profile-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            padding: 25px 40px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(15px);
+            animation: fadeIn 0.8s ease;
+        }
+        .hero-profile-card img { width: 70px; height: 70px; border-radius: 50%; border: 3px solid var(--primary); }
+        .hero-profile-info { text-align: left; }
+        .hero-profile-info h3 { font-size: 22px; font-weight: 700; }
+        .hero-profile-info span { font-size: 12px; color: var(--primary); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+
         .cta-button { 
             background: var(--primary); 
             color: white; 
@@ -109,14 +124,14 @@
             font-weight: 800; 
             font-size: 18px; 
             box-shadow: 0 15px 40px var(--primary-glow); 
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            transition: 0.4s; 
             border: none; 
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 15px;
         }
-        .cta-button:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 20px 50px var(--primary-glow); }
+        .cta-button:hover { transform: translateY(-5px); box-shadow: 0 20px 50px var(--primary-glow); }
 
         .hero-discord-btn {
             background: rgba(88, 101, 242, 0.1); 
@@ -132,56 +147,13 @@
             gap: 10px; 
             transition: 0.3s;
         }
-        .hero-discord-btn:hover { background: var(--discord); color: white; transform: translateY(-3px); }
+        .hero-discord-btn:hover { background: var(--discord); color: white; }
 
         /* --- SYSTEM MAPY (SZTYWNA RAMKA) --- */
-        .top-navbar { 
-            width: 95%; 
-            max-width: 1600px; 
-            margin: 10px auto 30px auto; 
-            background: var(--card-bg); 
-            backdrop-filter: blur(25px); 
-            border: 1px solid var(--glass-border); 
-            border-radius: 30px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            padding: 20px 40px; 
-        }
-        .map-selector { display: flex; background: rgba(0,0,0,0.5); padding: 6px; border-radius: 20px; gap: 10px; border: 1px solid var(--glass-border); }
-        .nav-btn { 
-            padding: 12px 30px; 
-            border: none; 
-            background: transparent; 
-            color: var(--text-muted); 
-            font-weight: 700; 
-            font-size: 13px; 
-            cursor: pointer; 
-            border-radius: 15px; 
-            transition: 0.3s; 
-            text-transform: uppercase; 
-        }
-        .nav-btn.active { background: var(--primary); color: white; }
-        
-        .main-container { display: flex; width: 95%; max-width: 1600px; margin: 0 auto; gap: 30px; }
-        #sidebar { 
-            width: 400px; 
-            min-width: 400px; 
-            background: var(--card-bg); 
-            border: 1px solid var(--glass-border); 
-            border-radius: 35px; 
-            padding: 35px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 30px; 
-            height: 850px;
-        }
-
-        /* TA SEKCA TWORZY EFEKT PANCERNEJ RAMKI */
         .map-frame { 
             flex-grow: 1; 
             background: #000; 
-            border: 12px solid #1a1e29; /* Ciemna ramka */
+            border: 12px solid #1a1e29; 
             border-radius: 40px; 
             height: 850px; 
             position: relative; 
@@ -194,98 +166,27 @@
             height: 100%; 
             background: #0b1424; 
             cursor: crosshair;
-            /* Usunięty scale() w CSS na rzecz fitBounds w JS dla sztywności */
         }
 
-        /* --- TURNIEJE --- */
-        .view-container-wide { width: 95%; max-width: 1400px; margin: 60px auto; }
-        .section-title { font-size: 56px; font-weight: 800; color: #fff; margin-bottom: 50px; letter-spacing: -2px; }
-        
-        .tournament-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 35px; }
-        .info-card { 
-            background: var(--glass); 
-            border: 1px solid var(--glass-border); 
-            border-radius: 35px; 
-            padding: 45px; 
-            position: relative; 
-            overflow: hidden; 
-            transition: 0.4s; 
-            backdrop-filter: blur(10px);
-        }
-        .info-card:hover { transform: translateY(-10px); border-color: var(--primary); background: rgba(255,255,255,0.05); }
-        
-        .status-badge { 
-            background: rgba(99, 102, 241, 0.2); 
-            color: var(--primary); 
-            padding: 8px 18px; 
-            border-radius: 12px; 
-            display: inline-block; 
-            font-size: 11px; 
-            font-weight: 800; 
-            margin-bottom: 25px; 
-            text-transform: uppercase; 
-            letter-spacing: 1px;
-        }
-        
-        .card-actions { display: flex; gap: 15px; margin: 30px 0; }
-        .card-link { 
-            text-decoration: none; 
-            font-size: 12px; 
-            font-weight: 800; 
-            text-transform: uppercase; 
-            letter-spacing: 1px;
-            padding: 14px 24px; 
-            border-radius: 15px; 
-            transition: 0.3s; 
-            display: flex; 
-            align-items: center; 
-            gap: 10px; 
-            flex: 1;
-            justify-content: center;
-        }
-        .link-map { background: rgba(99, 102, 241, 0.1); color: var(--primary); border: 1px solid rgba(99, 102, 241, 0.2); }
-        .link-map:hover { background: var(--primary); color: white; }
-        .link-leaderboard { background: rgba(217, 70, 239, 0.1); color: var(--accent); border: 1px solid rgba(217, 70, 239, 0.2); }
-        .link-leaderboard:hover { background: var(--accent); color: white; }
-
-        /* --- INFORMACJE --- */
-        .rules-wrapper { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-top: 40px; }
-        .rule-item { 
-            background: rgba(255,255,255,0.02); 
-            padding: 30px; 
-            border-radius: 25px; 
-            border-left: 4px solid var(--primary); 
-        }
-        .rule-item h4 { margin-bottom: 10px; color: var(--primary); font-size: 18px; }
-        .rule-item p { color: var(--text-muted); font-size: 14px; line-height: 1.6; }
-
-        /* --- PROFILE I LISTY --- */
-        .user-profile-box { 
-            background: rgba(255,255,255,0.03); 
-            border: 1px solid var(--glass-border); 
-            border-radius: 25px; 
-            padding: 20px; 
-            display: flex; 
-            align-items: center; 
-            gap: 15px; 
-        }
+        /* --- RESZTA UI --- */
+        .top-navbar { width: 95%; max-width: 1600px; margin: 10px auto 30px auto; background: var(--card-bg); backdrop-filter: blur(25px); border: 1px solid var(--glass-border); border-radius: 30px; display: flex; align-items: center; justify-content: space-between; padding: 20px 40px; }
+        .map-selector { display: flex; background: rgba(0,0,0,0.5); padding: 6px; border-radius: 20px; gap: 10px; border: 1px solid var(--glass-border); }
+        .nav-btn { padding: 12px 30px; border: none; background: transparent; color: var(--text-muted); font-weight: 700; font-size: 13px; cursor: pointer; border-radius: 15px; transition: 0.3s; text-transform: uppercase; }
+        .nav-btn.active { background: var(--primary); color: white; }
+        .main-container { display: flex; width: 95%; max-width: 1600px; margin: 0 auto; gap: 30px; }
+        #sidebar { width: 400px; min-width: 400px; background: var(--card-bg); border: 1px solid var(--glass-border); border-radius: 35px; padding: 35px; display: flex; flex-direction: column; gap: 30px; height: 850px; }
+        .info-card { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 35px; padding: 45px; position: relative; overflow: hidden; transition: 0.4s; backdrop-filter: blur(10px); }
+        .user-profile-box { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 25px; padding: 20px; display: flex; align-items: center; gap: 15px; }
         .user-profile-box img { width: 55px; height: 55px; border-radius: 50%; border: 2px solid var(--primary); }
-        .player-entry { 
-            display: flex; 
-            align-items: center; 
-            gap: 12px; 
-            padding: 12px 18px; 
-            background: rgba(255,255,255,0.03); 
-            border-radius: 18px; 
-            margin-bottom: 10px; 
-            font-size: 14px; 
-        }
+        .player-entry { display: flex; align-items: center; gap: 12px; padding: 12px 18px; background: rgba(255,255,255,0.03); border-radius: 18px; margin-bottom: 10px; font-size: 14px; }
         .player-entry img { width: 32px; height: 32px; border-radius: 50%; }
-
-        .circle-decor { position: absolute; width: 250px; height: 250px; background: var(--primary); filter: blur(120px); opacity: 0.15; bottom: -80px; right: -80px; z-index: -1; }
-        .zone-tooltip { background: transparent !important; border: none !important; box-shadow: none !important; }
         .avatar-cluster { display: flex; align-items: center; background: rgba(3, 7, 18, 0.9); padding: 5px 15px; border-radius: 30px; border: 2px solid white; }
         .cluster-img { width: 30px; height: 30px; border-radius: 50%; border: 2px solid white; margin-right: -12px; }
+        .zone-tooltip { background: transparent !important; border: none !important; box-shadow: none !important; }
+        .rules-wrapper { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-top: 40px; }
+        .rule-item { background: rgba(255,255,255,0.02); padding: 30px; border-radius: 25px; border-left: 4px solid var(--primary); }
+        .section-title { font-size: 56px; font-weight: 800; color: #fff; margin-bottom: 50px; letter-spacing: -2px; }
+        .tournament-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 35px; }
     </style>
 </head>
 <body>
@@ -304,14 +205,25 @@
     <div id="view-home" class="content-view active">
         <section class="hero-section">
             <h1 class="hero-title">FSBC SYSTEM</h1>
-            <p class="hero-subtitle">Najbardziej zaawansowany ekosystem taktyczny dla graczy Solo Blitz Royale. Zarządzaj swoimi drop-spotami i analizuj konkurencję w czasie rzeczywistym.</p>
-            <div class="hero-buttons">
-                <button class="cta-button" onclick="showView('map')">
-                    URUCHOM SYSTEM <i class="fa-solid fa-rocket"></i>
-                </button>
-                <a href="/auth/discord" id="main-discord-btn" class="hero-discord-btn">
+            <p class="hero-subtitle">Najbardziej zaawansowany ekosystem taktyczny dla graczy Solo Blitz Royale.</p>
+            
+            <div id="home-auth-container">
+                <a href="/auth/discord" class="hero-discord-btn">
                     <i class="fa-brands fa-discord"></i> POŁĄCZ Z DISCORD
                 </a>
+            </div>
+
+            <div id="home-profile-container" style="display: none;">
+                <div class="hero-profile-card">
+                    <img id="h-avatar" src="" alt="Avatar">
+                    <div class="hero-profile-info">
+                        <span id="h-tag">ZALOGOWANO</span>
+                        <h3 id="h-name">Użytkownik</h3>
+                    </div>
+                </div>
+                <button class="cta-button" onclick="showView('map')">
+                    OTWÓRZ MAPĘ TAKTYCZNĄ <i class="fa-solid fa-arrow-right"></i>
+                </button>
             </div>
         </section>
 
@@ -340,10 +252,8 @@
                 <button class="nav-btn active" id="btn-starfall" onclick="handleMapChange('starfall')">Starfall Island</button>
                 <button class="nav-btn" id="btn-venture" onclick="handleMapChange('venture')">Venture Peaks</button>
             </div>
-            <div style="display: flex; gap: 15px;">
-                <div class="nav-btn" style="background: rgba(255,255,255,0.05); color: white; cursor: default;">
-                    <i class="fa-solid fa-user-group"></i> AKTYWNI: <span id="count-total">0</span>
-                </div>
+            <div class="nav-btn" style="background: rgba(255,255,255,0.05); color: white; cursor: default;">
+                <i class="fa-solid fa-user-group"></i> AKTYWNI: <span id="count-total">0</span>
             </div>
         </nav>
 
@@ -354,30 +264,23 @@
                         <i class="fa-brands fa-discord"></i> ZALOGUJ SIĘ
                     </a>
                 </div>
-                
                 <div id="user-section" style="display: none;">
                     <div class="user-profile-box">
                         <img id="u-avatar" src="" alt="Avatar">
                         <div>
                             <b id="u-name" style="display: block;">Nazwa</b>
-                            <span id="u-access-tag" style="font-size: 11px; color: var(--primary); font-weight: 700;">SPRAWDZANIE...</span>
+                            <span id="u-access-tag" style="font-size: 11px; color: var(--primary); font-weight: 700;">STATUS...</span>
                         </div>
                     </div>
                     <div id="admin-tools" style="display: none; margin-top: 15px;">
-                        <button id="drawBtn" class="nav-btn active" style="width: 100%;" onclick="toggleDrawing()">
-                            DODAJ NOWĄ STREFĘ
-                        </button>
+                        <button id="drawBtn" class="nav-btn active" style="width: 100%;" onclick="toggleDrawing()">DODAJ NOWĄ STREFĘ</button>
                     </div>
                 </div>
-
                 <div style="flex-grow: 1; overflow-y: auto;">
-                    <h5 style="text-transform: uppercase; font-size: 11px; color: var(--text-muted); margin-bottom: 15px; letter-spacing: 1px;">
-                        Gracze w strefach (<span id="player-count">0</span>)
-                    </h5>
+                    <h5 style="text-transform: uppercase; font-size: 11px; color: var(--text-muted); margin-bottom: 15px;">Gracze (<span id="player-count">0</span>)</h5>
                     <div id="player-list"></div>
                 </div>
             </aside>
-
             <main class="map-frame">
                 <div id="map"></div>
             </main>
@@ -389,24 +292,12 @@
             <h1 class="section-title">Turnieje FSBC</h1>
             <div class="tournament-grid">
                 <div class="info-card" style="border: 2px solid var(--primary);">
-                    <div class="circle-decor"></div>
                     <div class="status-badge">Nadchodzi</div>
                     <h2 style="font-size: 36px; font-weight: 800; margin-bottom: 10px;">FSBC Solo Cup #5</h2>
-                    <p style="color: var(--text-muted); margin-bottom: 25px;">Kolejna edycja prestiżowego turnieju solo na Starfall Island.</p>
                     <div class="card-actions">
-                        <a href="#" class="card-link link-map" onclick="showView('map')">
-                            <i class="fa-solid fa-map"></i> Mapa Taktyczna
-                        </a>
-                        <a href="https://yunite.xyz/leaderboard/426c581c-f346-4f13-b004-fb3c3fa47595" target="_blank" class="card-link link-leaderboard">
-                            <i class="fa-solid fa-trophy"></i> Tabela Wyników
-                        </a>
+                        <a href="#" class="card-link link-map" onclick="showView('map')"><i class="fa-solid fa-map"></i> Mapa Taktyczna</a>
+                        <a href="#" target="_blank" class="card-link link-leaderboard"><i class="fa-solid fa-trophy"></i> Tabela Wyników</a>
                     </div>
-                </div>
-
-                <div class="info-card">
-                    <div class="status-badge" style="background: rgba(255,255,255,0.05); color: #888;">Zakończone</div>
-                    <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 10px; opacity: 0.6;">FSBC Solo Cup #4</h2>
-                    <p style="font-size: 13px; color: var(--text-muted);">Zwycięzca: PlayerX</p>
                 </div>
             </div>
         </div>
@@ -414,42 +305,18 @@
 
     <div id="view-info" class="content-view">
         <div class="view-container-wide">
-            <h1 class="section-title">Regulamin i Zasady</h1>
+            <h1 class="section-title">Regulamin</h1>
             <div class="rules-wrapper">
-                <div class="rule-item">
-                    <h4>1. Drop Spots</h4>
-                    <p>Każdy gracz musi wybrać swój unikalny spot na mapie przed rozpoczęciem meczu. Lądowanie w strefie innego gracza grozi dyskwalifikacją.</p>
-                </div>
-                <div class="rule-item">
-                    <h4>2. Looting Phase</h4>
-                    <p>Zakaz lootowania budynków przeciwnika do zamknięcia Zone 2. Skup się na swoim obszarze taktycznym.</p>
-                </div>
-                <div class="rule-item">
-                    <h4>3. Sportsmanship</h4>
-                    <p>Wszelkie przejawy toksyczności na czacie gry lub Discordzie będą skutkować banem w systemie FSBC.</p>
-                </div>
-                <div class="rule-item">
-                    <h4>4. Reporting</h4>
-                    <p>Problemy techniczne oraz złamanie regulaminu należy zgłaszać przez system ticketów na Discordzie.</p>
-                </div>
+                <div class="rule-item"><h4>1. Drop Spots</h4><p>Wybierz strefę przed meczem.</p></div>
+                <div class="rule-item"><h4>2. Looting</h4><p>Zakaz lootowania innych do Zone 2.</p></div>
             </div>
         </div>
     </div>
 
-    <div id="view-stats" class="content-view">
-        <div class="view-container-wide" style="text-align: center;">
-            <h1 class="section-title">Globalne Statystyki</h1>
-            <div class="info-card" style="max-width: 800px; margin: 0 auto; padding: 100px 50px;">
-                <i class="fa-solid fa-chart-line" style="font-size: 80px; color: var(--primary); margin-bottom: 30px;"></i>
-                <h2>Rankingi i analityka graczy</h2>
-                <p style="color: var(--text-muted); margin-top: 20px;">Trwa zbieranie danych z ostatnich turniejów. Statystyki zostaną udostępnione wkrótce.</p>
-            </div>
-        </div>
-    </div>
+    <div id="view-stats" class="content-view"><div class="hero-section"><h1>Statystyki wkrótce...</h1></div></div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        /* --- KONFIGURACJA --- */
         const REQUIRED_ROLE_ID = "1474787200758452369";
         let currentUser = null;
         let isDrawing = false;
@@ -462,7 +329,7 @@
             'venture': { url: 'https://i.ibb.co/fzjBkhTX/image.png', bounds: [[0, 0], [500, 500]] }
         };
 
-        /* --- INICJALIZACJA MAPY (SZTYWNA) --- */
+        /* --- INICJALIZACJA MAPY (ZABLOKOWANA) --- */
         const map = L.map('map', {
             crs: L.CRS.Simple,
             minZoom: -1,
@@ -470,16 +337,20 @@
             zoomControl: false,
             attributionControl: false,
             zoomSnap: 0.1,
-            bounceAtZoomLimits: false
+            
+            // BLOKADA RUCHU I ZOOMU
+            dragging: false,
+            scrollWheelZoom: false,
+            doubleClickZoom: false,
+            touchZoom: false,
+            boxZoom: false,
+            keyboard: false
         });
 
         let mapOverlay = L.imageOverlay(mapConfigs.starfall.url, mapConfigs.starfall.bounds).addTo(map);
 
-        // Funkcja wymuszająca "sztywne" wypełnienie ramki
         function lockMapToFrame() {
-            map.fitBounds(mapConfigs[currentMap].bounds, {
-                padding: [-100, -100] // Ujemny padding tworzy efekt zoomu/kadrowania
-            });
+            map.fitBounds(mapConfigs[currentMap].bounds, { padding: [-100, -100] });
         }
 
         async function initSystem() {
@@ -488,44 +359,40 @@
                 const user = await response.json();
                 if (user && user.id) {
                     currentUser = user;
+                    
+                    // AKTUALIZACJA UI SIDEBARA
                     document.getElementById('auth-section').style.display = 'none';
                     document.getElementById('user-section').style.display = 'block';
                     document.getElementById('u-name').innerText = user.username;
-                    document.getElementById('u-avatar').src = user.avatar ? 
-                        `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : 
-                        'https://via.placeholder.com/60';
+                    const avatarUrl = user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : 'https://via.placeholder.com/60';
+                    document.getElementById('u-avatar').src = avatarUrl;
                     
-                    const accessTag = document.getElementById('u-access-tag');
+                    // NOWOŚĆ: AKTUALIZACJA PROFILU NA EKRANIE GŁÓWNYM
+                    document.getElementById('home-auth-container').style.display = 'none';
+                    document.getElementById('home-profile-container').style.display = 'block';
+                    document.getElementById('h-name').innerText = user.username;
+                    document.getElementById('h-avatar').src = avatarUrl;
                     if(user.isAdmin) {
-                        accessTag.innerText = "STATUS: ADMINISTRATOR";
+                        document.getElementById('h-tag').innerText = "ADMINISTRATOR SYSTEMU";
                         document.getElementById('admin-tools').style.display = 'block';
-                    } else {
-                        accessTag.innerText = "STATUS: GRACZ";
                     }
+
                 }
             } catch (err) {}
-            
             loadZones();
             setInterval(loadZones, 5000);
             lockMapToFrame();
         }
 
-        /* --- LOGIKA PRZEŁĄCZANIA --- */
         function showView(viewId) {
             document.querySelectorAll('.content-view').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.header-nav-item').forEach(i => i.classList.remove('active'));
             document.getElementById('view-' + viewId).classList.add('active');
             document.getElementById('nav-' + viewId).classList.add('active');
-            
-            if(viewId === 'map') {
-                setTimeout(() => {
-                    map.invalidateSize();
-                    lockMapToFrame();
-                }, 200);
-            }
+            if(viewId === 'map') setTimeout(() => { map.invalidateSize(); lockMapToFrame(); }, 200);
         }
 
-        async function handleMapChange(mapId) {
+        function handleMapChange(mapId) {
             currentMap = mapId;
             document.querySelectorAll('.map-selector .nav-btn').forEach(b => b.classList.toggle('active', b.id === 'btn-' + mapId));
             mapOverlay.setUrl(mapConfigs[mapId].url);
@@ -533,7 +400,6 @@
             renderZones();
         }
 
-        /* --- LOGIKA STREF --- */
         async function loadZones() {
             try {
                 const res = await fetch('/api/zones');
@@ -569,7 +435,7 @@
         }
 
         async function handleZoneClick(zone) {
-            if (!currentUser) return alert("Musisz być zalogowany!");
+            if (!currentUser) return alert("Zaloguj się!");
             const index = zone.owners.findIndex(o => o.name === currentUser.username);
             if (index > -1) {
                 zone.owners.splice(index, 1);
@@ -581,11 +447,7 @@
         }
 
         async function syncZones() {
-            await fetch('/api/zones', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(allZones)
-            });
+            await fetch('/api/zones', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(allZones) });
             renderZones();
         }
 
@@ -593,7 +455,6 @@
             isDrawing = !isDrawing;
             const btn = document.getElementById('drawBtn');
             btn.innerText = isDrawing ? "ANULUJ" : "DODAJ NOWĄ STREFĘ";
-            btn.style.background = isDrawing ? "var(--danger)" : "var(--primary)";
             firstPoint = null;
         }
 
