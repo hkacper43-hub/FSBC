@@ -80,7 +80,7 @@
         .header-nav-item.active::after { width: 100%; }
 
         /* --- WIDOKI --- */
-        .content-view { display: none; width: 100%; animation: viewFade In 0.5s ease forwards; }
+        .content-view { display: none; width: 100%; animation: viewFadeIn 0.5s ease forwards; }
         .content-view.active { display: block; }
         @keyframes viewFadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -353,7 +353,7 @@
                         <img id="u-avatar" src="" alt="Avatar">
                         <div>
                             <b id="u-name" style="display: block;">Nazwa</b>
-                            <span style="font-size: 11px; color: var(--primary); font-weight: 700;">RANGA: GRACZ</span>
+                            <span id="u-access-tag" style="font-size: 11px; color: var(--primary); font-weight: 700;">SPRAWDZANIE...</span>
                         </div>
                     </div>
                     <div id="admin-tools" style="display: none; margin-top: 15px;">
@@ -380,14 +380,12 @@
     <div id="view-tournaments" class="content-view">
         <div class="view-container-wide">
             <h1 class="section-title">Turnieje FSBC</h1>
-            
             <div class="tournament-grid">
                 <div class="info-card" style="border: 2px solid var(--primary);">
                     <div class="circle-decor"></div>
                     <div class="status-badge">Nadchodzi</div>
                     <h2 style="font-size: 36px; font-weight: 800; margin-bottom: 10px;">FSBC Solo Cup #5</h2>
                     <p style="color: var(--text-muted); font-size: 15px;">Kolejna edycja prestiżowego turnieju solo. Przygotuj swoje taktyki i zdominuj mapę Starfall.</p>
-                    
                     <div class="card-actions">
                         <a href="#" class="card-link link-map" onclick="enterTournamentMap('starfall')">
                             <i class="fa-solid fa-map"></i> Mapa Taktyczna
@@ -396,21 +394,9 @@
                             <i class="fa-solid fa-trophy"></i> Tabela Wyników
                         </a>
                     </div>
-                    
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--glass-border); pt-20; padding-top: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--glass-border); padding-top: 20px;">
                         <span style="font-size: 13px; font-weight: 700; color: var(--text-muted);">DATA: MARZEC 2026</span>
                         <span style="font-size: 13px; font-weight: 700; color: var(--success);">PULA: TBD</span>
-                    </div>
-                </div>
-
-                <div class="info-card">
-                    <div class="status-badge" style="background: rgba(255,255,255,0.1); color: #fff;">Zakończony</div>
-                    <h2 style="font-size: 32px; font-weight: 800; margin-bottom: 10px;">FSBC Solo Cup #4</h2>
-                    <p style="color: var(--text-muted); font-size: 14px;">Zwycięzca: szimicarson6</p>
-                    <div class="card-actions">
-                        <a href="https://yunite.xyz/leaderboard/f406ce8e-205b-49ae-ae9d-076ea8c66aee" target="_blank" class="card-link link-leaderboard" style="width: 100%;">
-                            ARCHIWUM WYNIKÓW
-                        </a>
                     </div>
                 </div>
             </div>
@@ -420,30 +406,11 @@
     <div id="view-info" class="content-view">
         <div class="view-container-wide">
             <h1 class="section-title">Regulamin i Zasady</h1>
-            
             <div class="rules-wrapper">
-                <div class="rule-item">
-                    <h4>1. Drop Spots</h4>
-                    <p>Każdy gracz musi wybrać swój unikalny spot na mapie taktycznej przed rozpoczęciem turnieju. Zajęcie zajętego już spotu skutkuje upomnieniem.</p>
-                </div>
-                <div class="rule-item">
-                    <h4>2. Looting Phase</h4>
-                    <p>Zakaz lootowania budynków przeciwnika do zamknięcia się drugiej strefy (Zone 2).</p>
-                </div>
-                <div class="rule-item">
-                    <h4>3. Fighting Rules</h4>
-                    <p>Walka (Early Game Fighting) jest zabroniona do momentu pojawienia się 3 strefy, chyba że obie strony wyrażą zgodę lub zostaną sprowokowane.</p>
-                </div>
-                <div class="rule-item">
-                    <h4>4. Fair Play</h4>
-                    <p>Używanie exploitów, cheatów lub teamowanie w trybie Solo jest karane natychmiastową dyskwalifikacją z bieżącej i przyszłych edycji.</p>
-                </div>
-            </div>
-
-            <div class="penalty-card">
-                <div class="penalty-title">⚠️ Kara za złamanie regulaminu</div>
-                <div class="penalty-desc">-20 PUNKTÓW KARY</div>
-                <p style="margin-top: 20px; color: var(--text-muted);">Decyzja administracji jest ostateczna i niepodważalna.</p>
+                <div class="rule-item"><h4>1. Drop Spots</h4><p>Każdy gracz musi wybrać swój spot. Zajęcie zajętego spotu = upomnienie.</p></div>
+                <div class="rule-item"><h4>2. Looting Phase</h4><p>Zakaz lootowania budynków przeciwnika do Zone 2.</p></div>
+                <div class="rule-item"><h4>3. Fighting Rules</h4><p>Walka zabroniona do 3 strefy.</p></div>
+                <div class="rule-item"><h4>4. Fair Play</h4><p>Cheaty/Teaming = Ban.</p></div>
             </div>
         </div>
     </div>
@@ -454,17 +421,14 @@
             <div class="info-card" style="max-width: 800px; margin: 0 auto; padding: 100px 50px;">
                 <i class="fa-solid fa-chart-line" style="font-size: 80px; color: var(--primary); margin-bottom: 30px;"></i>
                 <h2>Rankingi w przygotowaniu</h2>
-                <p style="color: var(--text-muted); margin: 20px 0 40px 0;">Integrujemy system statystyk bezpośrednio z API Yunite, aby dostarczać Wam najdokładniejsze dane o Waszej formie.</p>
-                <a href="https://yunite.xyz/leaderboard/f406ce8e-205b-49ae-ae9d-076ea8c66aee" class="cta-button" style="display: inline-flex; margin: 0 auto;">
-                    SPRAWDŹ YUNITE LEADERBOARD
-                </a>
             </div>
         </div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        /* --- KONFIGURACJA I ZMIENNE --- */
+        /* --- KONFIGURACJA --- */
+        const REQUIRED_ROLE_ID = "1474787200758452369";
         let currentUser = null;
         let isDrawing = false;
         let firstPoint = null;
@@ -488,35 +452,7 @@
         let mapOverlay = L.imageOverlay(mapConfigs.starfall.url, mapConfigs.starfall.bounds).addTo(map);
         map.fitBounds(mapConfigs.starfall.bounds);
 
-        /* --- OBSŁUGA WIDOKÓW --- */
-        function showView(viewId) {
-            document.querySelectorAll('.content-view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.header-nav-item').forEach(i => i.classList.remove('active'));
-            
-            document.getElementById('view-' + viewId).classList.add('active');
-            document.getElementById('nav-' + viewId).classList.add('active');
-            
-            if(viewId === 'map') {
-                setTimeout(() => map.invalidateSize(), 200);
-            }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function enterTournamentMap(mapId) {
-            showView('map');
-            handleMapChange(mapId);
-        }
-
-        /* --- LOGIKA SYSTEMU MAPY --- */
-        async function handleMapChange(mapId) {
-            currentMap = mapId;
-            document.querySelectorAll('.map-selector .nav-btn').forEach(b => {
-                b.classList.toggle('active', b.id === 'btn-' + mapId);
-            });
-            mapOverlay.setUrl(mapConfigs[mapId].url);
-            renderZones();
-        }
-
+        /* --- LOGIKA SYSTEMU --- */
         async function initSystem() {
             try {
                 const response = await fetch('/api/user');
@@ -524,100 +460,54 @@
                 if (user && user.id) {
                     currentUser = user;
                     document.getElementById('auth-section').style.display = 'none';
-                    document.getElementById('main-discord-btn').style.display = 'none';
                     document.getElementById('user-section').style.display = 'block';
                     document.getElementById('u-name').innerText = user.username;
                     document.getElementById('u-avatar').src = user.avatar ? 
                         `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : 
                         'https://via.placeholder.com/60';
                     
-                    if (user.isAdmin) {
+                    // Sprawdzanie roli dla tagu w sidebarze
+                    const accessTag = document.getElementById('u-access-tag');
+                    const hasRole = user.roles && user.roles.includes(REQUIRED_ROLE_ID);
+                    
+                    if(user.isAdmin) {
+                        accessTag.innerText = "STATUS: ADMINISTRATOR";
+                        accessTag.style.color = "var(--accent)";
                         document.getElementById('admin-tools').style.display = 'block';
+                    } else if(hasRole) {
+                        accessTag.innerText = "STATUS: DOSTĘP TAKTYCZNY";
+                        accessTag.style.color = "var(--success)";
+                    } else {
+                        accessTag.innerText = "STATUS: BRAK ROLI TURNIEJOWEJ";
+                        accessTag.style.color = "var(--danger)";
                     }
                 }
-            } catch (err) { console.log("Użytkownik niezalogowany"); }
+            } catch (err) { console.log("Niezalogowany"); }
             
             loadZones();
             setInterval(loadZones, 5000);
         }
 
-        async function loadZones() {
-            try {
-                const res = await fetch('/api/zones');
-                const data = await res.json();
-                if (!isDrawing) {
-                    allZones = data;
-                    renderZones();
-                }
-            } catch (err) {}
-        }
-
-        function renderZones() {
-            map.eachLayer(layer => {
-                if (layer instanceof L.Rectangle || layer instanceof L.Tooltip) {
-                    map.removeLayer(layer);
-                }
-            });
-
-            const activeZones = allZones.filter(z => z.map === currentMap);
-            const playerListUI = document.getElementById('player-list');
-            playerListUI.innerHTML = '';
-            let totalPlayers = 0;
-
-            activeZones.forEach(zone => {
-                const ownersCount = zone.owners.length;
-                let color = "#ffffff";
-                if(ownersCount === 1) color = "#2ecc71";
-                if(ownersCount > 1) color = "#ef4444";
-
-                const rect = L.rectangle([zone.p1, zone.p2], {
-                    color: color,
-                    weight: 2,
-                    fillColor: color,
-                    fillOpacity: 0.25
-                }).addTo(map);
-
-                if (ownersCount > 0) {
-                    const avatars = zone.owners.map(o => `<img src="${o.avatar}" class="cluster-img">`).join('');
-                    const tooltipHtml = `<div class="avatar-cluster">${avatars}<span style="margin-left: 20px; font-weight: 800;">${ownersCount}</span></div>`;
-                    rect.bindTooltip(tooltipHtml, { permanent: true, direction: 'center', className: 'zone-tooltip' }).openTooltip();
-                    
-                    zone.owners.forEach(owner => {
-                        totalPlayers++;
-                        playerListUI.innerHTML += `
-                            <div class="player-entry">
-                                <img src="${owner.avatar}">
-                                <span>${owner.name}</span>
-                            </div>
-                        `;
-                    });
-                }
-
-                rect.on('click', (e) => {
-                    L.DomEvent.stopPropagation(e);
-                    if (currentUser) handleZoneClick(zone);
-                });
-
-                if (currentUser && currentUser.isAdmin) {
-                    rect.on('contextmenu', (e) => {
-                        L.DomEvent.stopPropagation(e);
-                        if(confirm("Usunąć tę strefę?")) {
-                            allZones = allZones.filter(z => z.id !== zone.id);
-                            syncZones();
-                        }
-                    });
-                }
-            });
-
-            document.getElementById('count-total').innerText = totalPlayers;
-            document.getElementById('player-count').innerText = totalPlayers;
-        }
-
         async function handleZoneClick(zone) {
+            // 1. Sprawdź czy zalogowany
+            if (!currentUser) {
+                alert("Zaloguj się przez Discord, aby wybrać spot!");
+                return;
+            }
+
+            // 2. Sprawdź rolę lub admina
+            const hasRole = currentUser.roles && currentUser.roles.includes(REQUIRED_ROLE_ID);
+            if (!hasRole && !currentUser.isAdmin) {
+                alert("Nie posiadasz wymaganej roli na Discordzie (Solo Cup Participant), aby zarezerwować miejsce!");
+                return;
+            }
+
+            // 3. Logika przypisywania
             const index = zone.owners.findIndex(o => o.name === currentUser.username);
             if (index > -1) {
                 zone.owners.splice(index, 1);
             } else {
+                // Usuń gracza z innych stref na tej mapie (tylko 1 spot na osobę)
                 allZones.forEach(z => {
                     if(z.map === currentMap) z.owners = z.owners.filter(o => o.name !== currentUser.username);
                 });
@@ -627,6 +517,62 @@
                 });
             }
             syncZones();
+        }
+
+        /* --- RESZTA FUNKCJI POMOCNICZYCH (Widoki, Load, Render, Sync) --- */
+        function showView(viewId) {
+            document.querySelectorAll('.content-view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.header-nav-item').forEach(i => i.classList.remove('active'));
+            document.getElementById('view-' + viewId).classList.add('active');
+            document.getElementById('nav-' + viewId).classList.add('active');
+            if(viewId === 'map') setTimeout(() => map.invalidateSize(), 200);
+        }
+
+        async function handleMapChange(mapId) {
+            currentMap = mapId;
+            document.querySelectorAll('.map-selector .nav-btn').forEach(b => b.classList.toggle('active', b.id === 'btn-' + mapId));
+            mapOverlay.setUrl(mapConfigs[mapId].url);
+            renderZones();
+        }
+
+        async function loadZones() {
+            try {
+                const res = await fetch('/api/zones');
+                const data = await res.json();
+                if (!isDrawing) { allZones = data; renderZones(); }
+            } catch (err) {}
+        }
+
+        function renderZones() {
+            map.eachLayer(layer => { if (layer instanceof L.Rectangle || layer instanceof L.Tooltip) map.removeLayer(layer); });
+            const activeZones = allZones.filter(z => z.map === currentMap);
+            const playerListUI = document.getElementById('player-list');
+            playerListUI.innerHTML = '';
+            let totalPlayers = 0;
+
+            activeZones.forEach(zone => {
+                const ownersCount = zone.owners.length;
+                let color = ownersCount === 0 ? "#ffffff" : (ownersCount === 1 ? "#2ecc71" : "#ef4444");
+                const rect = L.rectangle([zone.p1, zone.p2], { color: color, weight: 2, fillOpacity: 0.25 }).addTo(map);
+
+                if (ownersCount > 0) {
+                    const avatars = zone.owners.map(o => `<img src="${o.avatar}" class="cluster-img">`).join('');
+                    rect.bindTooltip(`<div class="avatar-cluster">${avatars}<span style="margin-left: 20px; font-weight: 800;">${ownersCount}</span></div>`, { permanent: true, direction: 'center', className: 'zone-tooltip' }).openTooltip();
+                    zone.owners.forEach(owner => {
+                        totalPlayers++;
+                        playerListUI.innerHTML += `<div class="player-entry"><img src="${owner.avatar}"><span>${owner.name}</span></div>`;
+                    });
+                }
+                rect.on('click', (e) => { L.DomEvent.stopPropagation(e); handleZoneClick(zone); });
+                if (currentUser && currentUser.isAdmin) {
+                    rect.on('contextmenu', (e) => {
+                        L.DomEvent.stopPropagation(e);
+                        if(confirm("Usunąć tę strefę?")) { allZones = allZones.filter(z => z.id !== zone.id); syncZones(); }
+                    });
+                }
+            });
+            document.getElementById('count-total').innerText = totalPlayers;
+            document.getElementById('player-count').innerText = totalPlayers;
         }
 
         async function syncZones() {
@@ -648,23 +594,13 @@
 
         map.on('click', (e) => {
             if (!isDrawing) return;
-            if (!firstPoint) {
-                firstPoint = e.latlng;
-            } else {
-                const newZone = {
-                    id: Date.now(),
-                    map: currentMap,
-                    p1: [firstPoint.lat, firstPoint.lng],
-                    p2: [e.latlng.lat, e.latlng.lng],
-                    owners: []
-                };
-                allZones.push(newZone);
-                syncZones();
-                toggleDrawing();
+            if (!firstPoint) firstPoint = e.latlng;
+            else {
+                allZones.push({ id: Date.now(), map: currentMap, p1: [firstPoint.lat, firstPoint.lng], p2: [e.latlng.lat, e.latlng.lng], owners: [] });
+                syncZones(); toggleDrawing();
             }
         });
 
-        /* START SYSTEMU */
         initSystem();
     </script>
 </body>
