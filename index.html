@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FSBC - SYSTEM TAKTYCZNY MAP V2</title>
+    <title>FSBC - SYSTEM TAKTYCZNY MAP</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -23,325 +23,104 @@
             --danger: #ef4444;
             --discord: #5865F2;
             --success: #2ecc71;
-            --map-border: #1a1e29;
         }
 
-        /* RESET & BASE */
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; -webkit-font-smoothing: antialiased; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
-
         body { 
             font-family: 'Poppins', sans-serif; 
             background-color: var(--bg-dark); 
             color: var(--text-main); 
             min-height: 100vh; 
             overflow-x: hidden; 
-            padding-bottom: 50px; 
+            padding-bottom: 80px; 
         }
         
         #dynamic-bg { position: fixed; inset: 0; background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #030712 100%); z-index: -2; }
         .grid-pattern { position: fixed; inset: 0; background-image: linear-gradient(var(--glass-border) 1px, transparent 1px), linear-gradient(90deg, var(--glass-border) 1px, transparent 1px); background-size: 45px 45px; z-index: -1; opacity: 0.12; }
 
-        /* --- SITE HEADER --- */
+        /* --- NAWIGACJA GŁÓWNA --- */
         .site-header { 
-            width: 100%; 
-            max-width: 1600px; 
-            margin: 0 auto; 
-            padding: 30px 40px; 
-            display: flex; 
-            justify-content: center; 
-            gap: 40px; 
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: linear-gradient(to bottom, var(--bg-dark) 70%, transparent);
+            width: 100%; max-width: 1600px; margin: 0 auto; padding: 30px 40px; 
+            display: flex; justify-content: center; gap: 40px; position: sticky;
+            top: 0; z-index: 1000; background: linear-gradient(to bottom, var(--bg-dark) 60%, transparent);
         }
         .header-nav-item { 
-            color: #ffffff; 
-            text-decoration: none; 
-            font-size: 14px; 
-            font-weight: 600; 
-            letter-spacing: 1px; 
-            opacity: 0.5; 
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-            position: relative; 
-            cursor: pointer; 
-            text-transform: uppercase;
+            color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 600; 
+            letter-spacing: 1px; opacity: 0.6; transition: 0.3s; position: relative; 
+            cursor: pointer; text-transform: uppercase;
         }
         .header-nav-item:hover, .header-nav-item.active { opacity: 1; color: var(--primary); }
-        .header-nav-item::after { 
-            content: ''; 
-            position: absolute; 
-            bottom: -8px; 
-            left: 50%; 
-            transform: translateX(-50%);
-            width: 0; 
-            height: 2px; 
-            background: var(--primary); 
-            transition: 0.3s; 
-        }
-        .header-nav-item.active::after { width: 100%; }
+        .header-nav-item.active::after { content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 100%; height: 2px; background: var(--primary); }
 
-        /* --- VIEWS --- */
-        .content-view { display: none; width: 100%; animation: viewFadeIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
+        /* --- WIDOKI --- */
+        .content-view { display: none; width: 100%; animation: viewFadeIn 0.5s ease forwards; }
         .content-view.active { display: block; }
-        @keyframes viewFadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes viewFadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- HERO SECTION --- */
-        .hero-section { height: 80vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
-        .hero-title { 
-            font-size: clamp(60px, 12vw, 120px); 
-            font-weight: 900; 
-            background: linear-gradient(to bottom right, #fff 30%, var(--primary), var(--accent)); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-            line-height: 0.85; 
-            margin-bottom: 30px; 
-            letter-spacing: -6px; 
-        }
-        .hero-subtitle { font-size: 20px; color: var(--text-muted); max-width: 800px; margin-bottom: 50px; line-height: 1.6; font-weight: 300; }
-        
-        .cta-button { 
-            background: var(--primary); 
-            color: white; 
-            padding: 22px 60px; 
-            border-radius: 100px; 
-            font-weight: 800; 
-            font-size: 18px; 
-            box-shadow: 0 15px 40px var(--primary-glow); 
-            transition: 0.4s; 
-            border: none; 
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .cta-button:hover { transform: translateY(-5px); box-shadow: 0 20px 50px var(--primary-glow); filter: brightness(1.1); }
-
-        /* --- MAP CORE (TWOJA RAMKA) --- */
+        /* --- TWOJA NOWA RAMKA MAPY Z WARSTWĄ INTERAKTYWNĄ --- */
         .map-container {
-            width: 100%; 
-            height: 850px; 
-            border: 10px solid var(--map-border); 
-            border-radius: 40px; 
-            overflow: hidden; 
-            position: relative;
-            background-color: #000;
-            box-shadow: 0 30px 70px rgba(0,0,0,0.8);
+            width: 100%; height: 850px; 
+            border: 10px solid #1a1e29; border-radius: 35px; 
+            overflow: hidden; position: relative;
+            background-color: #000; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
 
-        #map-interaction-wrapper {
-            position: relative;
-            width: 100%;
-            height: 100%;
+        #map-wrapper {
+            position: relative; width: 100%; height: 100%;
             cursor: crosshair;
         }
 
-        .map-image-layer {
-            width: 100%; 
-            height: 100%;
-            object-fit: cover; 
-            object-position: center;
+        .map-image {
+            width: 100%; height: 100%;
+            object-fit: cover; object-position: center;
             transform: scale(1.3); /* Twój zoom */
-            transition: opacity 0.5s ease;
+            transition: opacity 0.4s;
         }
 
-        #zones-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+        /* Warstwa rysowania stref */
+        #zones-layer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: all;
         }
 
-        .visual-zone {
-            position: absolute;
-            border: 2px solid rgba(255,255,255,0.4);
-            background: rgba(99, 102, 241, 0.1);
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(2px);
-            border-radius: 4px;
+        .zone-poly {
+            position: absolute; border: 2px solid white;
+            background: rgba(255, 255, 255, 0.2);
+            cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center;
         }
-        .visual-zone:hover {
-            background: rgba(99, 102, 241, 0.3);
-            border-color: var(--primary);
-            z-index: 10;
-        }
-        .visual-zone.claimed { border-color: var(--success); background: rgba(46, 204, 113, 0.2); }
-        .visual-zone.conflict { border-color: var(--danger); background: rgba(239, 68, 68, 0.2); }
+        .zone-poly:hover { background: rgba(99, 102, 241, 0.4); border-color: var(--primary); }
+        .zone-poly.occupied { border-color: var(--success); background: rgba(46, 204, 113, 0.3); }
+        .zone-poly.conflict { border-color: var(--danger); background: rgba(239, 68, 68, 0.3); }
 
-        .zone-avatar-group {
-            display: flex;
-            gap: -10px;
-        }
-        .zone-mini-avatar {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            border: 2px solid white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            margin-right: -8px;
-        }
-
-        /* --- SYSTEM LAYOUT --- */
-        .main-container { display: flex; width: 95%; max-width: 1700px; margin: 0 auto; gap: 30px; }
-        
+        /* --- SIDEBAR & LAYOUT --- */
+        .main-container { display: flex; width: 95%; max-width: 1600px; margin: 0 auto; gap: 30px; }
         #sidebar { 
-            width: 420px; 
-            min-width: 420px; 
-            background: var(--card-bg); 
-            border: 1px solid var(--glass-border); 
-            border-radius: 40px; 
-            padding: 40px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 35px; 
-            height: 850px;
-            backdrop-filter: blur(20px);
+            width: 400px; min-width: 400px; background: var(--card-bg); 
+            border: 1px solid var(--glass-border); border-radius: 35px; 
+            padding: 35px; display: flex; flex-direction: column; gap: 30px; height: 850px;
         }
 
         .top-navbar { 
-            width: 95%; 
-            max-width: 1700px; 
-            margin: 10px auto 30px auto; 
-            background: var(--card-bg); 
-            border: 1px solid var(--glass-border); 
-            border-radius: 30px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            padding: 15px 35px; 
-        }
-
-        .map-switcher {
-            display: flex;
-            background: rgba(0,0,0,0.5);
-            padding: 6px;
-            border-radius: 18px;
-            gap: 10px;
-        }
-
-        .sw-btn {
-            padding: 12px 25px;
-            border: none;
-            background: transparent;
-            color: var(--text-muted);
-            font-weight: 700;
-            font-size: 13px;
-            cursor: pointer;
-            border-radius: 14px;
-            transition: 0.3s;
-            text-transform: uppercase;
-        }
-        .sw-btn.active { background: var(--primary); color: white; }
-
-        /* --- USER INTERFACE --- */
-        .profile-card {
-            background: rgba(255,255,255,0.03);
+            width: 95%; max-width: 1600px; margin: 10px auto 30px auto; 
+            background: var(--card-bg); border-radius: 30px; 
+            display: flex; align-items: center; justify-content: space-between; padding: 20px 40px; 
             border: 1px solid var(--glass-border);
-            border-radius: 25px;
-            padding: 25px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
         }
-        .profile-card img { width: 65px; height: 65px; border-radius: 50%; border: 3px solid var(--primary); padding: 3px; }
-        .profile-info b { font-size: 18px; display: block; }
-        .profile-info span { font-size: 11px; font-weight: 800; letter-spacing: 1px; }
 
-        .player-list-container {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding-right: 10px;
-        }
-        .player-row {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 15px;
-            background: rgba(255,255,255,0.02);
-            border-radius: 20px;
-            margin-bottom: 12px;
-            border: 1px solid transparent;
-            transition: 0.3s;
-        }
-        .player-row:hover { border-color: var(--glass-border); background: rgba(255,255,255,0.05); }
-        .player-row img { width: 35px; height: 35px; border-radius: 50%; }
-
-        /* --- TOURNAMENTS VIEW --- */
-        .tourney-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 40px; margin-top: 50px; }
-        .tourney-card {
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
-            border-radius: 45px;
-            padding: 50px;
-            position: relative;
-            overflow: hidden;
-            transition: 0.5s;
-        }
-        .tourney-card:hover { transform: translateY(-15px); border-color: var(--primary); }
-        .tourney-badge {
-            background: var(--primary-glow);
-            color: var(--primary);
-            padding: 8px 20px;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: 900;
-            display: inline-block;
-            margin-bottom: 25px;
-        }
-        .tourney-card h2 { font-size: 38px; margin-bottom: 15px; font-weight: 800; }
-        .tourney-card p { color: var(--text-muted); line-height: 1.7; margin-bottom: 30px; }
-
-        .tourney-stats {
-            display: flex;
-            justify-content: space-between;
-            border-top: 1px solid var(--glass-border);
-            padding-top: 30px;
-        }
-        .t-stat { display: flex; flex-direction: column; }
-        .t-stat span { font-size: 11px; color: var(--text-muted); text-transform: uppercase; }
-        .t-stat b { font-size: 18px; color: #fff; }
-
-        /* --- INFO & STATS --- */
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-        .info-item { background: rgba(255,255,255,0.02); padding: 40px; border-radius: 35px; border: 1px solid var(--glass-border); }
-        .info-item h3 { color: var(--primary); margin-bottom: 15px; font-size: 24px; }
+        .user-profile-box { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 25px; padding: 20px; display: flex; align-items: center; gap: 15px; }
+        .user-profile-box img { width: 55px; height: 55px; border-radius: 50%; border: 2px solid var(--primary); }
         
-        .penalty-box {
-            margin-top: 40px;
-            padding: 60px;
-            text-align: center;
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, transparent 100%);
-            border: 2px dashed var(--danger);
-            border-radius: 40px;
-        }
-        .penalty-box h2 { font-size: 60px; font-weight: 900; color: var(--danger); letter-spacing: -3px; }
+        .player-entry { display: flex; align-items: center; gap: 12px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 12px; margin-bottom: 8px; }
+        .player-entry img { width: 30px; height: 30px; border-radius: 50%; }
 
-        /* DRAWING MODE UI */
-        #admin-panel {
-            display: none;
-            gap: 10px;
-        }
-        .admin-btn {
-            background: transparent;
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            padding: 10px 20px;
-            border-radius: 12px;
-            font-weight: 800;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .admin-btn.active { background: var(--primary); color: #fff; }
+        /* --- RESZTA WIDOKÓW (TURNIEJE I INFO) --- */
+        .view-container-wide { width: 95%; max-width: 1400px; margin: 60px auto; }
+        .section-title { font-size: 56px; font-weight: 800; color: #fff; margin-bottom: 50px; letter-spacing: -2px; }
+        .info-card { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 35px; padding: 45px; position: relative; overflow: hidden; transition: 0.4s; }
+        
+        .rules-wrapper { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; }
+        .rule-item { background: rgba(255,255,255,0.02); padding: 30px; border-radius: 25px; border-left: 4px solid var(--primary); }
     </style>
 </head>
 <body>
@@ -350,380 +129,244 @@
     <div class="grid-pattern"></div>
 
     <header class="site-header">
-        <div class="header-nav-item active" id="nav-home" onclick="switchView('home')">Główna</div>
-        <div class="header-nav-item" id="nav-map" onclick="switchView('map')">System Map</div>
-        <div class="header-nav-item" id="nav-tournaments" onclick="switchView('tournaments')">Turnieje</div>
-        <div class="header-nav-item" id="nav-stats" onclick="switchView('stats')">Ranking</div>
-        <div class="header-nav-item" id="nav-info" onclick="switchView('info')">Zasady</div>
+        <div class="header-nav-item active" onclick="showView('home')" id="nav-home">Home</div>
+        <div class="header-nav-item" onclick="showView('map')" id="nav-map">System Map</div>
+        <div class="header-nav-item" onclick="showView('tournaments')" id="nav-tournaments">Turnieje</div>
+        <div class="header-nav-item" onclick="showView('info')" id="nav-info">Informacje</div>
     </header>
 
-    <main id="view-home" class="content-view active">
-        <section class="hero-section">
-            <h1 class="hero-title">FSBC<br>TACTICAL</h1>
-            <p class="hero-subtitle">Oficjalny hub taktyczny dla graczy Solo Cup. Wybieraj spoty, analizuj konkurencję i dominuj na mapach Starfall oraz Venture.</p>
-            <div style="display: flex; gap: 20px;">
-                <button class="cta-button" onclick="switchView('map')">
-                    Otwórz Mapy <i class="fa-solid fa-location-crosshairs"></i>
-                </button>
-                <a href="/auth/discord" class="cta-button" style="background: var(--discord); box-shadow: 0 15px 40px rgba(88, 101, 242, 0.4);">
-                    <i class="fa-brands fa-discord"></i> Połącz konto
-                </a>
-            </div>
+    <div id="view-home" class="content-view active">
+        <section style="height: 70vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+            <h1 style="font-size: 80px; font-weight: 900; margin-bottom: 20px;">FSBC SYSTEM</h1>
+            <button class="nav-btn active" style="padding: 20px 60px; border-radius: 50px;" onclick="showView('map')">WEJDŹ DO SYSTEMU</button>
         </section>
-    </main>
+    </div>
 
-    <main id="view-map" class="content-view">
+    <div id="view-map" class="content-view">
         <nav class="top-navbar">
-            <div class="map-switcher">
-                <button class="sw-btn active" id="btn-starfall" onclick="changeMap('starfall')">Starfall Island</button>
-                <button class="sw-btn" id="btn-venture" onclick="changeMap('venture')">Venture Peaks</button>
+            <div style="display: flex; gap: 10px; background: rgba(0,0,0,0.4); padding: 5px; border-radius: 20px;">
+                <button class="nav-btn active" id="btn-starfall" onclick="handleMapChange('starfall')">Starfall</button>
+                <button class="nav-btn" id="btn-venture" onclick="handleMapChange('venture')">Venture</button>
             </div>
-            
-            <div id="admin-panel">
-                <button id="draw-btn" class="admin-btn" onclick="toggleDrawMode()">TRYB PROJEKTANTA: OFF</button>
-            </div>
-
-            <div style="display: flex; gap: 20px; align-items: center;">
-                <span style="font-size: 12px; font-weight: 800; color: var(--text-muted);">
-                    <i class="fa-solid fa-users"></i> OBSADA: <span id="occupancy-count">0/100</span>
-                </span>
+            <div id="admin-controls" style="display: none;">
+                <button id="draw-mode-btn" class="nav-btn" style="border: 1px solid var(--primary);" onclick="toggleDrawMode()">TRYB RYSOWANIA: OFF</button>
             </div>
         </nav>
 
         <div class="main-container">
             <aside id="sidebar">
-                <div class="profile-card">
-                    <img id="u-avatar" src="https://via.placeholder.com/100" alt="User">
-                    <div class="profile-info">
-                        <b id="u-name">Niezalogowany</b>
-                        <span id="u-status" style="color: var(--danger);">WYMAGANY DISCORD</span>
+                <div id="user-section">
+                    <div class="user-profile-box">
+                        <img id="u-avatar" src="https://via.placeholder.com/60">
+                        <div>
+                            <b id="u-name">Gość</b>
+                            <span id="u-access-tag" style="display:block; font-size:10px; color: var(--danger);">BRAK ROLI</span>
+                        </div>
                     </div>
                 </div>
-
-                <div class="player-list-container">
-                    <h5 style="text-transform: uppercase; font-size: 11px; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 20px;">Lista obecności</h5>
-                    <div id="dynamic-player-list">
-                        </div>
-                </div>
-
-                <div style="padding-top: 20px; border-top: 1px solid var(--glass-border);">
-                    <p style="font-size: 11px; color: var(--text-muted); line-height: 1.5;">
-                        <i class="fa-solid fa-circle-info"></i> Kliknij w strefę na mapie, aby ją zarezerwować. Musisz posiadać rolę turniejową.
-                    </p>
+                <div style="flex-grow: 1;">
+                    <h5 style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 15px;">Aktywni Gracze</h5>
+                    <div id="player-list"></div>
                 </div>
             </aside>
 
-            <section style="flex-grow: 1;">
+            <main style="flex-grow: 1;">
                 <div class="map-container">
-                    <div id="map-interaction-wrapper" onmousedown="onMapDown(event)" onmouseup="onMapUp(event)">
-                        <img id="map-display-img" src="https://i.ibb.co/dss8R1Ph/mapa.png" class="map-image-layer">
-                        <div id="zones-canvas">
-                            </div>
+                    <div id="map-wrapper" onclick="handleMapClick(event)">
+                        <img id="map-img-display" src="https://i.ibb.co/dss8R1Ph/mapa.png" class="map-image">
+                        <div id="zones-layer"></div>
                     </div>
                 </div>
-            </section>
+            </main>
         </div>
-    </main>
+    </div>
 
-    <main id="view-tournaments" class="content-view">
+    <div id="view-tournaments" class="content-view">
         <div class="view-container-wide">
-            <h1 class="section-title">Harmonogram Rozgrywek</h1>
-            <div class="tourney-grid">
-                <div class="tourney-card">
-                    <div class="tourney-badge">ZAPISY TRWAJĄ</div>
-                    <h2>Solo Cup Edition #5</h2>
-                    <p>Walcz o miano najlepszego gracza na wyspie Starfall. Turniej rozgrywany w formacie 5 rund z systemem punktowym Blitz.</p>
-                    <div class="tourney-stats">
-                        <div class="t-stat"><span>Data</span><b>28.02.2026</b></div>
-                        <div class="t-stat"><span>Pula</span><b>2000 PLN</b></div>
-                        <div class="t-stat"><span>Format</span><b>Solo BR</b></div>
-                    </div>
-                    <button class="cta-button" style="width: 100%; margin-top: 40px;" onclick="switchView('map')">Wybierz swój spot</button>
-                </div>
-
-                <div class="tourney-card" style="opacity: 0.6;">
-                    <div class="tourney-badge" style="background: var(--glass-border); color: #fff;">ZAKOŃCZONY</div>
-                    <h2>Duo Frenzy Starfall</h2>
-                    <p>Wielki finał czwartej edycji. Sprawdź wyniki końcowe i powtórki z meczów finałowych.</p>
-                    <div class="tourney-stats">
-                        <div class="t-stat"><span>Data</span><b>15.01.2026</b></div>
-                        <div class="t-stat"><span>Zwycięzca</span><b>Vantage_1</b></div>
-                        <div class="t-stat"><span>MVP</span><b>Zephyr</b></div>
-                    </div>
-                </div>
+            <h1 class="section-title">Aktywne Turnieje</h1>
+            <div class="info-card">
+                <h2>FSBC Solo Cup #5</h2>
+                <p>Status: Rejestracja otwarta</p>
+                <button class="nav-btn active" style="margin-top: 20px;" onclick="showView('map')">Wybierz Spot</button>
             </div>
         </div>
-    </main>
+    </div>
 
-    <main id="view-stats" class="content-view">
-        <div class="view-container-wide" style="text-align: center;">
-            <h1 class="section-title">Ranking Generalny</h1>
-            <div class="info-card" style="max-width: 900px; margin: 0 auto; padding: 80px;">
-                <i class="fa-solid fa-ranking-star" style="font-size: 80px; color: var(--primary); margin-bottom: 30px;"></i>
-                <h2>Rankingi są w trakcie synchronizacji</h2>
-                <p style="margin: 20px 0 40px 0;">Pobieramy najświeższe dane z Yunite API. Wyniki zostaną zaktualizowane po zakończeniu najbliższego Solo Cup.</p>
-                <div style="display: flex; gap: 15px; justify-content: center;">
-                    <div class="t-stat" style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 20px; width: 200px;">
-                        <span>Graczy</span><b>1,240</b>
-                    </div>
-                    <div class="t-stat" style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 20px; width: 200px;">
-                        <span>Meczy</span><b>5,892</b>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <main id="view-info" class="content-view">
+    <div id="view-info" class="content-view">
         <div class="view-container-wide">
-            <h1 class="section-title">Zasady & Fair Play</h1>
-            <div class="info-grid">
-                <div class="info-item">
-                    <h3>1. Rezerwacja Miejsc</h3>
-                    <p>Każdy zawodnik ma prawo do rezerwacji jednego spotu na mapie. Wybór jest wiążący przez cały czas trwania turnieju.</p>
-                </div>
-                <div class="info-item">
-                    <h3>2. Strefa Pokoju</h3>
-                    <p>Obowiązuje całkowity zakaz agresywnych działań w fazie lądowania oraz pierwszej minuty meczu (tzw. Looting Grace).</p>
-                </div>
-                <div class="info-item">
-                    <h3>3. Weryfikacja Roli</h3>
-                    <p>Tylko gracze z rolą "Solo Cup Participant" mogą korzystać z interaktywnego systemu map. Rola nadawana jest po akceptacji zgłoszenia.</p>
-                </div>
-                <div class="info-item">
-                    <h3>4. Stream Sniping</h3>
-                    <p>Dowody na stream sniping skutkują dożywotnim banem w strukturach FSBC.</p>
-                </div>
-            </div>
-
-            <div class="penalty-box">
-                <span style="font-weight: 800; color: var(--danger); text-transform: uppercase; letter-spacing: 3px;">System Kar</span>
-                <h2>-25 PUNKTÓW</h2>
-                <p style="color: var(--text-muted); max-width: 600px; margin: 20px auto;">Kara za naruszenie zasad lądowania lub bezpodstawne zajęcie cudzego budynku w Zone 1.</p>
+            <h1 class="section-title">Regulamin</h1>
+            <div class="rules-wrapper">
+                <div class="rule-item"><h4>Drop Spot</h4><p>Musisz posiadać rolę turniejową, aby zająć spot.</p></div>
+                <div class="rule-item"><h4>Zasady walki</h4><p>Brak walki do 3 strefy.</p></div>
             </div>
         </div>
-    </main>
+    </div>
 
     <script>
-        /* --- KONFIGURACJA GŁÓWNA --- */
-        const ROLE_PARTICIPANT = "1474787200758452369";
+        const REQUIRED_ROLE_ID = "1474787200758452369";
         let currentUser = null;
-        let activeMap = 'starfall';
-        let zonesData = [];
-        let drawMode = false;
-        let clickStart = null;
+        let currentMap = 'starfall';
+        let allZones = [];
+        let isDrawMode = false;
+        let startPoint = null;
 
-        const maps = {
+        const mapData = {
             'starfall': 'https://i.ibb.co/dss8R1Ph/mapa.png',
             'venture': 'https://i.ibb.co/fzjBkhTX/image.png'
         };
 
-        /* --- LOGIKA WIDOKÓW --- */
-        function switchView(viewId) {
-            document.querySelectorAll('.content-view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.header-nav-item').forEach(i => i.classList.remove('active'));
-            
-            document.getElementById('view-' + viewId).classList.add('active');
-            document.getElementById('nav-' + viewId).classList.add('active');
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        }
-
-        /* --- OBSŁUGA MAPY I STREF --- */
-        function changeMap(mapId) {
-            activeMap = mapId;
-            document.querySelectorAll('.sw-btn').forEach(b => b.classList.toggle('active', b.id === 'btn-' + mapId));
-            
-            const img = document.getElementById('map-display-img');
-            img.style.opacity = '0';
-            setTimeout(() => {
-                img.src = maps[mapId];
-                img.style.opacity = '1';
-                renderZones();
-            }, 300);
-        }
-
-        async function fetchZones() {
-            try {
-                const r = await fetch('/api/zones');
-                zonesData = await r.json();
-                renderZones();
-            } catch(e) { console.error("Błąd ładowania stref"); }
-        }
-
-        function renderZones() {
-            const canvas = document.getElementById('zones-canvas');
-            const list = document.getElementById('dynamic-player-list');
-            canvas.innerHTML = '';
-            list.innerHTML = '';
-
-            const currentZones = zonesData.filter(z => z.map === activeMap);
-            let totalOccupied = 0;
-
-            currentZones.forEach(zone => {
-                const el = document.createElement('div');
-                el.className = 'visual-zone';
-                
-                // Stan wizualny
-                if(zone.owners.length === 1) { el.classList.add('claimed'); totalOccupied++; }
-                if(zone.owners.length > 1) { el.classList.add('conflict'); totalOccupied += zone.owners.length; }
-
-                // Pozycjonowanie procentowe (responsywne)
-                el.style.left = zone.x + '%';
-                el.style.top = zone.y + '%';
-                el.style.width = zone.w + '%';
-                el.style.height = zone.h + '%';
-
-                // Avatary w środku
-                if(zone.owners.length > 0) {
-                    const group = document.createElement('div');
-                    group.className = 'zone-avatar-group';
-                    zone.owners.forEach(o => {
-                        group.innerHTML += `<img src="${o.avatar}" class="zone-mini-avatar" title="${o.name}">`;
-                        list.innerHTML += `
-                            <div class="player-row">
-                                <img src="${o.avatar}">
-                                <div>
-                                    <b style="font-size:13px;">${o.name}</b>
-                                    <span style="display:block; font-size:10px; color:var(--text-muted);">Sektor: ${zone.id.toString().slice(-4)}</span>
-                                </div>
-                            </div>
-                        `;
-                    });
-                    el.appendChild(group);
-                }
-
-                el.onclick = (e) => {
-                    e.stopPropagation();
-                    if(drawMode && currentUser?.isAdmin) {
-                        if(confirm("Usunąć tę strefę?")) deleteZone(zone.id);
-                    } else {
-                        claimZone(zone);
-                    }
-                };
-
-                canvas.appendChild(el);
-            });
-
-            document.getElementById('occupancy-count').innerText = `${totalOccupied}/100`;
-        }
-
-        /* --- SYSTEM REZERWACJI --- */
-        async function claimZone(zone) {
-            if(!currentUser) return alert("Musisz się zalogować przez Discord!");
-            
-            const hasRole = currentUser.roles && currentUser.roles.includes(ROLE_PARTICIPANT);
-            if(!hasRole && !currentUser.isAdmin) {
-                return alert("Twoje konto nie posiada roli 'Solo Cup Participant'. Dołącz do Discorda, aby się zweryfikować.");
-            }
-
-            // Usuń gracza z innych stref na tej samej mapie
-            zonesData.forEach(z => {
-                if(z.map === activeMap) {
-                    z.owners = z.owners.filter(o => o.id !== currentUser.id);
-                }
-            });
-
-            // Dodaj do nowej
-            zone.owners.push({
-                id: currentUser.id,
-                name: currentUser.username,
-                avatar: document.getElementById('u-avatar').src
-            });
-
-            await syncWithServer();
-        }
-
-        /* --- ADMIN: SYSTEM RYSOWANIA --- */
-        function toggleDrawMode() {
-            drawMode = !drawMode;
-            const btn = document.getElementById('draw-btn');
-            btn.innerText = drawMode ? "TRYB PROJEKTANTA: ON" : "TRYB PROJEKTANTA: OFF";
-            btn.classList.toggle('active', drawMode);
-            clickStart = null;
-        }
-
-        function onMapDown(e) {
-            if(!drawMode || !currentUser?.isAdmin) return;
-            const rect = document.getElementById('map-interaction-wrapper').getBoundingClientRect();
-            clickStart = {
-                x: ((e.clientX - rect.left) / rect.width) * 100,
-                y: ((e.clientY - rect.top) / rect.height) * 100
-            };
-        }
-
-        function onMapUp(e) {
-            if(!drawMode || !clickStart) return;
-            const rect = document.getElementById('map-interaction-wrapper').getBoundingClientRect();
-            const xEnd = ((e.clientX - rect.left) / rect.width) * 100;
-            const yEnd = ((e.clientY - rect.top) / rect.height) * 100;
-
-            const newZone = {
-                id: Date.now(),
-                map: activeMap,
-                x: Math.min(clickStart.x, xEnd),
-                y: Math.min(clickStart.y, yEnd),
-                w: Math.abs(xEnd - clickStart.x),
-                h: Math.abs(yEnd - clickStart.y),
-                owners: []
-            };
-
-            zonesData.push(newZone);
-            clickStart = null;
-            syncWithServer();
-        }
-
-        async function deleteZone(id) {
-            zonesData = zonesData.filter(z => z.id !== id);
-            await syncWithServer();
-        }
-
-        async function syncWithServer() {
-            renderZones();
-            try {
-                await fetch('/api/zones', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(zonesData)
-                });
-            } catch(e) { console.error("Błąd synchronizacji"); }
-        }
-
-        /* --- AUTH & INIT --- */
         async function init() {
             try {
-                const r = await fetch('/api/user');
-                const user = await r.json();
-                
+                const res = await fetch('/api/user');
+                const user = await res.json();
                 if(user && user.id) {
                     currentUser = user;
                     document.getElementById('u-name').innerText = user.username;
-                    document.getElementById('u-avatar').src = user.avatar ? 
-                        `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : 
-                        'https://via.placeholder.com/100';
+                    document.getElementById('u-avatar').src = user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : 'https://via.placeholder.com/60';
                     
-                    const hasRole = user.roles && user.roles.includes(ROLE_PARTICIPANT);
-                    const tag = document.getElementById('u-status');
+                    const hasRole = user.roles && user.roles.includes(REQUIRED_ROLE_ID);
+                    const accessTag = document.getElementById('u-access-tag');
                     
                     if(user.isAdmin) {
-                        tag.innerText = "ADMINISTRATOR";
-                        tag.style.color = "var(--accent)";
-                        document.getElementById('admin-panel').style.display = 'flex';
+                        accessTag.innerText = "STATUS: ADMIN";
+                        accessTag.style.color = "var(--accent)";
+                        document.getElementById('admin-controls').style.display = 'block';
                     } else if(hasRole) {
-                        tag.innerText = "UCZESTNIK TURNIEJU";
-                        tag.style.color = "var(--success)";
-                    } else {
-                        tag.innerText = "BRAK ROLI TURNIEJOWEJ";
-                        tag.style.color = "var(--danger)";
+                        accessTag.innerText = "STATUS: UCZESTNIK";
+                        accessTag.style.color = "var(--success)";
                     }
                 }
-            } catch(e) { console.log("Tryb gościa"); }
-            
-            fetchZones();
-            // Auto-refresh co 10 sekund
-            setInterval(fetchZones, 10000);
+            } catch(e) {}
+            loadZones();
         }
 
-        window.onload = init;
+        async function loadZones() {
+            try {
+                const res = await fetch('/api/zones');
+                allZones = await res.json();
+                renderZones();
+            } catch(e) {}
+        }
+
+        function renderZones() {
+            const layer = document.getElementById('zones-layer');
+            const list = document.getElementById('player-list');
+            layer.innerHTML = '';
+            list.innerHTML = '';
+            
+            allZones.filter(z => z.map === currentMap).forEach(zone => {
+                const div = document.createElement('div');
+                div.className = 'zone-poly';
+                if(zone.owners.length === 1) div.classList.add('occupied');
+                if(zone.owners.length > 1) div.classList.add('conflict');
+
+                // Pozycjonowanie procentowe
+                div.style.left = zone.x + '%';
+                div.style.top = zone.y + '%';
+                div.style.width = zone.w + '%';
+                div.style.height = zone.h + '%';
+
+                // Wyświetlanie avatarów w strefie
+                div.innerHTML = zone.owners.map(o => `<img src="${o.avatar}" style="width:20px; border-radius:50%; border:1px solid white; margin:-2px;">`).join('');
+
+                div.onclick = (e) => {
+                    e.stopPropagation();
+                    if(isDrawMode && currentUser?.isAdmin) {
+                        if(confirm("Usunąć strefę?")) {
+                            allZones = allZones.filter(z => z.id !== zone.id);
+                            saveZones();
+                        }
+                    } else {
+                        handleZoneClaim(zone);
+                    }
+                };
+
+                layer.appendChild(div);
+
+                zone.owners.forEach(o => {
+                    list.innerHTML += `<div class="player-entry"><img src="${o.avatar}"><span>${o.name}</span></div>`;
+                });
+            });
+        }
+
+        function handleZoneClaim(zone) {
+            if(!currentUser) return alert("Zaloguj się!");
+            const hasRole = currentUser.roles && currentUser.roles.includes(REQUIRED_ROLE_ID);
+            if(!hasRole && !currentUser.isAdmin) return alert("Brak roli Solo Cup!");
+
+            const alreadyOwned = zone.owners.find(o => o.id === currentUser.id);
+            
+            // Usuń gracza z innych stref na tej mapie
+            allZones.forEach(z => {
+                if(z.map === currentMap) z.owners = z.owners.filter(o => o.id !== currentUser.id);
+            });
+
+            if(!alreadyOwned) {
+                zone.owners.push({
+                    id: currentUser.id,
+                    name: currentUser.username,
+                    avatar: document.getElementById('u-avatar').src
+                });
+            }
+            saveZones();
+        }
+
+        async function saveZones() {
+            await fetch('/api/zones', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(allZones)
+            });
+            renderZones();
+        }
+
+        function toggleDrawMode() {
+            isDrawMode = !isDrawMode;
+            document.getElementById('draw-mode-btn').innerText = isDrawMode ? "TRYB RYSOWANIA: ON" : "TRYB RYSOWANIA: OFF";
+            document.getElementById('draw-mode-btn').style.background = isDrawMode ? "var(--primary)" : "transparent";
+            startPoint = null;
+        }
+
+        function handleMapClick(e) {
+            if(!isDrawMode || !currentUser?.isAdmin) return;
+
+            const rect = document.getElementById('map-wrapper').getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+            if(!startPoint) {
+                startPoint = {x, y};
+            } else {
+                const newZone = {
+                    id: Date.now(),
+                    map: currentMap,
+                    x: Math.min(startPoint.x, x),
+                    y: Math.min(startPoint.y, y),
+                    w: Math.abs(x - startPoint.x),
+                    h: Math.abs(y - startPoint.y),
+                    owners: []
+                };
+                allZones.push(newZone);
+                startPoint = null;
+                saveZones();
+            }
+        }
+
+        function handleMapChange(id) {
+            currentMap = id;
+            document.getElementById('map-img-display').src = mapData[id];
+            document.querySelectorAll('.map-selector .nav-btn').forEach(b => b.classList.toggle('active', b.id.includes(id)));
+            renderZones();
+        }
+
+        function showView(id) {
+            document.querySelectorAll('.content-view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.header-nav-item').forEach(i => i.classList.remove('active'));
+            document.getElementById('view-'+id).classList.add('active');
+            document.getElementById('nav-'+id).classList.add('active');
+        }
+
+        init();
     </script>
 </body>
 </html>
