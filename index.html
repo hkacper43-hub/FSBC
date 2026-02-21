@@ -26,7 +26,6 @@
             --map-border: #1a1e29;
         }
 
-        /* RESET & BASE */
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; -webkit-font-smoothing: antialiased; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
@@ -44,278 +43,62 @@
         #dynamic-bg { position: fixed; inset: 0; background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #030712 100%); z-index: -2; }
         .grid-pattern { position: fixed; inset: 0; background-image: linear-gradient(var(--glass-border) 1px, transparent 1px), linear-gradient(90deg, var(--glass-border) 1px, transparent 1px); background-size: 45px 45px; z-index: -1; opacity: 0.12; }
 
-        /* --- SITE HEADER --- */
+        /* HEADER */
         .site-header { 
-            width: 100%; 
-            max-width: 1600px; 
-            margin: 0 auto; 
-            padding: 30px 40px; 
-            display: flex; 
-            justify-content: center; 
-            gap: 40px; 
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: linear-gradient(to bottom, var(--bg-dark) 70%, transparent);
+            width: 100%; max-width: 1600px; margin: 0 auto; padding: 30px 40px; 
+            display: flex; justify-content: center; gap: 40px; position: sticky;
+            top: 0; z-index: 1000; background: linear-gradient(to bottom, var(--bg-dark) 70%, transparent);
         }
         .header-nav-item { 
-            color: #ffffff; 
-            text-decoration: none; 
-            font-size: 14px; 
-            font-weight: 600; 
-            letter-spacing: 1px; 
-            opacity: 0.5; 
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-            position: relative; 
-            cursor: pointer; 
-            text-transform: uppercase;
+            color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 600; 
+            letter-spacing: 1px; opacity: 0.5; transition: 0.3s; position: relative; cursor: pointer; text-transform: uppercase;
         }
         .header-nav-item:hover, .header-nav-item.active { opacity: 1; color: var(--primary); }
-        .header-nav-item::after { 
-            content: ''; 
-            position: absolute; 
-            bottom: -8px; 
-            left: 50%; 
-            transform: translateX(-50%);
-            width: 0; 
-            height: 2px; 
-            background: var(--primary); 
-            transition: 0.3s; 
-        }
-        .header-nav-item.active::after { width: 100%; }
+        .header-nav-item.active::after { content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 100%; height: 2px; background: var(--primary); }
 
-        /* --- VIEWS --- */
-        .content-view { display: none; width: 100%; animation: viewFadeIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
+        /* VIEWS */
+        .content-view { display: none; width: 100%; animation: viewFadeIn 0.6s ease forwards; }
         .content-view.active { display: block; }
         @keyframes viewFadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- HERO SECTION --- */
+        /* HERO */
         .hero-section { height: 80vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
-        .hero-title { 
-            font-size: clamp(60px, 12vw, 120px); 
-            font-weight: 900; 
-            background: linear-gradient(to bottom right, #fff 30%, var(--primary), var(--accent)); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-            line-height: 0.85; 
-            margin-bottom: 30px; 
-            letter-spacing: -6px; 
-        }
-        .hero-subtitle { font-size: 20px; color: var(--text-muted); max-width: 800px; margin-bottom: 50px; line-height: 1.6; font-weight: 300; }
-        
-        .cta-button { 
-            background: var(--primary); 
-            color: white; 
-            padding: 22px 60px; 
-            border-radius: 100px; 
-            font-weight: 800; 
-            font-size: 18px; 
-            box-shadow: 0 15px 40px var(--primary-glow); 
-            transition: 0.4s; 
-            border: none; 
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            text-decoration: none;
-        }
-        .cta-button:hover { transform: translateY(-5px); box-shadow: 0 20px 50px var(--primary-glow); filter: brightness(1.1); }
+        .hero-title { font-size: clamp(60px, 12vw, 120px); font-weight: 900; background: linear-gradient(to bottom right, #fff 30%, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 0.85; margin-bottom: 30px; letter-spacing: -6px; }
+        .cta-button { background: var(--primary); color: white; padding: 18px 45px; border-radius: 100px; font-weight: 800; font-size: 16px; box-shadow: 0 15px 40px var(--primary-glow); transition: 0.4s; border: none; cursor: pointer; display: flex; align-items: center; gap: 15px; text-transform: uppercase; text-decoration: none; }
 
-        /* --- MAP CORE --- */
+        /* TWOJA RAMKA MAPY */
         .map-container {
-            width: 100%; 
-            height: 850px; 
-            border: 10px solid var(--map-border); 
-            border-radius: 40px; 
-            overflow: hidden; 
-            position: relative;
-            background-color: #000;
-            box-shadow: 0 30px 70px rgba(0,0,0,0.8);
+            width: 100%; height: 850px; 
+            border: 10px solid var(--map-border); border-radius: 40px; 
+            overflow: hidden; position: relative;
+            background-color: #000; box-shadow: 0 30px 70px rgba(0,0,0,0.8);
         }
 
-        #map-interaction-wrapper {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            cursor: crosshair;
-        }
+        #map-interaction-wrapper { position: relative; width: 100%; height: 100%; cursor: crosshair; }
+        .map-image-layer { width: 100%; height: 100%; object-fit: cover; object-position: center; transform: scale(1.3); transition: opacity 0.5s ease; }
 
-        .map-image-layer {
-            width: 100%; 
-            height: 100%;
-            object-fit: cover; 
-            object-position: center;
-            transform: scale(1.3);
-            transition: opacity 0.5s ease;
-        }
-
-        #zones-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: all;
-        }
-
-        .visual-zone {
-            position: absolute;
-            border: 2px solid rgba(255,255,255,0.4);
-            background: rgba(99, 102, 241, 0.1);
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(2px);
-            border-radius: 4px;
-        }
-        .visual-zone:hover {
-            background: rgba(99, 102, 241, 0.3);
-            border-color: var(--primary);
-            z-index: 10;
-        }
+        /* STREFY */
+        #zones-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: all; }
+        .visual-zone { position: absolute; border: 2px solid rgba(255,255,255,0.4); background: rgba(99, 102, 241, 0.1); transition: 0.2s; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(2px); border-radius: 4px; }
+        .visual-zone:hover { background: rgba(99, 102, 241, 0.3); border-color: var(--primary); z-index: 10; }
         .visual-zone.claimed { border-color: var(--success); background: rgba(46, 204, 113, 0.2); }
         .visual-zone.conflict { border-color: var(--danger); background: rgba(239, 68, 68, 0.2); }
+        .zone-mini-avatar { width: 22px; height: 22px; border-radius: 50%; border: 2px solid white; margin-right: -6px; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
 
-        .zone-mini-avatar {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            border: 2px solid white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            margin-right: -8px;
-        }
-
-        /* --- SYSTEM LAYOUT --- */
+        /* LAYOUT */
         .main-container { display: flex; width: 95%; max-width: 1700px; margin: 0 auto; gap: 30px; }
-        
-        #sidebar { 
-            width: 420px; 
-            min-width: 420px; 
-            background: var(--card-bg); 
-            border: 1px solid var(--glass-border); 
-            border-radius: 40px; 
-            padding: 40px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 35px; 
-            height: 850px;
-            backdrop-filter: blur(20px);
-        }
+        #sidebar { width: 420px; min-width: 420px; background: var(--card-bg); border: 1px solid var(--glass-border); border-radius: 40px; padding: 40px; display: flex; flex-direction: column; gap: 35px; height: 850px; backdrop-filter: blur(20px); }
+        .top-navbar { width: 95%; max-width: 1700px; margin: 10px auto 30px auto; background: var(--card-bg); border: 1px solid var(--glass-border); border-radius: 30px; display: flex; align-items: center; justify-content: space-between; padding: 15px 35px; }
 
-        .top-navbar { 
-            width: 95%; 
-            max-width: 1700px; 
-            margin: 10px auto 30px auto; 
-            background: var(--card-bg); 
-            border: 1px solid var(--glass-border); 
-            border-radius: 30px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            padding: 15px 35px; 
-        }
-
-        .map-switcher {
-            display: flex;
-            background: rgba(0,0,0,0.5);
-            padding: 6px;
-            border-radius: 18px;
-            gap: 10px;
-        }
-
-        .sw-btn {
-            padding: 12px 25px;
-            border: none;
-            background: transparent;
-            color: var(--text-muted);
-            font-weight: 700;
-            font-size: 13px;
-            cursor: pointer;
-            border-radius: 14px;
-            transition: 0.3s;
-            text-transform: uppercase;
-        }
-        .sw-btn.active { background: var(--primary); color: white; }
-
-        /* --- USER INTERFACE --- */
-        .profile-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--glass-border);
-            border-radius: 25px;
-            padding: 25px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        .profile-card img { width: 65px; height: 65px; border-radius: 50%; border: 3px solid var(--primary); padding: 3px; }
-        .profile-info b { font-size: 18px; display: block; }
-        .profile-info span { font-size: 11px; font-weight: 800; letter-spacing: 1px; }
-
-        .player-list-container {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding-right: 10px;
-        }
-        .player-row {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 15px;
-            background: rgba(255,255,255,0.02);
-            border-radius: 20px;
-            margin-bottom: 12px;
-            border: 1px solid transparent;
-            transition: 0.3s;
-        }
-        .player-row:hover { border-color: var(--glass-border); background: rgba(255,255,255,0.05); }
+        /* USER UI */
+        .profile-card { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 25px; padding: 25px; display: flex; align-items: center; gap: 20px; }
+        .profile-card img { width: 60px; height: 60px; border-radius: 50%; border: 3px solid var(--primary); }
+        .player-row { display: flex; align-items: center; gap: 15px; padding: 15px; background: rgba(255,255,255,0.02); border-radius: 20px; margin-bottom: 12px; border: 1px solid transparent; }
         .player-row img { width: 35px; height: 35px; border-radius: 50%; }
 
-        /* --- TOURNAMENTS VIEW --- */
-        .tourney-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 40px; margin-top: 50px; }
-        .tourney-card {
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
-            border-radius: 45px;
-            padding: 50px;
-            position: relative;
-            overflow: hidden;
-            transition: 0.5s;
-        }
-        .tourney-card:hover { transform: translateY(-15px); border-color: var(--primary); }
-        .tourney-badge {
-            background: var(--primary-glow);
-            color: var(--primary);
-            padding: 8px 20px;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: 900;
-            display: inline-block;
-            margin-bottom: 25px;
-        }
-        .tourney-card h2 { font-size: 38px; margin-bottom: 15px; font-weight: 800; }
-        .tourney-card p { color: var(--text-muted); line-height: 1.7; margin-bottom: 30px; }
-
-        /* --- RULES --- */
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-        .info-item { background: rgba(255,255,255,0.02); padding: 40px; border-radius: 35px; border: 1px solid var(--glass-border); }
-        .info-item h3 { color: var(--primary); margin-bottom: 15px; font-size: 24px; }
-        
-        .penalty-box {
-            margin-top: 40px;
-            padding: 60px;
-            text-align: center;
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, transparent 100%);
-            border: 2px dashed var(--danger);
-            border-radius: 40px;
-        }
-        .penalty-box h2 { font-size: 60px; font-weight: 900; color: var(--danger); letter-spacing: -3px; }
-
-        #admin-panel { display: none; gap: 10px; }
-        .admin-btn { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 10px 20px; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; }
-        .admin-btn.active { background: var(--primary); color: #fff; }
+        /* ADMIN BUTTONS */
+        .admin-btn { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 8px 18px; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; font-size: 12px; }
+        .admin-btn.active { background: var(--primary); color: white; }
     </style>
 </head>
 <body>
@@ -333,12 +116,10 @@
     <main id="view-home" class="content-view active">
         <section class="hero-section">
             <h1 class="hero-title">FSBC<br>TACTICAL</h1>
-            <p class="hero-subtitle">Najbardziej zaawansowany system wyboru spotów dla graczy Solo Cup. Połącz się przez Discord i zarezerwuj swój budynek.</p>
-            <div style="display: flex; gap: 20px;">
-                <button class="cta-button" onclick="switchView('map')">
-                    Otwórz Mapy <i class="fa-solid fa-location-crosshairs"></i>
-                </button>
-                <a href="/auth/discord" id="main-auth-btn" class="cta-button" style="background: var(--discord); box-shadow: 0 15px 40px rgba(88, 101, 242, 0.4);">
+            <p style="color: var(--text-muted); margin-bottom: 40px; font-size: 18px;">Weryfikacja Discord i rezerwacja spotów w jednym miejscu.</p>
+            <div style="display: flex; gap: 15px;">
+                <button class="cta-button" onclick="switchView('map')">Otwórz Mapy</button>
+                <a href="/auth/discord" id="btn-login-main" class="cta-button" style="background: var(--discord);">
                     <i class="fa-brands fa-discord"></i> Połącz konto
                 </a>
             </div>
@@ -347,41 +128,39 @@
 
     <main id="view-map" class="content-view">
         <nav class="top-navbar">
-            <div class="map-switcher">
-                <button class="sw-btn active" id="btn-starfall" onclick="changeMap('starfall')">Starfall Island</button>
-                <button class="sw-btn" id="btn-venture" onclick="changeMap('venture')">Venture Peaks</button>
+            <div style="display: flex; gap: 10px; background: rgba(0,0,0,0.5); padding: 5px; border-radius: 15px;">
+                <button class="sw-btn active" id="btn-starfall" onclick="changeMap('starfall')" style="padding: 10px 20px; border: none; background: transparent; color: white; cursor: pointer; border-radius: 10px;">Starfall</button>
+                <button class="sw-btn" id="btn-venture" onclick="changeMap('venture')" style="padding: 10px 20px; border: none; background: transparent; color: white; cursor: pointer; border-radius: 10px;">Venture</button>
             </div>
             
-            <div id="admin-panel">
+            <div id="admin-panel" style="display: none;">
                 <button id="draw-btn" class="admin-btn" onclick="toggleDrawMode()">TRYB PROJEKTANTA: OFF</button>
             </div>
 
-            <div style="display: flex; gap: 20px; align-items: center;">
-                <span style="font-size: 12px; font-weight: 800; color: var(--text-muted);">
-                    <i class="fa-solid fa-users"></i> AKTYWNI: <span id="occupancy-count">0</span>
-                </span>
+            <div style="font-size: 12px; font-weight: 800; color: var(--text-muted);">
+                AKTYWNI: <span id="occupancy-count" style="color: var(--primary);">0</span>
             </div>
         </nav>
 
         <div class="main-container">
             <aside id="sidebar">
-                <div id="auth-placeholder">
-                    <a href="/auth/discord" class="cta-button" style="background: var(--discord); width: 100%; padding: 15px; font-size: 14px;">
-                        <i class="fa-brands fa-discord"></i> ZALOGUJ SIĘ
+                <div id="auth-sidebar-box">
+                    <a href="/auth/discord" class="cta-button" style="background: var(--discord); width: 100%; justify-content: center;">
+                        <i class="fa-brands fa-discord"></i> ZALOGUJ
                     </a>
                 </div>
-                <div id="user-profile-display" style="display: none;">
+                <div id="profile-sidebar-box" style="display: none;">
                     <div class="profile-card">
-                        <img id="u-avatar" src="https://via.placeholder.com/100">
+                        <img id="u-avatar" src="">
                         <div class="profile-info">
                             <b id="u-name">Użytkownik</b>
-                            <span id="u-status">GRACZ</span>
+                            <span id="u-status" style="font-size: 10px; color: var(--text-muted);">GRACZ</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="player-list-container">
-                    <h5 style="text-transform: uppercase; font-size: 11px; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 20px;">Lista Obecności</h5>
+                    <h5 style="text-transform: uppercase; font-size: 11px; color: var(--text-muted); margin-bottom: 20px; letter-spacing: 1px;">Gracze na mapie</h5>
                     <div id="dynamic-player-list"></div>
                 </div>
             </aside>
@@ -398,30 +177,16 @@
     </main>
 
     <main id="view-tournaments" class="content-view">
-        <div style="max-width: 1400px; margin: 60px auto; padding: 0 40px;">
-            <h1 style="font-size: 56px; font-weight: 800; margin-bottom: 50px; letter-spacing: -2px;">Aktywne Wydarzenia</h1>
-            <div class="tourney-grid">
-                <div class="tourney-card">
-                    <div class="tourney-badge">ZAPISY OTWARTE</div>
-                    <h2>Solo Cup #5</h2>
-                    <p>Wielki powrót na Starfall Island. Zapisz się już dziś i wybierz swój budynek.</p>
-                    <button class="cta-button" style="width: 100%;" onclick="switchView('map')">Wybierz Spot</button>
-                </div>
-            </div>
+        <div style="max-width: 1200px; margin: 50px auto; padding: 40px;">
+            <h1>Turnieje FSBC</h1>
+            <p style="color: var(--text-muted);">Wybierz aktywny turniej, aby zobaczyć mapę.</p>
         </div>
     </main>
 
     <main id="view-info" class="content-view">
-        <div style="max-width: 1400px; margin: 60px auto; padding: 0 40px;">
-            <h1 style="font-size: 56px; font-weight: 800; margin-bottom: 50px;">Zasady Rozgrywek</h1>
-            <div class="info-grid">
-                <div class="info-item"><h3>1. Spoty</h3><p>Budynek zarezerwowany na mapie jest Twoją wyłączną własnością do 3 strefy.</p></div>
-                <div class="info-item"><h3>2. Agresja</h3><p>Zakaz walki wczesnej (Early Game) pod groźbą kary punktowej.</p></div>
-            </div>
-            <div class="penalty-box">
-                <h2>-25 PUNKTÓW</h2>
-                <p>Kara za naruszenie spotu lądowania.</p>
-            </div>
+        <div style="max-width: 1200px; margin: 50px auto; padding: 40px;">
+            <h1>Regulamin</h1>
+            <p style="color: var(--text-muted);">Zasady lądowania i fair play.</p>
         </div>
     </main>
 
@@ -447,7 +212,10 @@
 
         function changeMap(mapId) {
             activeMap = mapId;
-            document.querySelectorAll('.sw-btn').forEach(b => b.classList.toggle('active', b.id === 'btn-' + mapId));
+            document.querySelectorAll('.sw-btn').forEach(b => {
+                b.classList.toggle('active', b.id === 'btn-' + mapId);
+                b.style.background = (b.id === 'btn-' + mapId) ? 'var(--primary)' : 'transparent';
+            });
             document.getElementById('map-display-img').src = maps[mapId];
             renderZones();
         }
@@ -467,7 +235,7 @@
             list.innerHTML = '';
 
             const currentZones = zonesData.filter(z => z.map === activeMap);
-            let totalPlayers = 0;
+            let count = 0;
 
             currentZones.forEach(zone => {
                 const el = document.createElement('div');
@@ -481,25 +249,35 @@
                 el.style.height = zone.h + '%';
 
                 zone.owners.forEach(o => {
-                    totalPlayers++;
-                    el.innerHTML += `<img src="${o.avatar}" class="zone-mini-avatar" title="${o.name}">`;
+                    count++;
+                    el.innerHTML += `<img src="${o.avatar}" class="zone-mini-avatar">`;
                     list.innerHTML += `<div class="player-row"><img src="${o.avatar}"><b>${o.name}</b></div>`;
                 });
 
+                // KLIKNIĘCIE W STREFĘ
                 el.onclick = (e) => {
                     e.stopPropagation();
-                    if(!drawMode) claimZone(zone);
+                    if(drawMode && currentUser?.isAdmin) {
+                        // USUWANIE STREFY (Tylko w trybie admina)
+                        if(confirm("Czy na pewno chcesz usunąć tę strefę?")) {
+                            zonesData = zonesData.filter(z => z.id !== zone.id);
+                            sync();
+                        }
+                    } else {
+                        // ZAJMOWANIE STREFY
+                        claimZone(zone);
+                    }
                 };
 
                 canvas.appendChild(el);
             });
-            document.getElementById('occupancy-count').innerText = totalPlayers;
+            document.getElementById('occupancy-count').innerText = count;
         }
 
         async function claimZone(zone) {
-            if(!currentUser) return alert("Zaloguj się przez Discord!");
+            if(!currentUser) return alert("Zaloguj się!");
             const hasRole = currentUser.roles && currentUser.roles.includes(ROLE_PARTICIPANT);
-            if(!hasRole && !currentUser.isAdmin) return alert("Nie masz roli Solo Cup Participant!");
+            if(!hasRole && !currentUser.isAdmin) return alert("Brak roli Solo Cup!");
 
             zonesData.forEach(z => {
                 if(z.map === activeMap) z.owners = z.owners.filter(o => o.id !== currentUser.id);
@@ -514,7 +292,6 @@
             sync();
         }
 
-        /* --- TRYB PROJEKTANTA --- */
         function toggleDrawMode() {
             drawMode = !drawMode;
             document.getElementById('draw-btn').innerText = drawMode ? "TRYB PROJEKTANTA: ON" : "TRYB PROJEKTANTA: OFF";
@@ -548,11 +325,7 @@
 
         async function sync() {
             renderZones();
-            await fetch('/api/zones', { 
-                method: 'POST', 
-                headers: {'Content-Type': 'application/json'}, 
-                body: JSON.stringify(zonesData) 
-            });
+            await fetch('/api/zones', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(zonesData) });
         }
 
         async function init() {
@@ -561,22 +334,16 @@
                 const user = await r.json();
                 if(user && user.id) {
                     currentUser = user;
-                    document.getElementById('auth-placeholder').style.display = 'none';
-                    document.getElementById('main-auth-btn').style.display = 'none';
-                    document.getElementById('user-profile-display').style.display = 'block';
+                    document.getElementById('auth-sidebar-box').style.display = 'none';
+                    document.getElementById('btn-login-main').style.display = 'none';
+                    document.getElementById('profile-sidebar-box').style.display = 'block';
                     
                     document.getElementById('u-name').innerText = user.username;
-                    document.getElementById('u-avatar').src = user.avatar ? 
-                        `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : 
-                        'https://via.placeholder.com/100';
+                    document.getElementById('u-avatar').src = user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : 'https://via.placeholder.com/100';
                     
                     if(user.isAdmin) {
-                        document.getElementById('admin-panel').style.display = 'flex';
+                        document.getElementById('admin-panel').style.display = 'block';
                         document.getElementById('u-status').innerText = "ADMINISTRATOR";
-                        document.getElementById('u-status').style.color = "var(--accent)";
-                    } else if(user.roles && user.roles.includes(ROLE_PARTICIPANT)) {
-                        document.getElementById('u-status').innerText = "UCZESTNIK";
-                        document.getElementById('u-status').style.color = "var(--success)";
                     }
                 }
             } catch(e) {}
