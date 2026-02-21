@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FSBC SYSTEM | Tournament Management</title>
+    <title>FSBC - SYSTEM TAKTYCZNY MAP</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -16,73 +16,269 @@
             --secondary: #a855f7;
             --accent: #d946ef;
             --bg-dark: #030712;
-            --card-bg: rgba(3, 7, 18, 0.95);
+            --card-bg: rgba(3, 7, 18, 0.9);
             --glass: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.12);
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --danger: #ef4444;
-            --success: #2ecc71;
             --discord: #5865F2;
+            --success: #2ecc71;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; -webkit-font-smoothing: antialiased; }
-        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; overflow-x: hidden; padding-bottom: 50px; }
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: var(--bg-dark); 
+            color: var(--text-main); 
+            min-height: 100vh; 
+            overflow-x: hidden; 
+            padding-bottom: 80px; 
+        }
         
         #dynamic-bg { position: fixed; inset: 0; background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #030712 100%); z-index: -2; }
-        .grid-pattern { position: fixed; inset: 0; background-image: linear-gradient(var(--glass-border) 1px, transparent 1px), linear-gradient(90deg, var(--glass-border) 1px, transparent 1px); background-size: 45px 45px; z-index: -1; opacity: 0.1; }
+        .grid-pattern { position: fixed; inset: 0; background-image: linear-gradient(var(--glass-border) 1px, transparent 1px), linear-gradient(90deg, var(--glass-border) 1px, transparent 1px); background-size: 45px 45px; z-index: -1; opacity: 0.12; }
 
-        /* HEADER */
-        .site-header { width: 100%; max-width: 1600px; margin: 0 auto; padding: 25px 40px; display: flex; justify-content: center; gap: 40px; position: sticky; top: 0; z-index: 1000; background: linear-gradient(to bottom, var(--bg-dark) 80%, transparent); }
-        .header-nav-item { color: #ffffff; text-decoration: none; font-size: 13px; font-weight: 700; letter-spacing: 1.5px; opacity: 0.5; transition: 0.3s; position: relative; cursor: pointer; text-transform: uppercase; }
+        /* --- NAWIGACJA GŁÓWNA --- */
+        .site-header { 
+            width: 100%; 
+            max-width: 1600px; 
+            margin: 0 auto; 
+            padding: 30px 40px; 
+            display: flex; 
+            justify-content: center; 
+            gap: 40px; 
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: linear-gradient(to bottom, var(--bg-dark) 60%, transparent);
+        }
+        .header-nav-item { 
+            color: #ffffff; 
+            text-decoration: none; 
+            font-size: 14px; 
+            font-weight: 600; 
+            letter-spacing: 1px; 
+            opacity: 0.6; 
+            transition: 0.3s; 
+            position: relative; 
+            cursor: pointer; 
+            text-transform: uppercase;
+        }
         .header-nav-item:hover, .header-nav-item.active { opacity: 1; color: var(--primary); }
-        .header-nav-item::after { content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 0; height: 2px; background: var(--primary); transition: 0.3s; }
+        .header-nav-item::after { 
+            content: ''; 
+            position: absolute; 
+            bottom: -8px; 
+            left: 50%; 
+            transform: translateX(-50%);
+            width: 0; 
+            height: 2px; 
+            background: var(--primary); 
+            transition: 0.3s; 
+        }
         .header-nav-item.active::after { width: 100%; }
 
-        /* VIEWS */
-        .content-view { display: none; width: 100%; animation: viewIn 0.5s ease forwards; }
+        /* --- WIDOKI --- */
+        .content-view { display: none; width: 100%; animation: viewFade In 0.5s ease forwards; }
         .content-view.active { display: block; }
-        @keyframes viewIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes viewFadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* HERO SECTION */
-        .hero-section { height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
-        .hero-title { font-size: clamp(40px, 8vw, 90px); font-weight: 900; background: linear-gradient(135deg, #fff 20%, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px; letter-spacing: -3px; }
-        .hero-subtitle { color: var(--text-muted); max-width: 600px; margin-bottom: 35px; font-size: 18px; }
-
-        /* MAP INTERFACE */
-        .map-top-bar { width: 96%; max-width: 1800px; margin: 10px auto 20px auto; display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 15px 30px; border-radius: 20px; border: 1px solid var(--glass-border); }
-        .map-layout { display: flex; width: 96%; max-width: 1800px; margin: 0 auto; gap: 20px; height: 800px; }
-        #sidebar { width: 380px; background: var(--card-bg); border: 1px solid var(--glass-border); border-radius: 30px; padding: 25px; display: flex; flex-direction: column; gap: 20px; }
-        .map-frame { flex-grow: 1; background: #000; border: 1px solid var(--glass-border); border-radius: 30px; overflow: hidden; position: relative; }
-        #map { width: 100%; height: 100%; }
-
-        .nav-btn { padding: 10px 25px; border: none; background: rgba(255,255,255,0.05); color: var(--text-muted); font-weight: 700; font-size: 12px; cursor: pointer; border-radius: 12px; transition: 0.3s; text-transform: uppercase; }
-        .nav-btn.active { background: var(--primary); color: white; }
-
-        /* TOURNAMENT CARDS */
-        .tournament-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 30px; width: 90%; max-width: 1400px; margin: 40px auto; }
-        .t-card { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 35px; padding: 45px; position: relative; overflow: hidden; transition: 0.4s; }
-        .t-card:hover { border-color: var(--primary); transform: translateY(-5px); }
-        .t-badge { background: var(--primary); color: white; padding: 5px 15px; border-radius: 10px; font-size: 11px; font-weight: 800; text-transform: uppercase; display: inline-block; margin-bottom: 20px; }
+        /* --- STRONA GŁÓWNA (HOME) --- */
+        .hero-section { height: 75vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
+        .hero-title { 
+            font-size: clamp(50px, 10vw, 100px); 
+            font-weight: 900; 
+            background: linear-gradient(to bottom right, #fff 30%, var(--primary), var(--accent)); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            line-height: 0.9; 
+            margin-bottom: 25px; 
+            letter-spacing: -5px; 
+        }
+        .hero-subtitle { font-size: 19px; color: var(--text-muted); max-width: 750px; margin-bottom: 45px; line-height: 1.6; font-weight: 300; }
         
-        .card-footer-btns { display: flex; gap: 15px; margin-top: 30px; }
-        .footer-link { text-decoration: none; flex: 1; padding: 15px; border-radius: 15px; text-align: center; font-weight: 800; font-size: 12px; text-transform: uppercase; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .btn-map { background: rgba(99, 102, 241, 0.1); color: var(--primary); border: 1px solid rgba(99, 102, 241, 0.2); }
-        .btn-map:hover { background: var(--primary); color: white; }
-        .btn-leader { background: rgba(217, 70, 239, 0.1); color: var(--accent); border: 1px solid rgba(217, 70, 239, 0.2); }
-        .btn-leader:hover { background: var(--accent); color: white; }
+        .hero-buttons { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .cta-button { 
+            background: var(--primary); 
+            color: white; 
+            padding: 20px 55px; 
+            border-radius: 100px; 
+            text-decoration: none; 
+            font-weight: 800; 
+            font-size: 18px; 
+            box-shadow: 0 15px 40px var(--primary-glow); 
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            border: none; 
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .cta-button:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 20px 50px var(--primary-glow); }
 
-        /* UI ELEMENTS */
-        .player-entry { display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 15px; margin-bottom: 10px; border: 1px solid transparent; }
-        .player-entry.me { border-color: var(--success); background: rgba(46, 204, 113, 0.05); }
-        .player-entry img { width: 35px; height: 35px; border-radius: 50%; }
+        .hero-discord-btn {
+            background: rgba(88, 101, 242, 0.1); 
+            color: var(--discord); 
+            border: 1px solid rgba(88, 101, 242, 0.3);
+            padding: 14px 35px; 
+            border-radius: 100px; 
+            text-decoration: none; 
+            font-weight: 700; 
+            font-size: 14px;
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            transition: 0.3s;
+        }
+        .hero-discord-btn:hover { background: var(--discord); color: white; transform: translateY(-3px); }
 
-        .avatar-cluster { display: flex; align-items: center; background: rgba(0,0,0,0.8); padding: 5px 12px; border-radius: 20px; border: 2px solid var(--primary); }
-        .cluster-img { width: 30px; height: 30px; border-radius: 50%; border: 1px solid white; margin-right: -10px; }
+        /* --- SYSTEM MAPY --- */
+        .top-navbar { 
+            width: 95%; 
+            max-width: 1600px; 
+            margin: 10px auto 30px auto; 
+            background: var(--card-bg); 
+            backdrop-filter: blur(25px); 
+            border: 1px solid var(--glass-border); 
+            border-radius: 30px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 20px 40px; 
+        }
+        .map-selector { display: flex; background: rgba(0,0,0,0.5); padding: 6px; border-radius: 20px; gap: 10px; border: 1px solid var(--glass-border); }
+        .nav-btn { 
+            padding: 12px 30px; 
+            border: none; 
+            background: transparent; 
+            color: var(--text-muted); 
+            font-weight: 700; 
+            font-size: 13px; 
+            cursor: pointer; 
+            border-radius: 15px; 
+            transition: 0.3s; 
+            text-transform: uppercase; 
+        }
+        .nav-btn.active { background: var(--primary); color: white; }
+        
+        .main-container { display: flex; width: 95%; max-width: 1600px; margin: 0 auto; gap: 30px; }
+        #sidebar { 
+            width: 400px; 
+            min-width: 400px; 
+            background: var(--card-bg); 
+            border: 1px solid var(--glass-border); 
+            border-radius: 35px; 
+            padding: 35px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 30px; 
+            height: 850px;
+        }
+        .map-frame { flex-grow: 1; background: var(--card-bg); border: 1px solid var(--glass-border); border-radius: 35px; padding: 15px; height: 850px; position: relative; }
+        #map { width: 100%; height: 100%; border-radius: 25px; background: #0b1424; cursor: crosshair; }
 
-        .status-msg { padding: 15px; border-radius: 15px; font-size: 12px; font-weight: 600; line-height: 1.5; margin-bottom: 20px; }
-        .msg-warning { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid var(--danger); }
-        .msg-success { background: rgba(46, 204, 113, 0.1); color: var(--success); border: 1px solid var(--success); }
+        /* --- TURNIEJE (TOURNAMENTS) --- */
+        .view-container-wide { width: 95%; max-width: 1400px; margin: 60px auto; }
+        .section-title { font-size: 56px; font-weight: 800; color: #fff; margin-bottom: 50px; letter-spacing: -2px; }
+        
+        .tournament-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 35px; }
+        .info-card { 
+            background: var(--glass); 
+            border: 1px solid var(--glass-border); 
+            border-radius: 35px; 
+            padding: 45px; 
+            position: relative; 
+            overflow: hidden; 
+            transition: 0.4s; 
+            backdrop-filter: blur(10px);
+        }
+        .info-card:hover { transform: translateY(-10px); border-color: var(--primary); background: rgba(255,255,255,0.05); }
+        
+        .status-badge { 
+            background: rgba(99, 102, 241, 0.2); 
+            color: var(--primary); 
+            padding: 8px 18px; 
+            border-radius: 12px; 
+            display: inline-block; 
+            font-size: 11px; 
+            font-weight: 800; 
+            margin-bottom: 25px; 
+            text-transform: uppercase; 
+            letter-spacing: 1px;
+        }
+        
+        .card-actions { display: flex; gap: 15px; margin: 30px 0; }
+        .card-link { 
+            text-decoration: none; 
+            font-size: 12px; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            letter-spacing: 1px;
+            padding: 14px 24px; 
+            border-radius: 15px; 
+            transition: 0.3s; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            flex: 1;
+            justify-content: center;
+        }
+        .link-map { background: rgba(99, 102, 241, 0.1); color: var(--primary); border: 1px solid rgba(99, 102, 241, 0.2); }
+        .link-map:hover { background: var(--primary); color: white; }
+        .link-leaderboard { background: rgba(217, 70, 239, 0.1); color: var(--accent); border: 1px solid rgba(217, 70, 239, 0.2); }
+        .link-leaderboard:hover { background: var(--accent); color: white; }
+
+        /* --- INFORMACJE & REGULAMIN --- */
+        .rules-wrapper { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-top: 40px; }
+        .rule-item { 
+            background: rgba(255,255,255,0.02); 
+            padding: 30px; 
+            border-radius: 25px; 
+            border-left: 4px solid var(--primary); 
+        }
+        .rule-item h4 { margin-bottom: 10px; color: var(--primary); font-size: 18px; }
+        .rule-item p { color: var(--text-muted); font-size: 14px; line-height: 1.6; }
+
+        .penalty-card { 
+            margin-top: 50px; 
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, transparent 100%); 
+            border: 2px dashed var(--danger); 
+            border-radius: 35px; 
+            padding: 50px; 
+            text-align: center; 
+        }
+        .penalty-title { color: var(--danger); font-weight: 900; font-size: 24px; text-transform: uppercase; margin-bottom: 15px; }
+        .penalty-desc { font-size: 48px; font-weight: 900; letter-spacing: -2px; }
+
+        /* --- ELEMENTY INTERFEJSU UŻYTKOWNIKA --- */
+        .user-profile-box { 
+            background: rgba(255,255,255,0.03); 
+            border: 1px solid var(--glass-border); 
+            border-radius: 25px; 
+            padding: 20px; 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+        }
+        .user-profile-box img { width: 55px; height: 55px; border-radius: 50%; border: 2px solid var(--primary); }
+        .player-entry { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            padding: 12px 18px; 
+            background: rgba(255,255,255,0.03); 
+            border-radius: 18px; 
+            margin-bottom: 10px; 
+            font-size: 14px; 
+        }
+        .player-entry img { width: 32px; height: 32px; border-radius: 50%; }
+
+        /* --- DEKORACJE --- */
+        .circle-decor { position: absolute; width: 250px; height: 250px; background: var(--primary); filter: blur(120px); opacity: 0.15; bottom: -80px; right: -80px; z-index: -1; }
+        .zone-tooltip { background: transparent !important; border: none !important; box-shadow: none !important; }
+        .avatar-cluster { display: flex; align-items: center; background: rgba(3, 7, 18, 0.9); padding: 5px 15px; border-radius: 30px; border: 2px solid white; }
+        .cluster-img { width: 30px; height: 30px; border-radius: 50%; border: 2px solid white; margin-right: -12px; }
     </style>
 </head>
 <body>
@@ -94,83 +290,84 @@
         <div class="header-nav-item active" id="nav-home" onclick="showView('home')">Home</div>
         <div class="header-nav-item" id="nav-map" onclick="showView('map')">System Map</div>
         <div class="header-nav-item" id="nav-tournaments" onclick="showView('tournaments')">Turnieje</div>
+        <div class="header-nav-item" id="nav-stats" onclick="showView('stats')">Statystyki</div>
         <div class="header-nav-item" id="nav-info" onclick="showView('info')">Informacje</div>
     </header>
 
     <div id="view-home" class="content-view active">
         <section class="hero-section">
-            <h1 class="hero-title">FSBC TOURNAMENTS</h1>
-            <p class="hero-subtitle">Profesjonalny system rezerwacji drop-spotów dla Liderów Duo. Zaloguj się, aby zarządzać taktyką swojego zespołu.</p>
-            <button class="nav-btn active" style="padding: 20px 50px; border-radius: 100px; font-size: 16px;" onclick="showView('map')">WEJDŹ DO SYSTEMU</button>
-        </section>
-    </div>
-
-    <div id="view-tournaments" class="content-view">
-        <div class="tournament-grid">
-            <div class="t-card" style="border: 2px solid var(--primary);">
-                <span class="t-badge">Aktywny</span>
-                <h2 style="font-size: 36px; margin-bottom: 10px;">FSBC Duo Cup #5</h2>
-                <p style="color: var(--text-muted); font-size: 15px;">Turniej przeznaczony dla zweryfikowanych par. Liderzy z rangą turniejową wybierają spoty na mapie Starfall.</p>
-                
-                <div class="card-footer-btns">
-                    <a href="#" class="footer-link btn-map" onclick="enterTournamentMap('starfall')">
-                        <i class="fa-solid fa-map-location-dot"></i> Mapa Turnieju
-                    </a>
-                    <a href="https://yunite.xyz/leaderboard/f406ce8e-205b-49ae-ae9d-076ea8c66aee" target="_blank" class="footer-link btn-leader">
-                        <i class="fa-solid fa-ranking-star"></i> Leaderboard
-                    </a>
-                </div>
+            <h1 class="hero-title">FSBC SYSTEM</h1>
+            <p class="hero-subtitle">Najbardziej zaawansowany ekosystem taktyczny dla graczy Solo Blitz Royale. Zarządzaj swoimi drop-spotami i analizuj konkurencję w czasie rzeczywistym.</p>
+            <div class="hero-buttons">
+                <button class="cta-button" onclick="showView('map')">
+                    URUCHOM SYSTEM <i class="fa-solid fa-rocket"></i>
+                </button>
+                <a href="/auth/discord" id="main-discord-btn" class="hero-discord-btn">
+                    <i class="fa-brands fa-discord"></i> POŁĄCZ Z DISCORD
+                </a>
             </div>
+        </section>
 
-            <div class="t-card">
-                <span class="t-badge" style="background: grey;">Zakończony</span>
-                <h2 style="font-size: 32px; margin-bottom: 10px;">FSBC Solo #4</h2>
-                <p style="color: var(--text-muted); font-size: 14px;">Zakończono: Luty 2026. Gratulacje dla zwycięzców poprzedniej edycji.</p>
-                <div class="card-footer-btns">
-                    <a href="#" class="footer-link btn-leader" style="width: 100%;">ZOBACZ ARCHIWUM</a>
-                </div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; max-width: 1200px; margin: 0 auto; padding: 0 40px 100px 40px;">
+            <div class="info-card" style="padding: 30px; text-align: center;">
+                <i class="fa-solid fa-map-location-dot" style="font-size: 40px; color: var(--primary); margin-bottom: 20px; display: block;"></i>
+                <h4>Precyzyjne Spoty</h4>
+                <p style="font-size: 13px; color: var(--text-muted); margin-top: 10px;">Wybieraj swoje miejsca lądowania na mapach Starfall i Venture bez konfliktów.</p>
+            </div>
+            <div class="info-card" style="padding: 30px; text-align: center;">
+                <i class="fa-solid fa-users-viewfinder" style="font-size: 40px; color: var(--secondary); margin-bottom: 20px; display: block;"></i>
+                <h4>Podgląd Graczy</h4>
+                <p style="font-size: 13px; color: var(--text-muted); margin-top: 10px;">Widzisz w czasie rzeczywistym, kto zajmuje daną strefę na mapie turniejowej.</p>
+            </div>
+            <div class="info-card" style="padding: 30px; text-align: center;">
+                <i class="fa-solid fa-trophy" style="font-size: 40px; color: var(--accent); margin-bottom: 20px; display: block;"></i>
+                <h4>Historia Chwały</h4>
+                <p style="font-size: 13px; color: var(--text-muted); margin-top: 10px;">Śledź wyniki poprzednich edycji i przygotuj się na nadchodzące wyzwania.</p>
             </div>
         </div>
     </div>
 
     <div id="view-map" class="content-view">
-        <div class="map-top-bar">
-            <div style="display: flex; gap: 10px;">
-                <button class="nav-btn active" id="btn-starfall" onclick="changeMap('starfall')">Starfall</button>
-                <button class="nav-btn" id="btn-venture" onclick="changeMap('venture')">Venture</button>
+        <nav class="top-navbar">
+            <div class="map-selector">
+                <button class="nav-btn active" id="btn-starfall" onclick="handleMapChange('starfall')">Starfall Island</button>
+                <button class="nav-btn" id="btn-venture" onclick="handleMapChange('venture')">Venture Peaks</button>
             </div>
-            <div id="user-info-bar" style="font-weight: 800; font-size: 12px; color: var(--primary);">
-                <i class="fa-solid fa-shield-halved"></i> TRYB: WERYFIKACJA RANGI
+            <div style="display: flex; gap: 15px;">
+                <div class="nav-btn" style="background: rgba(255,255,255,0.05); color: white; cursor: default;">
+                    <i class="fa-solid fa-user-group"></i> AKTYWNI: <span id="count-total">0</span>
+                </div>
             </div>
-        </div>
+        </nav>
 
-        <div class="map-layout">
+        <div class="main-container">
             <aside id="sidebar">
                 <div id="auth-section">
-                    <a href="/auth/discord" class="nav-btn active" style="display: block; text-align: center; text-decoration: none; padding: 18px;">
-                        <i class="fa-brands fa-discord"></i> LOGOWANIE LIDER
+                    <a href="/auth/discord" class="hero-discord-btn" style="width: 100%; justify-content: center; padding: 18px;">
+                        <i class="fa-brands fa-discord"></i> ZALOGUJ SIĘ
                     </a>
                 </div>
-
-                <div id="user-profile" style="display: none;">
-                    <div class="player-entry" style="background: rgba(99, 102, 241, 0.15); border: 1px solid var(--primary);">
-                        <img id="u-avatar" src="">
+                
+                <div id="user-section" style="display: none;">
+                    <div class="user-profile-box">
+                        <img id="u-avatar" src="" alt="Avatar">
                         <div>
-                            <b id="u-name">Lider Duo</b>
-                            <div id="role-tag" style="font-size: 10px; color: var(--primary); font-weight: 800;">FSBC #5 VERIFIED</div>
+                            <b id="u-name" style="display: block;">Nazwa</b>
+                            <span style="font-size: 11px; color: var(--primary); font-weight: 700;">RANGA: GRACZ</span>
                         </div>
                     </div>
-                    
-                    <div id="access-msg" class="status-msg"></div>
-
-                    <button id="adminBtn" class="nav-btn" style="width: 100%; margin-top: 10px; display: none;" onclick="toggleDraw()">
-                        DODAJ STREFĘ (ADMIN)
-                    </button>
+                    <div id="admin-tools" style="display: none; margin-top: 15px;">
+                        <button id="drawBtn" class="nav-btn active" style="width: 100%;" onclick="toggleDrawing()">
+                            DODAJ NOWĄ STREFĘ
+                        </button>
+                    </div>
                 </div>
 
                 <div style="flex-grow: 1; overflow-y: auto;">
-                    <h5 style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 15px;">Aktywne Rezerwacje</h5>
-                    <div id="reservation-list"></div>
+                    <h5 style="text-transform: uppercase; font-size: 11px; color: var(--text-muted); margin-bottom: 15px; letter-spacing: 1px;">
+                        Gracze w strefach (<span id="player-count">0</span>)
+                    </h5>
+                    <div id="player-list"></div>
                 </div>
             </aside>
 
@@ -180,163 +377,295 @@
         </div>
     </div>
 
-    <div id="view-info" class="content-view">
-        <div style="width: 90%; max-width: 1000px; margin: 50px auto;">
-            <div class="t-card">
-                <h2 style="margin-bottom: 25px; color: var(--primary);">Zasady Lidera Duo</h2>
-                <div style="display: flex; flex-direction: column; gap: 20px; color: var(--text-muted);">
-                    <p>1. Tylko jedna osoba z Duo (Lider) może posiadać rangę <b>FSBC #5</b>.</p>
-                    <p>2. Wybrany spot na mapie obowiązuje obu graczy z drużyny.</p>
-                    <p>3. System automatycznie blokuje możliwość zajęcia dwóch miejsc przez tego samego lidera.</p>
-                    <p>4. Zmiana spotu jest możliwa w dowolnym momencie przed startem meczu.</p>
+    <div id="view-tournaments" class="content-view">
+        <div class="view-container-wide">
+            <h1 class="section-title">Turnieje FSBC</h1>
+            
+            <div class="tournament-grid">
+                <div class="info-card" style="border: 2px solid var(--primary);">
+                    <div class="circle-decor"></div>
+                    <div class="status-badge">Nadchodzi</div>
+                    <h2 style="font-size: 36px; font-weight: 800; margin-bottom: 10px;">FSBC Solo Cup #5</h2>
+                    <p style="color: var(--text-muted); font-size: 15px;">Kolejna edycja prestiżowego turnieju solo. Przygotuj swoje taktyki i zdominuj mapę Starfall.</p>
+                    
+                    <div class="card-actions">
+                        <a href="#" class="card-link link-map" onclick="enterTournamentMap('starfall')">
+                            <i class="fa-solid fa-map"></i> Mapa Taktyczna
+                        </a>
+                        <a href="https://yunite.xyz/leaderboard/426c581c-f346-4f13-b004-fb3c3fa47595" target="_blank" class="card-link link-leaderboard">
+                            <i class="fa-solid fa-trophy"></i> Tabela Wyników
+                        </a>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--glass-border); pt-20; padding-top: 20px;">
+                        <span style="font-size: 13px; font-weight: 700; color: var(--text-muted);">DATA: MARZEC 2026</span>
+                        <span style="font-size: 13px; font-weight: 700; color: var(--success);">PULA: TBD</span>
+                    </div>
                 </div>
+
+                <div class="info-card">
+                    <div class="status-badge" style="background: rgba(255,255,255,0.1); color: #fff;">Zakończony</div>
+                    <h2 style="font-size: 32px; font-weight: 800; margin-bottom: 10px;">FSBC Solo Cup #4</h2>
+                    <p style="color: var(--text-muted); font-size: 14px;">Zwycięzca: szimicarson6</p>
+                    <div class="card-actions">
+                        <a href="https://yunite.xyz/leaderboard/f406ce8e-205b-49ae-ae9d-076ea8c66aee" target="_blank" class="card-link link-leaderboard" style="width: 100%;">
+                            ARCHIWUM WYNIKÓW
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-info" class="content-view">
+        <div class="view-container-wide">
+            <h1 class="section-title">Regulamin i Zasady</h1>
+            
+            <div class="rules-wrapper">
+                <div class="rule-item">
+                    <h4>1. Drop Spots</h4>
+                    <p>Każdy gracz musi wybrać swój unikalny spot na mapie taktycznej przed rozpoczęciem turnieju. Zajęcie zajętego już spotu skutkuje upomnieniem.</p>
+                </div>
+                <div class="rule-item">
+                    <h4>2. Looting Phase</h4>
+                    <p>Zakaz lootowania budynków przeciwnika do zamknięcia się drugiej strefy (Zone 2).</p>
+                </div>
+                <div class="rule-item">
+                    <h4>3. Fighting Rules</h4>
+                    <p>Walka (Early Game Fighting) jest zabroniona do momentu pojawienia się 3 strefy, chyba że obie strony wyrażą zgodę lub zostaną sprowokowane.</p>
+                </div>
+                <div class="rule-item">
+                    <h4>4. Fair Play</h4>
+                    <p>Używanie exploitów, cheatów lub teamowanie w trybie Solo jest karane natychmiastową dyskwalifikacją z bieżącej i przyszłych edycji.</p>
+                </div>
+            </div>
+
+            <div class="penalty-card">
+                <div class="penalty-title">⚠️ Kara za złamanie regulaminu</div>
+                <div class="penalty-desc">-20 PUNKTÓW KARY</div>
+                <p style="margin-top: 20px; color: var(--text-muted);">Decyzja administracji jest ostateczna i niepodważalna.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-stats" class="content-view">
+        <div class="view-container-wide" style="text-align: center;">
+            <h1 class="section-title">Globalne Statystyki</h1>
+            <div class="info-card" style="max-width: 800px; margin: 0 auto; padding: 100px 50px;">
+                <i class="fa-solid fa-chart-line" style="font-size: 80px; color: var(--primary); margin-bottom: 30px;"></i>
+                <h2>Rankingi w przygotowaniu</h2>
+                <p style="color: var(--text-muted); margin: 20px 0 40px 0;">Integrujemy system statystyk bezpośrednio z API Yunite, aby dostarczać Wam najdokładniejsze dane o Waszej formie.</p>
+                <a href="https://yunite.xyz/leaderboard/f406ce8e-205b-49ae-ae9d-076ea8c66aee" class="cta-button" style="display: inline-flex; margin: 0 auto;">
+                    SPRAWDŹ YUNITE LEADERBOARD
+                </a>
             </div>
         </div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // TWOJE DANE KONFIGURACYJNE
-        const TOURNAMENT_ROLE_ID = "1474787200758452369";
-        let currentUser = null, allZones = [], currentMap = 'starfall', isDrawing = false, p1 = null;
+        /* --- KONFIGURACJA I ZMIENNE --- */
+        let currentUser = null;
+        let isDrawing = false;
+        let firstPoint = null;
+        let allZones = [];
+        let currentMap = 'starfall';
 
-        const maps = {
-            starfall: { url: 'https://i.ibb.co/dss8R1Ph/mapa.png', bounds: [[0,0], [500,500]] },
-            venture: { url: 'https://i.ibb.co/fzjBkhTX/image.png', bounds: [[0,0], [500,500]] }
+        const mapConfigs = {
+            'starfall': { url: 'https://i.ibb.co/dss8R1Ph/mapa.png', bounds: [[0, 0], [500, 500]] },
+            'venture': { url: 'https://i.ibb.co/fzjBkhTX/image.png', bounds: [[0, 0], [500, 500]] }
         };
 
-        const map = L.map('map', { crs: L.CRS.Simple, minZoom: -1, zoomControl: false, attributionControl: false });
-        let overlay = L.imageOverlay(maps.starfall.url, maps.starfall.bounds).addTo(map);
-        map.fitBounds(maps.starfall.bounds);
+        /* --- INICJALIZACJA MAPY --- */
+        const map = L.map('map', {
+            crs: L.CRS.Simple,
+            minZoom: -1,
+            maxZoom: 2,
+            zoomControl: false,
+            attributionControl: false
+        });
 
-        function showView(id) {
+        let mapOverlay = L.imageOverlay(mapConfigs.starfall.url, mapConfigs.starfall.bounds).addTo(map);
+        map.fitBounds(mapConfigs.starfall.bounds);
+
+        /* --- OBSŁUGA WIDOKÓW --- */
+        function showView(viewId) {
             document.querySelectorAll('.content-view').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.header-nav-item').forEach(i => i.classList.remove('active'));
-            document.getElementById('view-'+id).classList.add('active');
-            document.getElementById('nav-'+id).classList.add('active');
-            if(id === 'map') setTimeout(() => map.invalidateSize(), 200);
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        }
-
-        function enterTournamentMap(m) { showView('map'); changeMap(m); }
-
-        async function init() {
-            try {
-                const r = await fetch('/api/user');
-                const u = await r.json();
-                
-                if(u.id) {
-                    currentUser = u;
-                    document.getElementById('auth-section').style.display = 'none';
-                    document.getElementById('user-profile').style.display = 'block';
-                    document.getElementById('u-name').innerText = u.username;
-                    document.getElementById('u-avatar').src = u.avatar ? `https://cdn.discordapp.com/avatars/${u.id}/${u.avatar}.png` : 'https://via.placeholder.com/40';
-                    
-                    // LOGIKA WERYFIKACJI RANGI
-                    const msgBox = document.getElementById('access-msg');
-                    if(u.roles && u.roles.includes(TOURNAMENT_ROLE_ID)) {
-                        msgBox.innerText = "Weryfikacja pomyślna. Możesz zajmować spot.";
-                        msgBox.className = "status-msg msg-success";
-                        currentUser.canVote = true;
-                    } else {
-                        msgBox.innerText = "Brak rangi FSBC #5. Skontaktuj się z administratorem.";
-                        msgBox.className = "status-msg msg-warning";
-                        currentUser.canVote = false;
-                    }
-
-                    if(u.isAdmin) document.getElementById('adminBtn').style.display = 'block';
-                }
-            } catch(e){}
-            load(); setInterval(load, 5000);
-        }
-
-        async function load() {
-            try {
-                const r = await fetch('/api/zones');
-                const d = await r.json();
-                if(!isDrawing) { allZones = d; render(); }
-            } catch(e){}
-        }
-
-        function render() {
-            map.eachLayer(l => { if(l instanceof L.Rectangle || l instanceof L.Tooltip) map.removeLayer(l); });
-            const list = document.getElementById('reservation-list');
-            list.innerHTML = '';
             
-            allZones.filter(z => z.map === currentMap).forEach(z => {
-                const count = z.owners.length;
-                let color = count === 0 ? "#fff" : (count === 1 ? "#2ecc71" : "#ef4444");
-                
-                const rect = L.rectangle([z.p1, z.p2], { color: color, weight: 2, fillOpacity: 0.15 }).addTo(map);
-                
-                if(count > 0) {
-                    const avatars = z.owners.map(o => `<img src="${o.avatar}" class="cluster-img">`).join('');
-                    rect.bindTooltip(`<div class="avatar-cluster">${avatars}</div>`, { permanent: true, direction: 'center', className: 'zone-tooltip' }).openTooltip();
+            document.getElementById('view-' + viewId).classList.add('active');
+            document.getElementById('nav-' + viewId).classList.add('active');
+            
+            if(viewId === 'map') {
+                setTimeout(() => map.invalidateSize(), 200);
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function enterTournamentMap(mapId) {
+            showView('map');
+            handleMapChange(mapId);
+        }
+
+        /* --- LOGIKA SYSTEMU MAPY --- */
+        async function handleMapChange(mapId) {
+            currentMap = mapId;
+            document.querySelectorAll('.map-selector .nav-btn').forEach(b => {
+                b.classList.toggle('active', b.id === 'btn-' + mapId);
+            });
+            mapOverlay.setUrl(mapConfigs[mapId].url);
+            renderZones();
+        }
+
+        async function initSystem() {
+            try {
+                const response = await fetch('/api/user');
+                const user = await response.json();
+                if (user && user.id) {
+                    currentUser = user;
+                    document.getElementById('auth-section').style.display = 'none';
+                    document.getElementById('main-discord-btn').style.display = 'none';
+                    document.getElementById('user-section').style.display = 'block';
+                    document.getElementById('u-name').innerText = user.username;
+                    document.getElementById('u-avatar').src = user.avatar ? 
+                        `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : 
+                        'https://via.placeholder.com/60';
                     
-                    z.owners.forEach(o => {
-                        const isMe = currentUser && o.name === currentUser.username;
-                        list.innerHTML += `
-                            <div class="player-row ${isMe ? 'me' : ''}">
-                                <img src="${o.avatar}">
-                                <span>${o.name}</span>
-                            </div>`;
+                    if (user.isAdmin) {
+                        document.getElementById('admin-tools').style.display = 'block';
+                    }
+                }
+            } catch (err) { console.log("Użytkownik niezalogowany"); }
+            
+            loadZones();
+            setInterval(loadZones, 5000);
+        }
+
+        async function loadZones() {
+            try {
+                const res = await fetch('/api/zones');
+                const data = await res.json();
+                if (!isDrawing) {
+                    allZones = data;
+                    renderZones();
+                }
+            } catch (err) {}
+        }
+
+        function renderZones() {
+            map.eachLayer(layer => {
+                if (layer instanceof L.Rectangle || layer instanceof L.Tooltip) {
+                    map.removeLayer(layer);
+                }
+            });
+
+            const activeZones = allZones.filter(z => z.map === currentMap);
+            const playerListUI = document.getElementById('player-list');
+            playerListUI.innerHTML = '';
+            let totalPlayers = 0;
+
+            activeZones.forEach(zone => {
+                const ownersCount = zone.owners.length;
+                let color = "#ffffff";
+                if(ownersCount === 1) color = "#2ecc71";
+                if(ownersCount > 1) color = "#ef4444";
+
+                const rect = L.rectangle([zone.p1, zone.p2], {
+                    color: color,
+                    weight: 2,
+                    fillColor: color,
+                    fillOpacity: 0.25
+                }).addTo(map);
+
+                if (ownersCount > 0) {
+                    const avatars = zone.owners.map(o => `<img src="${o.avatar}" class="cluster-img">`).join('');
+                    const tooltipHtml = `<div class="avatar-cluster">${avatars}<span style="margin-left: 20px; font-weight: 800;">${ownersCount}</span></div>`;
+                    rect.bindTooltip(tooltipHtml, { permanent: true, direction: 'center', className: 'zone-tooltip' }).openTooltip();
+                    
+                    zone.owners.forEach(owner => {
+                        totalPlayers++;
+                        playerListUI.innerHTML += `
+                            <div class="player-entry">
+                                <img src="${owner.avatar}">
+                                <span>${owner.name}</span>
+                            </div>
+                        `;
                     });
                 }
 
-                rect.on('click', () => { 
-                    if(currentUser && currentUser.canVote) toggleReservation(z); 
-                    else if(currentUser) alert("Brak uprawnień (Ranga FSBC #5 wymagana)!");
-                });
-
-                if(currentUser?.isAdmin) rect.on('contextmenu', (e) => { 
+                rect.on('click', (e) => {
                     L.DomEvent.stopPropagation(e);
-                    if(confirm("Usunąć strefę?")) { allZones = allZones.filter(x => x.id !== z.id); sync(); }
+                    if (currentUser) handleZoneClick(zone);
                 });
-            });
-        }
 
-        async function toggleReservation(z) {
-            const alreadyThere = z.owners.some(o => o.name === currentUser.username);
-            
-            // USUŃ MNIE Z INNYCH SPOTÓW NA TEJ MAPIE (Logika 1 spot na lidera)
-            allZones.forEach(zone => {
-                if(zone.map === currentMap) {
-                    zone.owners = zone.owners.filter(o => o.name !== currentUser.username);
+                if (currentUser && currentUser.isAdmin) {
+                    rect.on('contextmenu', (e) => {
+                        L.DomEvent.stopPropagation(e);
+                        if(confirm("Usunąć tę strefę?")) {
+                            allZones = allZones.filter(z => z.id !== zone.id);
+                            syncZones();
+                        }
+                    });
                 }
             });
 
-            // DODAJ DO NOWEGO JEŚLI NIE BYŁO MNIE TAM
-            if(!alreadyThere) {
-                z.owners.push({ name: currentUser.username, avatar: document.getElementById('u-avatar').src });
+            document.getElementById('count-total').innerText = totalPlayers;
+            document.getElementById('player-count').innerText = totalPlayers;
+        }
+
+        async function handleZoneClick(zone) {
+            const index = zone.owners.findIndex(o => o.name === currentUser.username);
+            if (index > -1) {
+                zone.owners.splice(index, 1);
+            } else {
+                allZones.forEach(z => {
+                    if(z.map === currentMap) z.owners = z.owners.filter(o => o.name !== currentUser.username);
+                });
+                zone.owners.push({
+                    name: currentUser.username,
+                    avatar: document.getElementById('u-avatar').src
+                });
             }
-            
-            sync();
+            syncZones();
         }
 
-        async function sync() {
-            await fetch('/api/zones', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(allZones)});
-            render();
+        async function syncZones() {
+            await fetch('/api/zones', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(allZones)
+            });
+            renderZones();
         }
 
-        function changeMap(m) {
-            currentMap = m;
-            document.querySelectorAll('.map-top-bar .nav-btn').forEach(b => b.classList.toggle('active', b.id === 'btn-'+m));
-            overlay.setUrl(maps[m].url);
-            render();
+        function toggleDrawing() {
+            isDrawing = !isDrawing;
+            const btn = document.getElementById('drawBtn');
+            btn.innerText = isDrawing ? "ANULUJ RYSOWANIE" : "DODAJ NOWĄ STREFĘ";
+            btn.style.background = isDrawing ? "var(--danger)" : "var(--primary)";
+            firstPoint = null;
         }
 
-        function toggleDraw() { isDrawing = !isDrawing; p1 = null; document.getElementById('adminBtn').innerText = isDrawing ? "ANULUJ" : "DODAJ STREFĘ (ADMIN)"; }
-        
         map.on('click', (e) => {
-            if(!isDrawing) return;
-            if(!p1) p1 = e.latlng;
-            else {
-                allZones.push({ id: Date.now(), map: currentMap, p1: [p1.lat, p1.lng], p2: [e.latlng.lat, e.latlng.lng], owners: [] });
-                p1 = null; toggleDraw(); sync();
+            if (!isDrawing) return;
+            if (!firstPoint) {
+                firstPoint = e.latlng;
+            } else {
+                const newZone = {
+                    id: Date.now(),
+                    map: currentMap,
+                    p1: [firstPoint.lat, firstPoint.lng],
+                    p2: [e.latlng.lat, e.latlng.lng],
+                    owners: []
+                };
+                allZones.push(newZone);
+                syncZones();
+                toggleDrawing();
             }
         });
 
-        init();
+        /* START SYSTEMU */
+        initSystem();
     </script>
 </body>
 </html>
