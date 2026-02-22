@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 3000;
 
 // --- POŁĄCZENIE Z MONGODB ---
 // Wklej tutaj swój link z MongoDB Atlas w cudzysłowie
-const MONGO_URI = process.env.MONGO_URI; 
+const MONGO_URI = 'mongodb+srv://hkacper43_db_user:Bimatech1907@cluster0.nsfmsqp.mongodb.net/?retryWrites=true&w=majority'; 
 
 mongoose.connect(MONGO_URI)
     .then(() => console.log('Połączono z MongoDB!'))
@@ -75,3 +75,4 @@ app.post('/api/zones', async (req, res) => {
 });
 
 app.listen(PORT, () => console.log(`Serwer wystartował na porcie ${PORT}`));
+
