@@ -553,6 +553,7 @@
         }
 
         async function deleteZone(zoneId) {
+            if (!currentUser || !currentUser.isAdmin) return;
             if (confirm("Usunąć tę strefę na stałe?")) {
                 allZones = allZones.filter(z => z.id !== zoneId);
                 await fetch('/api/zones', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(allZones) });
@@ -561,6 +562,7 @@
         }
 
         async function clearMap() {
+            if (!currentUser || !currentUser.isAdmin) return;
             if (confirm("UWAGA: Czy na pewno chcesz usunąć WSZYSTKIE strefy z tej mapy?")) {
                 allZones = allZones.filter(z => z.map !== currentMap);
                 await fetch('/api/zones', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(allZones) });
@@ -569,6 +571,10 @@
         }
 
         function toggleDrawing() {
+            if (!currentUser || !currentUser.isAdmin) {
+                alert("Brak uprawnień administracyjnych.");
+                return;
+            }
             isDrawing = !isDrawing;
             document.getElementById('drawBtn').innerText = isDrawing ? "ANULUJ" : "DODAJ STREFĘ";
             firstPoint = null;
@@ -576,6 +582,11 @@
 
         map.on('click', (e) => {
             if (!isDrawing) return;
+            if (!currentUser || !currentUser.isAdmin) {
+                isDrawing = false;
+                return;
+            }
+
             if (!firstPoint) firstPoint = e.latlng;
             else {
                 allZones.push({ id: Date.now(), map: currentMap, p1: [firstPoint.lat, firstPoint.lng], p2: [e.latlng.lat, e.latlng.lng], owners: [] });
