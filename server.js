@@ -3,23 +3,29 @@ const passport = require('passport');
 const DiscordStrategy = require('passport-discord').Strategy;
 const session = require('express-session');
 const path = require('path');
-const fs = require('fs');
+const mongoose = require('mongoose');
+const MongoStore = require('connect-mongo');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// --- POŁĄCZENIE Z MONGODB ---
+// Wklej tutaj swój link z MongoDB Atlas w cudzysłowie
+const MONGO_URI = process.env.MONGO_URI; 
+
+mongoose.connect(MONGO_URI)
+    .then(() => console.log('Połączono z MongoDB!'))
+    .catch(err => console.error('Błąd MongoDB:', err));
+
+// Model strefy w bazie danych
+const Zone = mongoose.model('Zone', new mongoose.Schema({
+    data: Array // Przechowujemy całą listę stref jako jeden dokument dla ułatwienia
+}));
+
 // --- DANE KONFIGURACYJNE ---
-// Pobierz te dane z Discord Developer Portal
 const CLIENT_ID = '1459649925485957266'; 
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const CALLBACK_URL = 'https://fsbc.onrender.com/auth/discord/callback';
-
-// Baza danych stref zapisywana do pliku, aby nie znikała
-let zones = [];
-const ZONES_FILE = 'zones.json';
-if (fs.existsSync(ZONES_FILE)) {
-    zones = JSON.parse(fs.readFileSync(ZONES_FILE));
-}
 
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((obj, done) => done(null, obj));
@@ -28,50 +34,44 @@ passport.use(new DiscordStrategy({
     clientID: CLIENT_ID,
     clientSecret: CLIENT_SECRET,
     callbackURL: CALLBACK_URL,
-    scope: ['identify'] // Wymagane dla poprawnej autoryzacji
+    scope: ['identify']
 }, (accessToken, refreshToken, profile, done) => {
-    // Dodajemy uprawnienia admina dla konkretnego użytkownika
     profile.isAdmin = (profile.username === 'bliziog');
     return done(null, profile);
 }));
 
 app.use(express.json());
+
+// --- NAPRAWIONE SESJE (Zapisują się w MongoDB, nie w RAMie) ---
 app.use(session({
     secret: 'fsbc-secret-key-123',
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false } // Zmień na true, jeśli używasz HTTPS
+    store: MongoStore.create({ mongoUrl: MONGO_URI }),
+    cookie: { secure: false, maxAge: 1000 * 60 * 60 * 24 * 7 } // Sesja na 7 dni
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
-
-// Serwowanie plików Twojej strony
 app.use(express.static(path.join(__dirname)));
 
 // --- OBSŁUGA LOGOWANIA ---
 app.get('/auth/discord', passport.authenticate('discord'));
+app.get('/auth/discord/callback', passport.authenticate('discord', { failureRedirect: '/' }), (req, res) => res.redirect('/'));
+app.get('/api/user', (req, res) => res.json(req.user || null));
 
-app.get('/auth/discord/callback', passport.authenticate('discord', {
-    failureRedirect: '/'
-}), (req, res) => {
-    res.redirect('/');
+// --- API DLA MAPY (ZAPIS DO MONGODB) ---
+app.get('/api/zones', async (req, res) => {
+    const doc = await Zone.findOne();
+    res.json(doc ? doc.data : []);
 });
 
-app.get('/api/user', (req, res) => {
-    res.json(req.user || null);
-});
-
-// --- API DLA MAPY ---
-app.get('/api/zones', (req, res) => res.json(zones));
-
-app.post('/api/zones', (req, res) => {
-    zones = req.body;
-    fs.writeFileSync(ZONES_FILE, JSON.stringify(zones));
+app.post('/api/zones', async (req, res) => {
+    // Usuwamy stare i zapisujemy nowe do bazy MongoDB
+    await Zone.deleteMany({});
+    const newZones = new Zone({ data: req.body });
+    await newZones.save();
     res.json({ status: 'ok' });
 });
 
 app.listen(PORT, () => console.log(`Serwer wystartował na porcie ${PORT}`));
-
-
-
