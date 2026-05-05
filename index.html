@@ -351,14 +351,26 @@
         <div class="view-container-wide">
             <h1 class="section-title">Turnieje FSBC</h1>
             <div class="tournament-grid">
+                
+                <!-- NOWY TURNIEJ -->
                 <div class="info-card">
                     <div class="status-badge">Nadchodzi</div>
-                    <h2>FSBC Solo Cup #5</h2>
+                    <h2>FSBC Solo Cup #6</h2>
                     <div class="card-actions">
                         <a href="#" class="card-link link-map" onclick="showView('map')"><i class="fa-solid fa-map"></i> Mapa Taktyczna</a>
+                        <a href="#" class="card-link link-leaderboard"><i class="fa-solid fa-trophy"></i> Tabela Wyników</a>
+                    </div>
+                </div>
+
+                <!-- ZAKOŃCZONY TURNIEJ (#5) -->
+                <div class="info-card" style="opacity: 0.7;">
+                    <div class="status-badge" style="background: rgba(255, 255, 255, 0.08); color: var(--text-muted);">Zakończone</div>
+                    <h2>FSBC Solo Cup #5</h2>
+                    <div class="card-actions">
                         <a href="https://yunite.xyz/leaderboard/426c581c-f346-4f13-b004-fb3c3fa47595" target="_blank" class="card-link link-leaderboard"><i class="fa-solid fa-trophy"></i> Tabela Wyników</a>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -419,9 +431,12 @@
         let firstPoint = null;
         let allZones = [];
         let currentMap = 'venture';
+        
+        // Obiekt do przechowywania czasu ostatniej zmiany dla gracza (zapisywany w localStorage dla sesji)
+        const COOLDOWN_MS = 7 * 60 * 1000; // 7 minut
 
         const mapConfigs = {
-            'venture': { url: 'https://i.ibb.co/R4Byggqp/image.png', bounds: [[0, 0], [500, 500]] }
+            'venture': { url: 'https://i.ibb.co/9ks9WsVp/Gtu-XUk-NXg-AA6-LSn.webp', bounds: [[0, 0], [500, 500]] }
         };
 
         const map = L.map('map', {
@@ -540,12 +555,31 @@
 
         async function handleZoneClick(zone) {
             if (!currentUser) return alert("Zaloguj się przez Discord!");
+
+            // Logika Cooldown dla graczy
+            if (!currentUser.isAdmin) {
+                const lastChange = localStorage.getItem('lastZoneChange');
+                const now = Date.now();
+                if (lastChange && (now - lastChange < COOLDOWN_MS)) {
+                    const remaining = Math.ceil((COOLDOWN_MS - (now - lastChange)) / 1000 / 60);
+                    alert(`Możesz zmienić strefę dopiero za ${remaining} min.`);
+                    return;
+                }
+            }
+
             const index = zone.owners.findIndex(o => o.name === currentUser.username);
-            if (index > -1) zone.owners.splice(index, 1);
-            else {
+            if (index > -1) {
+                zone.owners.splice(index, 1);
+            } else {
                 allZones.forEach(z => { if(z.map === currentMap) z.owners = z.owners.filter(o => o.name !== currentUser.username); });
                 zone.owners.push({ name: currentUser.username, avatar: document.getElementById('u-avatar').src });
             }
+
+            // Zapisz czas zmiany (tylko jeśli to nie admin)
+            if (!currentUser.isAdmin) {
+                localStorage.setItem('lastZoneChange', Date.now().toString());
+            }
+
             await fetch('/api/zones', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(allZones) });
             renderZones();
         }
