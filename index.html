@@ -309,7 +309,6 @@
     <div id="view-map" class="content-view">
         <nav class="top-navbar">
             <div class="map-selector">
-                <button class="nav-btn active" id="btn-starfall" onclick="handleMapChange('starfall')">Starfall</button>
                 <button class="nav-btn" id="btn-venture" onclick="handleMapChange('venture')">Venture</button>
             </div>
             <div class="nav-btn" style="background: rgba(255,255,255,0.05); color: white; cursor: default;">
@@ -398,15 +397,8 @@
                 </div>
                 <div class="rule-item">
                     <h4>4. Zakazane przedmioty</h4>
-                    <p>Zakazane przedmioty: Lock on assault rifle.</p>
+                    <p>Zakazane przedmioty: XXX.</p>
                 </div>
-
-                <div class="rule-item" style="grid-column: span 2; margin-top: 10px;">
-                    <h4>5. Zasady Końcowych Fazy Gry i Rotacji</h4>
-                    <p>Poniższa grafika przedstawia dopuszczalne zachowania podczas rotacji w ostatnich kręgach. Pamiętaj o respektowaniu granic spotów nawet podczas ucieczki przed strefą.</p>
-                    <div style="margin-top: 20px; border-radius: 20px; overflow: hidden; border: 1px solid var(--primary);">
-                        <img src="https://i.ibb.co/xSD3vRHP/275ac6a0-9ce6-4a32-ac93-599cb351e589.png" style="width: 100%; display: block;" alt="Grafika Taktyczna">
-                    </div>
                     <p style="margin-top: 15px; font-style: italic; color: var(--text-muted);">Dopis: Wszelkie sporne sytuacje dotyczące rotacji należy zgłaszać administracji z powtórką meczu.</p>
                 </div>
             </div>
@@ -422,8 +414,7 @@
         let currentMap = 'starfall';
 
         const mapConfigs = {
-            'starfall': { url: 'https://i.ibb.co/yBW1SzF3/7169b511-b1c3-4adb-9716-7ef7da195366.jpg', bounds: [[0, 0], [500, 500]] },
-            'venture': { url: 'https://i.ibb.co/xSD3vRHP/275ac6a0-9ce6-4a32-ac93-599cb351e589.png', bounds: [[0, 0], [500, 500]] }
+            'venture': { url: 'https://i.ibb.co/9ks9WsVp/Gtu-XUk-NXg-AA6-LSn.webp', bounds: [[0, 0], [500, 500]] }
         };
 
         const map = L.map('map', {
