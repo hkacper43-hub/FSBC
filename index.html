@@ -309,8 +309,7 @@
     <div id="view-map" class="content-view">
         <nav class="top-navbar">
             <div class="map-selector">
-                <button class="nav-btn active" id="btn-starfall" onclick="handleMapChange('starfall')">Starfall</button>
-                <button class="nav-btn" id="btn-venture" onclick="handleMapChange('venture')">Venture</button>
+                <button class="nav-btn active" id="btn-venture" onclick="handleMapChange('venture')">Venture</button>
             </div>
             <div class="nav-btn" style="background: rgba(255,255,255,0.05); color: white; cursor: default;">
                 <i class="fa-solid fa-user-group"></i> AKTYWNI: <span id="count-total">0</span>
@@ -419,11 +418,10 @@
         let isDrawing = false;
         let firstPoint = null;
         let allZones = [];
-        let currentMap = 'starfall';
+        let currentMap = 'venture';
 
         const mapConfigs = {
-            'starfall': { url: 'https://i.ibb.co/yBW1SzF3/7169b511-b1c3-4adb-9716-7ef7da195366.jpg', bounds: [[0, 0], [500, 500]] },
-            'venture': { url: 'https://i.ibb.co/xSD3vRHP/275ac6a0-9ce6-4a32-ac93-599cb351e589.png', bounds: [[0, 0], [500, 500]] }
+            'venture': { url: 'https://i.ibb.co/9ks9WsVp/Gtu-XUk-NXg-AA6-LSn.webp', bounds: [[0, 0], [500, 500]] }
         };
 
         const map = L.map('map', {
@@ -440,7 +438,7 @@
             keyboard: false
         });
 
-        let mapOverlay = L.imageOverlay(mapConfigs.starfall.url, mapConfigs.starfall.bounds).addTo(map);
+        let mapOverlay = L.imageOverlay(mapConfigs.venture.url, mapConfigs.venture.bounds).addTo(map);
 
         function lockMapToFrame() {
             map.fitBounds(mapConfigs[currentMap].bounds, { padding: [-100, -100] });
@@ -486,7 +484,7 @@
         function handleMapChange(mapId) {
             currentMap = mapId;
             document.querySelectorAll('.nav-btn').forEach(b => {
-                if(b.id === 'btn-starfall' || b.id === 'btn-venture') {
+                if(b.id === 'btn-venture') {
                     b.classList.toggle('active', b.id === 'btn-' + mapId);
                     b.style.background = (b.id === 'btn-' + mapId) ? 'var(--primary)' : 'transparent';
                     b.style.color = (b.id === 'btn-' + mapId) ? 'white' : 'var(--text-muted)';
