@@ -1,0 +1,787 @@
+/**
+ * ============================================
+ * FSBC - SYSTEM TAKTYCZNY MAP
+ * Plik CSS - Style i wygląd aplikacji
+ * ============================================
+ */
+
+/* ============================================
+   ZMIENNE KOLORÓW I PALETA DESIGNU
+   ============================================ */
+:root {
+    --primary: #6366f1;
+    --primary-glow: rgba(99, 102, 241, 0.5);
+    --secondary: #a855f7;
+    --accent: #d946ef;
+    --bg-dark: #030712;
+    --card-bg: rgba(3, 7, 18, 0.9);
+    --glass: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --danger: #ef4444;
+    --discord: #5865F2;
+    --success: #2ecc71;
+    --map-border: #1a1e29;
+}
+
+/* ============================================
+   RESETOWANIE I USTAWIENIA GLOBALNE
+   ============================================ */
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    outline: none; 
+    -webkit-font-smoothing: antialiased; 
+}
+
+body { 
+    font-family: 'Poppins', sans-serif; 
+    background-color: var(--bg-dark); 
+    color: var(--text-main); 
+    min-height: 100vh; 
+    overflow-x: hidden; 
+    padding-bottom: 80px; 
+}
+
+/* ============================================
+   TŁO I EFEKTY WIZUALNE
+   ============================================ */
+#dynamic-bg { 
+    position: fixed; 
+    inset: 0; 
+    background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #030712 100%); 
+    z-index: -2; 
+}
+
+.grid-pattern { 
+    position: fixed; 
+    inset: 0; 
+    background-image: linear-gradient(var(--glass-border) 1px, transparent 1px), linear-gradient(90deg, var(--glass-border) 1px, transparent 1px); 
+    background-size: 45px 45px; 
+    z-index: -1; 
+    opacity: 0.12; 
+}
+
+/* ============================================
+   NAGŁÓWEK I NAWIGACJA
+   ============================================ */
+.site-header { 
+    width: 100%; 
+    max-width: 1600px; 
+    margin: 0 auto; 
+    padding: 30px 40px; 
+    display: flex; 
+    justify-content: center; 
+    gap: 40px; 
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: linear-gradient(to bottom, var(--bg-dark) 60%, transparent);
+}
+
+.header-nav-item { 
+    color: #ffffff; 
+    text-decoration: none; 
+    font-size: 14px; 
+    font-weight: 600; 
+    letter-spacing: 1px; 
+    opacity: 0.6; 
+    transition: 0.3s; 
+    position: relative; 
+    cursor: pointer; 
+    text-transform: uppercase;
+}
+
+.header-nav-item:hover, 
+.header-nav-item.active { 
+    opacity: 1; 
+    color: var(--primary); 
+}
+
+.header-nav-item::after { 
+    content: ''; 
+    position: absolute; 
+    bottom: -8px; 
+    left: 50%; 
+    transform: translateX(-50%);
+    width: 0; 
+    height: 2px; 
+    background: var(--primary); 
+    transition: 0.3s; 
+}
+
+.header-nav-item.active::after { 
+    width: 100%; 
+}
+
+/* ============================================
+   WIDOKI I SEKCJE
+   ============================================ */
+.content-view { 
+    display: none; 
+    width: 100%; 
+    animation: viewFadeIn 0.5s ease forwards; 
+}
+
+.content-view.active { 
+    display: block; 
+}
+
+@keyframes viewFadeIn { 
+    from { 
+        opacity: 0; 
+        transform: translateY(15px); 
+    } 
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    } 
+}
+
+/* ============================================
+   SEKCJA HERO / STRONA GŁÓWNA
+   ============================================ */
+.hero-section { 
+    height: 75vh; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    text-align: center; 
+    padding: 20px; 
+}
+
+.hero-title { 
+    font-size: clamp(50px, 10vw, 100px); 
+    font-weight: 900; 
+    background: linear-gradient(to bottom right, #fff 30%, var(--primary), var(--accent)); 
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+    line-height: 0.9; 
+    margin-bottom: 25px; 
+    letter-spacing: -5px; 
+}
+
+.hero-subtitle { 
+    font-size: 19px; 
+    color: var(--text-muted); 
+    max-width: 750px; 
+    margin-bottom: 45px; 
+    line-height: 1.6; 
+    font-weight: 300; 
+}
+
+.hero-profile-card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    padding: 25px 40px;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    margin-bottom: 30px;
+    backdrop-filter: blur(15px);
+    animation: fadeIn 0.8s ease;
+}
+
+.hero-profile-card img { 
+    width: 70px; 
+    height: 70px; 
+    border-radius: 50%; 
+    border: 3px solid var(--primary); 
+}
+
+.hero-profile-info { 
+    text-align: left; 
+}
+
+.hero-profile-info h3 { 
+    font-size: 22px; 
+    font-weight: 700; 
+}
+
+.hero-profile-info span { 
+    font-size: 12px; 
+    color: var(--primary); 
+    font-weight: 800; 
+    text-transform: uppercase; 
+    letter-spacing: 1px; 
+}
+
+/* ============================================
+   PRZYCISKI I LINKI
+   ============================================ */
+.cta-button { 
+    background: var(--primary); 
+    color: white; 
+    padding: 20px 55px; 
+    border-radius: 100px; 
+    text-decoration: none; 
+    font-weight: 800; 
+    font-size: 18px; 
+    box-shadow: 0 15px 40px var(--primary-glow); 
+    transition: 0.4s; 
+    border: none; 
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.cta-button:hover { 
+    transform: translateY(-5px); 
+    box-shadow: 0 20px 50px var(--primary-glow); 
+}
+
+.hero-discord-btn {
+    background: rgba(88, 101, 242, 0.1); 
+    color: var(--discord); 
+    border: 1px solid rgba(88, 101, 242, 0.3);
+    padding: 14px 35px; 
+    border-radius: 100px; 
+    text-decoration: none; 
+    font-weight: 700; 
+    font-size: 14px;
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+    transition: 0.3s;
+}
+
+.hero-discord-btn:hover { 
+    background: var(--discord); 
+    color: white; 
+}
+
+/* ============================================
+   MAPA I RAMKA MAPY
+   ============================================ */
+.map-frame { 
+    flex-grow: 1; 
+    background: #000; 
+    border: 12px solid #1a1e29; 
+    border-radius: 40px; 
+    height: 850px; 
+    position: relative; 
+    overflow: hidden; 
+    box-shadow: inset 0 0 40px rgba(0,0,0,0.9), 0 15px 50px rgba(0,0,0,0.5);
+}
+
+#map { 
+    width: 100%; 
+    height: 100%; 
+    background: #0b1424; 
+    cursor: crosshair; 
+}
+
+/* ============================================
+   KONTENERY I LAYOUTY
+   ============================================ */
+.view-container-wide { 
+    width: 95%; 
+    max-width: 1400px; 
+    margin: 60px auto; 
+}
+
+.section-title { 
+    font-size: 56px; 
+    font-weight: 800; 
+    color: #fff; 
+    margin-bottom: 50px; 
+    letter-spacing: -2px; 
+}
+
+.main-container { 
+    display: flex; 
+    width: 95%; 
+    max-width: 1600px; 
+    margin: 0 auto; 
+    gap: 30px; 
+}
+
+/* ============================================
+   KARTY INFORMACYJNE
+   ============================================ */
+.info-card { 
+    background: var(--glass); 
+    border: 1px solid var(--glass-border); 
+    border-radius: 35px; 
+    padding: 40px; 
+    position: relative; 
+    overflow: hidden; 
+    transition: 0.4s; 
+    backdrop-filter: blur(15px);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+}
+
+.tournament-grid { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 20px; 
+    margin-top: 20px; 
+}
+
+.tournament-card { 
+    width: 100%; 
+    max-width: none;
+    min-height: 100px; 
+    padding: 24px 30px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    background: rgba(8, 10, 18, 0.95); 
+    border: 1px solid rgba(255, 255, 255, 0.08); 
+    border-radius: 24px; 
+    transition: transform 0.25s ease, box-shadow 0.25s ease; 
+}
+
+.tournament-card:hover { 
+    transform: translateY(-2px); 
+    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.25); 
+}
+
+.tournament-card-header { 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    width: 100%; 
+    gap: 20px; 
+}
+
+.tournament-card-header > div:first-child { 
+    display: flex; 
+    align-items: center; 
+    gap: 16px; 
+}
+
+.tournament-card-header h2 { 
+    margin: 0; 
+    font-size: 22px; 
+}
+
+.status-badge { 
+    padding: 8px 16px; 
+    border-radius: 999px; 
+    font-size: 12px; 
+    letter-spacing: 0.08em; 
+}
+
+.card-actions { 
+    display: flex; 
+    gap: 12px; 
+    flex-wrap: wrap; 
+    justify-content: flex-end; 
+}
+
+.card-link { 
+    padding: 10px 18px; 
+    border-radius: 999px; 
+    font-size: 13px; 
+}
+
+.card-link-disabled { 
+    opacity: 0.55; 
+}
+
+.section-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.section-subtitle {
+    color: var(--text-muted);
+    font-size: 16px;
+    max-width: 760px;
+    line-height: 1.7;
+    margin-top: 8px;
+}
+
+.status-badge { 
+    background: rgba(99, 102, 241, 0.15); 
+    color: var(--primary); 
+    padding: 6px 16px; 
+    border-radius: 12px; 
+    font-size: 12px; 
+    font-weight: 700; 
+    margin-bottom: 15px; 
+    display: inline-block;
+}
+
+.card-actions { 
+    display: flex; 
+    flex-wrap: wrap;
+    gap: 15px; 
+    width: 100%;
+    margin-top: 20px;
+}
+
+.card-link { 
+    text-decoration: none; 
+    font-size: 13px; 
+    font-weight: 600; 
+    padding: 12px 20px; 
+    border-radius: 14px; 
+    transition: 0.3s; 
+    display: flex; 
+    align-items: center; 
+    gap: 10px;
+    white-space: nowrap;
+}
+
+.link-map { 
+    background: rgba(99, 102, 241, 0.1); 
+    color: var(--primary); 
+    border: 1px solid rgba(99, 102, 241, 0.2); 
+}
+
+.link-map:hover { 
+    background: var(--primary); 
+    color: white; 
+}
+
+.link-leaderboard { 
+    background: rgba(217, 70, 239, 0.1); 
+    color: var(--accent); 
+    border: 1px solid rgba(217, 70, 239, 0.2); 
+}
+
+.link-leaderboard:hover { 
+    background: var(--accent); 
+    color: white; 
+}
+
+/* ============================================
+   STATYSTYKI
+   ============================================ */
+.stats-grid { 
+    display: grid; 
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 20px; 
+    margin-bottom: 40px; 
+}
+
+.stat-box { 
+    background: var(--glass); 
+    padding: 30px; 
+    border-radius: 25px; 
+    border: 1px solid var(--glass-border); 
+    text-align: center; 
+}
+
+.stat-val { 
+    font-size: 32px; 
+    font-weight: 800; 
+    color: var(--primary); 
+    display: block; 
+}
+
+.stat-lbl { 
+    font-size: 12px; 
+    color: var(--text-muted); 
+    text-transform: uppercase; 
+    letter-spacing: 1px; 
+}
+
+/* ============================================
+   ZASADY I REGUŁY
+   ============================================ */
+.rules-wrapper { 
+    display: grid; 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 30px; 
+    margin-top: 40px; 
+}
+
+.rule-item { 
+    background: rgba(255,255,255,0.02); 
+    padding: 30px; 
+    border-radius: 25px; 
+    border-left: 4px solid var(--primary); 
+}
+
+.rule-item h4 { 
+    margin-bottom: 10px; 
+    color: #fff; 
+}
+
+.rule-item p { 
+    font-size: 14px; 
+    color: var(--text-muted); 
+    line-height: 1.6; 
+}
+
+/* ============================================
+   PASEK NAWIGACJI MAPY
+   ============================================ */
+.top-navbar { 
+    width: 95%; 
+    max-width: 1600px; 
+    margin: 10px auto 30px auto; 
+    background: var(--card-bg); 
+    backdrop-filter: blur(25px); 
+    border: 1px solid var(--glass-border); 
+    border-radius: 30px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    padding: 20px 30px; 
+    gap: 20px;
+}
+
+.map-selector { 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+}
+
+.nav-btn { 
+    background: transparent; 
+    color: var(--text-muted); 
+    font-weight: 700; 
+    font-size: 13px; 
+    cursor: pointer; 
+    border-radius: 15px; 
+    transition: 0.3s; 
+    text-transform: uppercase; 
+    border: 1px solid transparent; 
+    padding: 12px 18px; 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 10px;
+}
+
+.nav-btn:hover:not(.active) { 
+    background: rgba(255,255,255,0.06); 
+    color: var(--text-main); 
+}
+
+.nav-btn.active { 
+    background: var(--primary); 
+    color: white; 
+    border-color: rgba(99, 102, 241, 0.25);
+}
+
+/* ============================================
+   TURNIEJE I TABELE
+   ============================================ */
+.tournament-card { 
+    background: rgba(12, 16, 28, 0.95); 
+    border: 1px solid rgba(255, 255, 255, 0.08); 
+    border-radius: 35px; 
+    padding: 35px; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 25px; 
+    transition: 0.4s; 
+    backdrop-filter: blur(20px);
+}
+
+.tournament-card:hover { 
+    transform: translateY(-4px); 
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35); 
+}
+
+.tournament-card-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: flex-start; 
+    gap: 20px; 
+    flex-wrap: wrap; 
+}
+
+.tournament-card-header h2 { 
+    font-size: 28px; 
+    margin: 0; 
+}
+
+.tournament-card-body { 
+    color: var(--text-muted); 
+    font-size: 15px; 
+    line-height: 1.75; 
+    width: 100%;
+}
+
+.tournament-table-wrapper { 
+    overflow-x: auto; 
+    width: 100%;
+}
+
+.tournament-card.ended { 
+    opacity: 0.95; 
+}
+
+.tournament-card .card-actions { 
+    margin-top: 0; 
+    gap: 12px; 
+    justify-content: flex-end; 
+    flex-wrap: wrap;
+}
+
+.card-link { 
+    text-decoration: none; 
+    font-size: 13px; 
+    font-weight: 700; 
+    padding: 12px 20px; 
+    min-width: 160px; 
+    border-radius: 16px; 
+    transition: 0.3s; 
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center;
+    gap: 10px; 
+    white-space: nowrap; 
+    border: 1px solid transparent;
+}
+
+.card-link:hover { 
+    transform: translateY(-1px);
+}
+
+.card-link-disabled { 
+    background: rgba(255, 255, 255, 0.06); 
+    color: rgba(255, 255, 255, 0.5); 
+    border: 1px solid rgba(255, 255, 255, 0.08); 
+    cursor: not-allowed; 
+}
+
+.link-map { 
+    background: rgba(99, 102, 241, 0.1); 
+    color: var(--primary); 
+}
+
+.link-map:hover { 
+    background: var(--primary); 
+    color: white; 
+}
+
+.link-leaderboard { 
+    background: rgba(217, 70, 239, 0.1); 
+    color: var(--accent); 
+}
+
+.link-leaderboard:hover { 
+    background: var(--accent); 
+    color: white; 
+}
+
+.tournament-table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    min-width: 320px; 
+}
+
+.tournament-table th, 
+.tournament-table td { 
+    padding: 16px 18px; 
+    text-align: left; 
+    border-bottom: 1px solid rgba(255,255,255,0.08); 
+}
+
+.tournament-table th { 
+    color: #cbd5e1; 
+    font-size: 13px; 
+    letter-spacing: 0.08em; 
+    text-transform: uppercase; 
+}
+
+.tournament-table td { 
+    color: #f8fafc; 
+    font-size: 15px; 
+}
+
+.tournament-table tr:hover td { 
+    background: rgba(255,255,255,0.03); 
+}
+
+.status-badge.muted { 
+    background: rgba(255, 255, 255, 0.08); 
+    color: var(--text-muted); 
+}
+
+/* ============================================
+   PASEK BOCZNY (SIDEBAR)
+   ============================================ */
+#sidebar { 
+    width: 400px; 
+    min-width: 400px; 
+    background: var(--card-bg); 
+    border: 1px solid var(--glass-border); 
+    border-radius: 35px; 
+    padding: 35px; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 30px; 
+    height: 850px; 
+}
+
+.user-profile-box { 
+    background: rgba(255,255,255,0.03); 
+    border: 1px solid var(--glass-border); 
+    border-radius: 25px; 
+    padding: 20px; 
+    display: flex; 
+    align-items: center; 
+    gap: 15px; 
+}
+
+.user-profile-box img { 
+    width: 55px; 
+    height: 55px; 
+    border-radius: 50%; 
+    border: 2px solid var(--primary); 
+}
+
+/* ============================================
+   LISTA GRACZY
+   ============================================ */
+.player-entry { 
+    display: flex; 
+    align-items: center; 
+    gap: 12px; 
+    padding: 12px 18px; 
+    background: rgba(255,255,255,0.03); 
+    border-radius: 18px; 
+    margin-bottom: 10px; 
+    font-size: 14px; 
+}
+
+.player-entry img { 
+    width: 32px; 
+    height: 32px; 
+    border-radius: 50%; 
+}
+
+/* ============================================
+   AVATARY I GRAFIKĘ STREF
+   ============================================ */
+.avatar-cluster { 
+    display: flex; 
+    align-items: center; 
+    background: rgba(3, 7, 18, 0.95); 
+    padding: 8px 12px; 
+    border-radius: 25px; 
+    border: 2px solid var(--primary); 
+    gap: 8px;
+}
+
+.cluster-img { 
+    width: 30px; 
+    height: 30px; 
+    border-radius: 50%; 
+    border: 2px solid var(--primary);
+}
+
+.zone-tooltip { 
+    background: transparent !important; 
+    border: none !important; 
+    box-shadow: none !important; 
+}

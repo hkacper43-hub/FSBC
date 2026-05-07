@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <!-- ================================================== -->
+    <!-- META - Informacje o dokumencie -->
+    <!-- ================================================== -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FSBC - SYSTEM TAKTYCZNY MAP</title>
+    
+    <!-- ================================================== -->
+    <!-- ZEWNĘTRZNE BIBLIOTEKI CSS -->
+    <!-- ================================================== -->
+    <!-- Czcionka Poppins z Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet - biblioteka do interaktywnych map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Font Awesome - ikony -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- ================================================== -->
+    <!-- NASZ PLIK CSS (styles.css) -->
+    <!-- Zawiera: zmienne kolorów, layout, komponenty, animacje -->
+    <!-- ================================================== -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div id="dynamic-bg"></div>
+    <div class="grid-pattern"></div>
+
+    <header class="site-header">
+        <div class="header-nav-item active" id="nav-home" onclick="showView('home')">Home</div>
+        <div class="header-nav-item" id="nav-map" onclick="showView('map')">System Map</div>
+        <div class="header-nav-item" id="nav-tournaments" onclick="showView('tournaments')">Turnieje</div>
+        <div class="header-nav-item" id="nav-stats" onclick="showView('stats')">Statystyki</div>
+        <div class="header-nav-item" id="nav-info" onclick="showView('info')">Informacje</div>
+    </header>
+
+    <div id="view-home" class="content-view active">
+        <section class="hero-section">
+            <h1 class="hero-title">FSBC SYSTEM</h1>
+            <p class="hero-subtitle">Najbardziej zaawansowany ekosystem taktyczny dla graczy Solo Blitz Royale.</p>
+            
+            <div id="home-auth-container">
+                <a href="/auth/discord" class="hero-discord-btn">
+                    <i class="fa-brands fa-discord"></i> POŁĄCZ Z DISCORD
+                </a>
+            </div>
+
+            <div id="home-profile-container" style="display: none;">
+                <div class="hero-profile-card">
+                    <img id="h-avatar" src="" alt="Avatar">
+                    <div class="hero-profile-info">
+                        <span id="h-tag">ZALOGOWANO</span>
+                        <h3 id="h-name">Użytkownik</h3>
+                    </div>
+                </div>
+                <button class="cta-button" onclick="showView('map')">
+                    OTWÓRZ MAPĘ TAKTYCZNĄ <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; max-width: 1200px; margin: 0 auto; padding: 0 40px 100px 40px;">
+            <div class="info-card" style="padding: 30px; text-align: center; align-items: center;">
+                <i class="fa-solid fa-map-location-dot" style="font-size: 40px; color: var(--primary); margin-bottom: 20px;"></i>
+                <h4>Precyzyjne Spoty</h4>
+                <p style="font-size: 13px; color: var(--text-muted); margin-top: 10px;">Wybieraj swoje miejsca lądowania bez konfliktów.</p>
+            </div>
+            <div class="info-card" style="padding: 30px; text-align: center; align-items: center;">
+                <i class="fa-solid fa-users-viewfinder" style="font-size: 40px; color: var(--secondary); margin-bottom: 20px;"></i>
+                <h4>Podgląd Graczy</h4>
+                <p style="font-size: 13px; color: var(--text-muted); margin-top: 10px;">Widzisz w czasie rzeczywistym, kto zajmuje daną strefę.</p>
+            </div>
+            <div class="info-card" style="padding: 30px; text-align: center; align-items: center;">
+                <i class="fa-solid fa-trophy" style="font-size: 40px; color: var(--accent); margin-bottom: 20px;"></i>
+                <h4>Historia Chwały</h4>
+                <p style="font-size: 13px; color: var(--text-muted); margin-top: 10px;">Śledź wyniki poprzednich edycji i wyzwania.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-map" class="content-view">
+        <nav class="top-navbar">
+            <div class="map-selector">
+                <button class="nav-btn active" id="btn-venture" onclick="handleMapChange('venture')">Venture</button>
+            </div>
+            <div class="nav-btn" style="background: rgba(255,255,255,0.05); color: white; cursor: default;">
+                <i class="fa-solid fa-user-group"></i> AKTYWNI: <span id="count-total">0</span>
+            </div>
+        </nav>
+
+        <div class="main-container">
+            <aside id="sidebar">
+                <div id="auth-section">
+                    <a href="/auth/discord" class="hero-discord-btn" style="width: 100%; justify-content: center; padding: 18px;">
+                        <i class="fa-brands fa-discord"></i> ZALOGUJ SIĘ
+                    </a>
+                </div>
+                <div id="user-section" style="display: none;">
+                    <div class="user-profile-box">
+                        <img id="u-avatar" src="" alt="Avatar">
+                        <div>
+                            <b id="u-name" style="display: block;">Nazwa</b>
+                            <span id="u-access-tag" style="font-size: 11px; color: var(--primary); font-weight: 700;">STATUS...</span>
+                        </div>
+                    </div>
+                    <div id="admin-tools" style="display: none; margin-top: 15px; display: flex; flex-direction: column; gap: 10px;">
+                        <button id="drawBtn" class="nav-btn active" style="width: 100%;" onclick="toggleDrawing()">DODAJ NOWĄ STREFĘ</button>
+                        <button class="nav-btn" style="width: 100%; background: var(--danger); color: white;" onclick="clearMap()">WYCZYŚĆ MAPĘ</button>
+                    </div>
+                </div>
+                <div style="flex-grow: 1; overflow-y: auto;">
+                    <h5 style="text-transform: uppercase; font-size: 11px; color: var(--text-muted); margin-bottom: 15px;">Gracze (<span id="player-count">0</span>)</h5>
+                    <div id="player-list"></div>
+                </div>
+            </aside>
+            <main class="map-frame">
+                <div id="map"></div>
+            </main>
+        </div>
+    </div>
+
+    <div id="view-tournaments" class="content-view">
+        <div class="view-container-wide">
+            <h1 class="section-title">Turnieje FSBC</h1>
+            <div class="tournament-grid">
+                
+                <!-- NOWY TURNIEJ -->
+                <div class="tournament-card upcoming">
+                    <div class="tournament-card-header">
+                        <div>
+                            <span class="status-badge">Nadchodzi</span>
+                            <h2>FSBC Solo Cup #6</h2>
+                        </div>
+                        <div class="card-actions">
+                            <button class="card-link card-link-disabled" disabled><i class="fa-solid fa-map"></i> Mapa Taktyczna</button>
+                            <a href="https://yunite.xyz/leaderboard/b1ccca47-a221-4256-a325-c061266dc998" target="_blank" class="card-link link-leaderboard"><i class="fa-solid fa-trophy"></i> Tabela Wyników</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ZAKOŃCZONY TURNIEJ (#5) -->
+                <div class="tournament-card ended">
+                    <div class="tournament-card-header">
+                        <div>
+                            <span class="status-badge muted">Zakończone</span>
+                            <h2>FSBC Solo Cup #5</h2>
+                        </div>
+                        <div class="card-actions">
+                            <button class="card-link card-link-disabled" disabled><i class="fa-solid fa-map"></i> Mapa Taktyczna</button>
+                            <button class="card-link link-leaderboard" onclick="showView('cup5')"><i class="fa-solid fa-trophy"></i> Zobacz Tabelę</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="view-cup5" class="content-view">
+        <div class="view-container-wide">
+            <div class="section-title-row">
+                <div>
+                    <h1 class="section-title">FSBC Solo Cup #5</h1>
+                    <p class="section-subtitle">Tabela wyników oraz szczegóły punktacji z zakończonego turnieju.</p>
+                </div>
+                <button class="cta-button" onclick="showView('tournaments')">Wróć do Turniejów</button>
+            </div>
+            <div class="tournament-card ended">
+                <div class="tournament-card-body">
+                    <div class="tournament-table-wrapper">
+                        <table class="tournament-table">
+                            <thead>
+                                <tr>
+                                    <th>Miejsce</th>
+                                    <th>Gracz</th>
+                                    <th>Punkty</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>1.</td><td>Szimi</td><td>156</td></tr>
+                                <tr><td>2.</td><td>Ciolas</td><td>143</td></tr>
+                                <tr><td>3.</td><td>Smiki</td><td>107</td></tr>
+                                <tr><td>4.</td><td>Blizio</td><td>95</td></tr>
+                                <tr><td>5.</td><td>Marcel</td><td>91</td></tr>
+                                <tr><td>6.</td><td>Stecu</td><td>78</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-stats" class="content-view">
+        <div class="view-container-wide">
+            <h1 class="section-title">Globalne Statystyki</h1>
+            <div class="stats-grid">
+                <div class="stat-box"><span class="stat-val">6</span><span class="stat-lbl">Graczy w tabeli</span></div>
+                <div class="stat-box"><span class="stat-val">670</span><span class="stat-lbl">Łączne punkty</span></div>
+                <div class="stat-box"><span class="stat-val">112</span><span class="stat-lbl">Średnio na gracza</span></div>
+                <div class="stat-box"><span class="stat-val">156</span><span class="stat-lbl">Najwyższy wynik</span></div>
+            </div>
+            <div class="info-card" style="width: 100%;">
+                <h3>Ostatni turniej: FSBC Solo Cup #5</h3>
+                <p style="margin-top: 15px; color: var(--text-muted);">Na podstawie wyników 6 najlepszych graczy w Cup #5: 670 punktów łącznie, średnia 112 punktów, a Szimi wygrał z 156 punktami.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-info" class="content-view">
+        <div class="view-container-wide">
+            <h1 class="section-title">Informacje i Zasady</h1>
+            <div style="background: rgba(217, 70, 239, 0.12); border: 2px solid var(--accent); border-radius: 25px; padding: 40px 30px; margin-bottom: 40px; text-align: center;">
+                <p style="font-size: 24px; font-weight: 700; color: var(--accent); margin: 0; letter-spacing: 1px;">⚠️ ZASADY ZOSTANĄ ZAAKTUALIZOWANE</p>
+                <p style="font-size: 14px; color: var(--text-muted); margin-top: 12px; margin-bottom: 0;">Przed startem kolejnej edycji FSBC zarezerwuj sobie chwilę, aby zapoznać się z aktualnymi regulaminami.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================== -->
+    <!-- ZEWNĘTRZNE BIBLIOTEKI JAVASCRIPT -->
+    <!-- ================================================== -->
+    <!-- Leaflet - biblioteka do interaktywnych map -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- ================================================== -->
+    <!-- NAS PLIK JAVASCRIPT (script.js) -->
+    <!-- Zawiera: logikę mapy, obsługę stref, funkcje UI -->
+    <!-- ================================================== -->
+    <script src="script.js"></script>
+</body>
+</html>
